@@ -8,12 +8,13 @@ import net.runelite.client.config.ConfigItem;
 public interface ItemRespawnTimerConfig extends Config
 {
 	@ConfigItem(
-		keyName = "greeting",
-		name = "Welcome Greeting",
-		description = "The message to show to the user when they login"
+			keyName = "enabled",
+			name = "Enable overlay",
+			description = "Show respawn timers for static spawns"
 	)
-	default String greeting()
+	default boolean enabled()
 	{
-		return "Hello";
+		return true;
 	}
+
 }
