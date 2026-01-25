@@ -7,6 +7,7 @@ import net.runelite.api.*;
 import net.runelite.api.coords.WorldPoint;
 import net.runelite.client.config.ConfigManager;
 import net.runelite.client.eventbus.Subscribe;
+import net.runelite.client.game.WorldService;
 import net.runelite.client.plugins.Plugin;
 import net.runelite.client.plugins.PluginDescriptor;
 
@@ -14,9 +15,11 @@ import java.util.HashMap;
 import java.time.Instant;
 import java.util.List;
 import java.util.Map;
+import java.util.Arrays;
 
 import net.runelite.client.ui.overlay.OverlayManager;
 import net.runelite.api.events.ItemDespawned;
+import net.runelite.http.api.worlds.WorldResult;
 
 
 @Slf4j
@@ -34,6 +37,10 @@ public class ItemRespawnTimerPlugin extends Plugin
 
 	@Inject
 	private OverlayManager overlayManager;
+
+	@Inject
+	private WorldService worldService;
+
 
 
 	//region objects
@@ -130,7 +137,7 @@ public class ItemRespawnTimerPlugin extends Plugin
 	private void handleStaticItemPickup(WorldPoint wp, StaticSpawn spawn)
 	{
 		//todo move this calc into RespawnTimer constructor
-		long worldPopulation = 1000;//todo get population
+		int worldPopulation = getCurrentWorldPopulation();
 		int respawnTicks = (int)Math.floor(spawn.getBaseRespawnTicks() * ((4000D-worldPopulation)/4000));
 		int respawnSeconds = (int)(respawnTicks*0.6);
 		long now = Instant.now().toEpochMilli();
@@ -138,6 +145,23 @@ public class ItemRespawnTimerPlugin extends Plugin
 		long respawnAt = now + respawnSeconds * 1000L;
 
 		activeTimers.put(wp, new RespawnTimer(respawnAt, respawnSeconds));
+	}
+
+	private int getCurrentWorldPopulation(){
+		int worldId = client.getWorld();
+		WorldResult worlds = worldService.getWorlds();
+
+		if (worlds != null)
+		{
+			net.runelite.http.api.worlds.World world = worlds.findWorld(worldId);
+			if (world != null)
+			{
+				int population = world.getPlayers();
+				return population;
+			}
+		}
+		return 0;
+
 	}
 
 }
