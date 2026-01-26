@@ -47,13 +47,11 @@ public class ItemRespawnTimerPlugin extends Plugin
 	@Inject
 	private ItemRespawnTimerOverlay overlay;
 
-	private Map<WorldPoint, List<StaticSpawn>> staticSpawns = new HashMap<>();
-
 	@Inject
 	private StaticSpawnService staticSpawnService;
 
-	// WorldPoint -> RespawnTimer
-	private final Map<WorldPoint, RespawnTimer> activeTimers = new HashMap<>();
+	// WorldIdAndWorldPoint -> RespawnTimer
+	private final Map<WorldIdAndWorldPoint, RespawnTimer> activeTimers = new HashMap<>();
 
 	// WorldPoint -> list of static spawns at that tile
 	private Map<WorldPoint, List<StaticSpawn>> staticSpawnsByTile = new HashMap<>();
@@ -92,7 +90,7 @@ public class ItemRespawnTimerPlugin extends Plugin
 	//endregion
 
 
-	Map<WorldPoint, RespawnTimer> getActiveTimers()
+	Map<WorldIdAndWorldPoint, RespawnTimer> getActiveTimers()
 	{
 		return activeTimers;
 	}
@@ -136,6 +134,9 @@ public class ItemRespawnTimerPlugin extends Plugin
 
 	private void handleStaticItemPickup(WorldPoint wp, StaticSpawn spawn)
 	{
+		int worldId = client.getWorld();
+		WorldIdAndWorldPoint location = new WorldIdAndWorldPoint(worldId, wp);
+
 		//todo move this calc into RespawnTimer constructor
 		int worldPopulation = getCurrentWorldPopulation();
 		int respawnTicks = (int)Math.floor(spawn.getBaseRespawnTicks() * ((4000D-worldPopulation)/4000));
@@ -144,16 +145,16 @@ public class ItemRespawnTimerPlugin extends Plugin
 		//long respawnAt = now + spawn.getRespawnSeconds() * 1000L;
 		long respawnAt = now + respawnSeconds * 1000L;
 
-		activeTimers.put(wp, new RespawnTimer(respawnAt, respawnSeconds));
+		activeTimers.put(location, new RespawnTimer(respawnAt, respawnSeconds));
 	}
 
 	private int getCurrentWorldPopulation(){
-		int worldId = client.getWorld();
+		int currentWorldId = client.getWorld();
 		WorldResult worlds = worldService.getWorlds();
 
 		if (worlds != null)
 		{
-			net.runelite.http.api.worlds.World world = worlds.findWorld(worldId);
+			net.runelite.http.api.worlds.World world = worlds.findWorld(currentWorldId);
 			if (world != null)
 			{
 				int population = world.getPlayers();

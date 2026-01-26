@@ -34,6 +34,7 @@ public class ItemRespawnTimerOverlay extends Overlay
     @Override
     public Dimension render(Graphics2D g)
     {
+        int currentWorldId = client.getWorld();
         if (!config.enabled())
         {
             return null;
@@ -41,9 +42,15 @@ public class ItemRespawnTimerOverlay extends Overlay
 
         long now = Instant.now().toEpochMilli();
 
-        for (Map.Entry<WorldPoint, RespawnTimer> entry : plugin.getActiveTimers().entrySet())
+        for (Map.Entry<WorldIdAndWorldPoint, RespawnTimer> entry : plugin.getActiveTimers().entrySet())
         {
-            WorldPoint wp = entry.getKey();
+            WorldIdAndWorldPoint location = entry.getKey();
+
+            if (location.getWorldId() != currentWorldId){
+                continue; // skip rendering this timer because it's for another world
+            }
+
+            WorldPoint wp = location.getWorldPoint();
             RespawnTimer timer = entry.getValue();
 
             if (timer.getRespawnAt() <= now)
