@@ -1,11 +1,18 @@
 package com.itemrespawntimer;
 
+import lombok.Builder;
 import lombok.Value;
 
+
 @Value
+@Builder
 public class StaticSpawn
 {
-    int itemId;
-    int quantity;
     int baseRespawnTicks;
+
+    @Builder.Default
+    int itemId = -1;
+
+    @Builder.Default
+    int quantity = -1;
 }
