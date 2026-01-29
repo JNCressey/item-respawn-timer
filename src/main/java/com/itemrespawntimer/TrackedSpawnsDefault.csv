@@ -1,0 +1,13 @@
+x,y,z,baseRespawnTicks,itemId,quantity
+# x,y,z: world coordinates. x,y for the position, z for the plane. *required
+# baseRespawnTicks: the number of ticks used as the base respawn rate. *required
+# itemId: the numerical id of the item. optional. If not provided, the timer will react to any item in that position.
+# quantity: the quantity of the item. optional. not currently used.
+3206,3208,0,100,558,1
+3208,3214,0,100
+3209,3214,0,100,,1
+
+# todo populate this data.
+# - Wiki is useful for respawn times.
+# - following gist has dump of data:
+#     https://gist.githubusercontent.com/Tyluur/4cb93ba0ea96f36640f8bfb5ec49f7c3/raw/osrs_item_spawn_dump.json

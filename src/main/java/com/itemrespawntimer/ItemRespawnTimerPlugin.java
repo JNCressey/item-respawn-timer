@@ -15,7 +15,6 @@ import java.util.HashMap;
 import java.time.Instant;
 import java.util.List;
 import java.util.Map;
-import java.util.Arrays;
 
 import net.runelite.client.ui.overlay.OverlayManager;
 import net.runelite.api.events.ItemDespawned;
@@ -121,7 +120,7 @@ public class ItemRespawnTimerPlugin extends Plugin
 
 		for (StaticSpawn spawn : spawns)
 		{
-			if (spawn.getItemId() == item.getId())
+			if (spawn.getItemId()==item.getId() || spawn.getItemId()==-1)
 			{
 				handleStaticItemPickup(wp, spawn);
 				break;
