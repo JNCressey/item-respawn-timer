@@ -72,26 +72,20 @@ public class StaticSpawnService
         s.baseRespawnTicks(Integer.parseInt(lineData.get(3)));
 
         // set itemId if present
-        try {
-            lineData.stream()
-                    .skip(4).findFirst() // nth value if present line has enough values
-                    .filter(itemId -> !itemId.isEmpty())
-                    .map(Integer::valueOf)
-                    .ifPresent(s::itemId); // set value of the static spawn
-        } catch (NumberFormatException e){
-            // skip if integer value can't be parsed
-        }
+        lineData.stream()
+                .skip(4).findFirst() // nth value if present line has enough values
+                .filter(itemId -> !itemId.isEmpty())
+                .map(this::tryParseIntElseNull)
+                .ifPresent(s::itemId); // set value of the static spawn
+
 
         // set quantity if present
-        try {
-            lineData.stream()
-                    .skip(5).findFirst() // nth value if present line has enough values
-                    .filter(quantity -> !quantity.isEmpty())
-                    .map(Integer::valueOf)
-                    .ifPresent(s::quantity); // set value of the static spawn
-        } catch (NumberFormatException e){
-            // skip if integer value can't be parsed
-        }
+        lineData.stream()
+                .skip(5).findFirst() // nth value if present line has enough values
+                .filter(quantity -> !quantity.isEmpty())
+                .map(this::tryParseIntElseNull)
+                .ifPresent(s::quantity); // set value of the static spawn
+
 
 //todo remove
 //        StaticSpawn s = new StaticSpawn(
@@ -111,18 +105,17 @@ public class StaticSpawnService
                 .add(s.build());
     }
 
-    //todo remove
-//    /**
-//     *
-//     * @param s the string to parse
-//     * @return the parsed integer if possible, else returns null
-//     */
-//    private Integer tryParseIntElseNull(String s){
-//        try{
-//            return Integer.valueOf(s);
-//        } catch (NumberFormatException e){
-//            return null;
-//        }
-//    }
+    /**
+     *
+     * @param s the string to parse
+     * @return the parsed integer if possible, else returns null
+     */
+    private Integer tryParseIntElseNull(String s){
+        try{
+            return Integer.valueOf(s);
+        } catch (NumberFormatException e){
+            return null;
+        }
+    }
 
 }
