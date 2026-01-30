@@ -39,7 +39,7 @@ public interface ItemRespawnTimerConfig extends Config
 	)
 	default String trackedSpawns()
 	{
-		return "3206,3208,0,100,558,1\n3208,3214,0,100\n3209,3214,0,100,,1"; //todo: load value from TrackedSpawnsDefault.csv
+		return TrackedSpawnsDefaultFileReader.readResource();
 	}
 
 

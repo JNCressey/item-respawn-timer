@@ -7,7 +7,6 @@ Predictions can be slightly off. Because the respawn time depends on how many pl
 - don't start timer from going up some stairs or running away, only when item is taken
 - work for all respawning items, not just Lumbridge castle mind rune
   - fill the csv file
-  - load the data in from the cav file
   - handle item names
 - clear the timer if respawn is witnessed
 - side panel to track worlds where you're waiting for a respawn

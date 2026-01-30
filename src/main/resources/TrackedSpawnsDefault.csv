@@ -3,9 +3,14 @@ x,y,z,baseRespawnTicks,itemId,quantity
 # baseRespawnTicks: the number of ticks used as the base respawn rate. *required
 # itemId: the numerical id of the item. optional. If not provided, the timer will react to any item in that position.
 # quantity: the quantity of the item. optional. not currently used.
+
+# if you want to omit itemId but put a quantity, put the itemId value as "", for example:
+# 3209,3214,0,100,"",1
+
+
 3206,3208,0,100,558,1
 3208,3214,0,100
-3209,3214,0,100,,1
+3209,3214,0,100,"",1
 
 # todo populate this data.
 # - Wiki is useful for respawn times.
