@@ -9,7 +9,6 @@ Predictions can be slightly off. Because the respawn time depends on how many pl
   - fill the csv file
   - load the data in from the cav file
   - handle item names
-  - update the map when config value is changed
 - clear the timer if respawn is witnessed
 - side panel to track worlds where you're waiting for a respawn
   - hop to world on click

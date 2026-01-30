@@ -7,6 +7,7 @@ import net.runelite.api.*;
 import net.runelite.api.coords.WorldPoint;
 import net.runelite.client.config.ConfigManager;
 import net.runelite.client.eventbus.Subscribe;
+import net.runelite.client.events.ConfigChanged;
 import net.runelite.client.game.WorldService;
 import net.runelite.client.plugins.Plugin;
 import net.runelite.client.plugins.PluginDescriptor;
@@ -64,8 +65,8 @@ public class ItemRespawnTimerPlugin extends Plugin
 		log.debug("Item Respawn Timer plugin started!");
 		overlayManager.add(overlay);
 
-		// Load static spawns (currently stubbed in StaticSpawnService)
-		staticSpawnsByTile = staticSpawnService.loadStaticSpawns();
+
+		loadStaticSpawns();
 
 	}
 
@@ -89,12 +90,38 @@ public class ItemRespawnTimerPlugin extends Plugin
 	//endregion
 
 
+
 	Map<WorldIdAndWorldPoint, RespawnTimer> getActiveTimers()
 	{
 		return activeTimers;
 	}
 
 
+	//#region reloading spawn data
+	@Subscribe
+	public void onConfigChanged(ConfigChanged event)
+	{
+		String configKey = event.getKey();
+
+		System.out.println("Config changed: " + configKey);
+
+		// Example: trigger specific logic when a certain key changes
+		if (configKey.equals("trackedSpawns"))
+		{
+			loadStaticSpawns();
+		}
+	}
+
+	private void loadStaticSpawns(){
+		staticSpawnsByTile = staticSpawnService.loadStaticSpawns();
+	}
+
+
+	//#endregion
+
+
+
+	//#region react to items in game
 	@Subscribe
 	public void onItemDespawned(ItemDespawned event)
 	{
@@ -128,6 +155,8 @@ public class ItemRespawnTimerPlugin extends Plugin
 		}
 	}
 
+
+
 	//todo trigger to remove timer if we see the item
 
 
@@ -146,6 +175,7 @@ public class ItemRespawnTimerPlugin extends Plugin
 
 		activeTimers.put(location, new RespawnTimer(respawnAt, respawnSeconds));
 	}
+	//#endregion
 
 	private int getCurrentWorldPopulation(){
 		int currentWorldId = client.getWorld();
