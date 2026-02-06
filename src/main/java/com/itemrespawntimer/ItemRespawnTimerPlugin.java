@@ -50,8 +50,9 @@ public class ItemRespawnTimerPlugin extends Plugin
 	@Inject
 	private StaticSpawnService staticSpawnService;
 
-	// WorldIdAndWorldPoint -> RespawnTimer
-	private final Map<WorldIdAndWorldPoint, RespawnTimer> activeTimers = new HashMap<>();
+	@Inject
+	private ActiveTimers activeTimers;
+
 
 	// WorldPoint -> list of static spawns at that tile
 	private Map<WorldPoint, List<StaticSpawn>> staticSpawnsByTile = new HashMap<>();
@@ -93,7 +94,7 @@ public class ItemRespawnTimerPlugin extends Plugin
 
 	Map<WorldIdAndWorldPoint, RespawnTimer> getActiveTimers()
 	{
-		return activeTimers;
+		return activeTimers.getActiveTimers();
 	}
 
 

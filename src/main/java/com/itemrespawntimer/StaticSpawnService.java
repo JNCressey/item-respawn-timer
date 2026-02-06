@@ -5,19 +5,9 @@ import javax.inject.Inject;
 import javax.inject.Singleton;
 
 import lombok.extern.slf4j.Slf4j;
-import net.runelite.client.game.ItemManager;
 import net.runelite.client.util.Text;
 
 import net.runelite.api.coords.WorldPoint;
-import net.runelite.http.api.item.ItemPrice;
-
-/**
- * Stub service: currently returns an empty map.
- *
- * You can later wire this to:
- *  - A generated data file of static spawns, or
- *  - A cache-reading utility run offline to produce that data.
- */
 
 @Slf4j
 @Singleton
@@ -27,14 +17,9 @@ public class StaticSpawnService
     @Inject
     private ItemRespawnTimerConfig config;
 
-    @Inject
-    private ItemManager itemManager;
-
 
     public Map<WorldPoint, List<StaticSpawn>> loadStaticSpawns()
     {
-        // TODO: Replace with real static spawn loading from OSRS cache data.
-        // For now, this returns an empty map but keeps the plugin compile-ready.
         HashMap<WorldPoint, List<StaticSpawn>> spawns = new HashMap<>();
 
         config.trackedSpawns().lines()
@@ -86,19 +71,6 @@ public class StaticSpawnService
                 .map(this::tryParseIntElseNull)
                 .ifPresent(s::quantity); // set value of the static spawn
 
-
-//todo remove
-//        StaticSpawn s = new StaticSpawn(
-//                Integer.parseInt(lineData.get(3)),
-//                lineData.stream()
-//                        .skip(4).findFirst() // nth value if present line has enough values
-//                        .filter(itemId -> !itemId.isEmpty())
-//                        .map(this::tryParseIntElseNull),
-//                lineData.stream()
-//                        .skip(5).findFirst()// nth value if present line has enough values
-//                        .filter(quantity -> !quantity.isEmpty())
-//                        .map(this::tryParseIntElseNull)
-//                );
 
         spawns
                 .computeIfAbsent(wp,k -> new ArrayList<>())

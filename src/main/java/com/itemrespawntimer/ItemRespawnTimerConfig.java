@@ -3,6 +3,7 @@ package com.itemrespawntimer;
 import net.runelite.client.config.Config;
 import net.runelite.client.config.ConfigGroup;
 import net.runelite.client.config.ConfigItem;
+import net.runelite.client.config.ConfigSection;
 
 @ConfigGroup("itemrespawntimer")
 public interface ItemRespawnTimerConfig extends Config
@@ -18,12 +19,31 @@ public interface ItemRespawnTimerConfig extends Config
 		return true;
 	}
 
+	@ConfigItem(
+			keyName = "worldTrackerMinimumValue",
+			name = "World tracker minimum value",
+			description = "The minimum value for the world tracker side panel",
+			position = 0
+	)
+	default int worldTrackerMinimumValue()
+	{
+		return 0;
+	}
+
+	@ConfigSection(
+			name = "Tracked Spawns",
+			description = "Parameters of locations of spawns to track",
+			position = 1,
+			closedByDefault = true
+	)
+	String trackedSpawnsSection = "trackedSpawnsSection";
 
 	@ConfigItem(
 			keyName = "discoveryModeEnabled",
 			name = "Enable Discovery Mode",
+			section = trackedSpawnsSection,
 			description = "Will attempt to automatically update the list of tracked spawns while you observe spawns.",
-			position = 1
+			position = 0
 	)
 	default boolean discoveryModeEnabled()
 	{
@@ -34,8 +54,9 @@ public interface ItemRespawnTimerConfig extends Config
 	@ConfigItem(
 			keyName = "trackedSpawns",
 			name = "Tracked Item Spawns",
+			section = trackedSpawnsSection,
 			description = "List of data about known item spawns that this plugin will show timers for.",
-			position = 2
+			position = 1
 	)
 	default String trackedSpawns()
 	{
