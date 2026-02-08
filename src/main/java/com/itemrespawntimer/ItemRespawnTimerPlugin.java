@@ -8,15 +8,20 @@ import net.runelite.api.coords.WorldPoint;
 import net.runelite.client.config.ConfigManager;
 import net.runelite.client.eventbus.Subscribe;
 import net.runelite.client.events.ConfigChanged;
+import net.runelite.client.game.ItemManager;
 import net.runelite.client.game.WorldService;
 import net.runelite.client.plugins.Plugin;
 import net.runelite.client.plugins.PluginDescriptor;
 
+import net.runelite.client.util.AsyncBufferedImage;
 import java.util.HashMap;
 import java.time.Instant;
 import java.util.List;
 import java.util.Map;
 
+import net.runelite.client.ui.ClientToolbar;
+import net.runelite.client.ui.NavigationButton;
+import net.runelite.client.ui.NavigationButton.NavigationButtonBuilder;
 import net.runelite.client.ui.overlay.OverlayManager;
 import net.runelite.api.events.ItemDespawned;
 import net.runelite.http.api.worlds.WorldResult;
@@ -41,6 +46,16 @@ public class ItemRespawnTimerPlugin extends Plugin
 	@Inject
 	private WorldService worldService;
 
+	@Inject
+	private ClientToolbar clientToolbar;
+
+	private Boolean shuttingDown;
+
+	private NavigationButton navButton;
+
+	@Inject
+	private ItemManager itemManager;
+
 
 
 	//region objects
@@ -53,7 +68,6 @@ public class ItemRespawnTimerPlugin extends Plugin
 	@Inject
 	private ActiveTimers activeTimers;
 
-
 	// WorldPoint -> list of static spawns at that tile
 	private Map<WorldPoint, List<StaticSpawn>> staticSpawnsByTile = new HashMap<>();
 	//endregion
@@ -63,22 +77,47 @@ public class ItemRespawnTimerPlugin extends Plugin
 	@Override
 	protected void startUp() throws Exception
 	{
+		shuttingDown = false;
 		log.debug("Item Respawn Timer plugin started!");
 		overlayManager.add(overlay);
 
-
 		loadStaticSpawns();
 
+		startupSidePanel();
+
+	}
+
+	private void startupSidePanel(){
+		AsyncBufferedImage itemIcon = itemManager.getImage(245); //Wine of Zamorak
+
+		WorldTimersSidePanel panel = injector.getInstance(WorldTimersSidePanel.class);
+
+		NavigationButtonBuilder navButtonBuilder = NavigationButton.builder()
+				.tooltip("Item Respawns")
+				.panel(panel);
+
+		itemIcon.onLoaded(()->{
+			navButton = navButtonBuilder
+				.icon(itemIcon)
+				.build();
+
+			clientToolbar.addNavigation(navButton);
+			if (shuttingDown){ // ensure it is removed if onLoaded adds the navigation after it's supposed to be shutting down
+				clientToolbar.removeNavigation(navButton);
+			}
+		});
 	}
 
 
 	@Override
 	protected void shutDown() throws Exception
 	{
+		shuttingDown = true;
 		log.debug("Item Respawn Timer plugin  stopped!");
 		overlayManager.remove(overlay);
 		activeTimers.clear();
 		staticSpawnsByTile.clear();
+		clientToolbar.removeNavigation(navButton);
 	}
 
 
@@ -187,8 +226,7 @@ public class ItemRespawnTimerPlugin extends Plugin
 			net.runelite.http.api.worlds.World world = worlds.findWorld(currentWorldId);
 			if (world != null)
 			{
-				int population = world.getPlayers();
-				return population;
+				return world.getPlayers();
 			}
 		}
 		return 0;
