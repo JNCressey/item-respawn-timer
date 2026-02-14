@@ -188,11 +188,13 @@ public class ItemRespawnTimerPlugin extends Plugin
 			return;
 		}
 
+		long nowMillis = Instant.now().toEpochMilli();
 		for (StaticSpawn spawn : spawns)
 		{
 			if (spawn.getItemId()==item.getId() || spawn.getItemId()==-1)
 			{
-				handleStaticItemPickup(wp, spawn);
+
+				handleStaticItemPickup(wp, spawn, nowMillis);
 				break;
 			}
 		}
@@ -202,8 +204,13 @@ public class ItemRespawnTimerPlugin extends Plugin
 
 	//todo trigger to remove timer if we see the item
 
-
-	private void handleStaticItemPickup(WorldPoint wp, StaticSpawn spawn)
+	/**
+	 *
+	 * @param wp
+	 * @param spawn
+	 * @param nowMillis the result of Instant.now().toEpochMilli();
+	 */
+	private void handleStaticItemPickup(WorldPoint wp, StaticSpawn spawn, long nowMillis)
 	{
 		int worldId = client.getWorld();
 		WorldIdAndWorldPoint location = new WorldIdAndWorldPoint(worldId, wp);
@@ -212,9 +219,7 @@ public class ItemRespawnTimerPlugin extends Plugin
 		int worldPopulation = getCurrentWorldPopulation();
 		int respawnTicks = (int)Math.floor(spawn.getBaseRespawnTicks() * ((4000D-worldPopulation)/4000));
 		int respawnSeconds = (int)(respawnTicks*0.6);
-		long now = Instant.now().toEpochMilli();
-		//long respawnAt = now + spawn.getRespawnSeconds() * 1000L;
-		long respawnAt = now + respawnSeconds * 1000L;
+		long respawnAt = nowMillis + respawnSeconds * 1000L;
 
 		activeTimers.put(location, new RespawnTimer(respawnAt, respawnSeconds));
 	}
@@ -243,9 +248,9 @@ public class ItemRespawnTimerPlugin extends Plugin
 	)
 	public void updateSidePanel()
 	{
-		// Your code here
-		//System.out.println("This runs every second!");
-		((WorldTimersSidePanel) navButton.getPanel()).updateMessage(activeTimers);
+     	long nowMillis = Instant.now().toEpochMilli();
+		((WorldTimersSidePanel) navButton.getPanel())
+				.updateMessage(activeTimers,nowMillis);
 	}
 
 }

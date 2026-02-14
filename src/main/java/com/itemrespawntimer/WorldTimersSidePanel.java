@@ -22,25 +22,27 @@ public class WorldTimersSidePanel extends PluginPanel {
         todo: make list of worlds with timers
          */
         setLayout(new BorderLayout());
-        //label = new JLabel("Hello RuneLite!");
-        //add(label, BorderLayout.NORTH);
         textArea = new JTextArea("Hello RuneLite!");
         add(textArea, BorderLayout.NORTH);
 
     }
 
-    public void updateMessage(ActiveTimers activeTimers){
-        long now = Instant.now().toEpochMilli();
-        Map<Integer, RespawnTimer> worldTimers = activeTimers.getActiveWorldTimers();
+
+    /**
+     *
+     * @param activeTimers
+     * @param nowMillis the result of Instant.now().toEpochMilli();
+     */
+    public void updateMessage(ActiveTimers activeTimers, long nowMillis){
+        Map<Integer, OrderedTimerCollection> worldTimers = activeTimers.getActiveWorldTimers();
         String txt = worldTimers.entrySet().stream()
-                .sorted(Comparator.comparingLong(e -> e.getValue().getRespawnAt()))
-                .map(entry-> {
-                    long timeDue = entry.getValue().getSecondsRemaining(now);
-                    return String.format("%s %s", entry.getKey(),timeDue);
+                .sorted(Comparator.comparingLong(entry -> entry.getValue().getRespawnAt()))
+                .map(entry -> {
+                    long secondsRemaining = entry.getValue().getSecondsRemaining(nowMillis);
+                    return String.format("%s %s", entry.getKey(), secondsRemaining);
                 })
-                .collect(Collectors.joining("\r\n"));
-        //label.setText(txt);
+                .collect(Collectors.joining("\n"));
+
         textArea.setText(txt);
-        //label.setText(activeTimers.getActiveWorldTimers().toString());
     }
 }

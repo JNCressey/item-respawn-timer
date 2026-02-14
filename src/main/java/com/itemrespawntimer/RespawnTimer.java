@@ -2,8 +2,6 @@ package com.itemrespawntimer;
 
 import lombok.Getter;
 
-import java.time.Instant;
-
 public class RespawnTimer
 {
     @Getter
@@ -13,19 +11,11 @@ public class RespawnTimer
     private final int totalSeconds;
 
 
-    //#region constructors
     public RespawnTimer(long respawnAt, int totalSeconds)
     {
         this.respawnAt = respawnAt;
         this.totalSeconds = totalSeconds;
     }
-
-    //constructor for just an end time
-    public RespawnTimer(long respawnAt){
-        this.respawnAt = respawnAt;
-        this.totalSeconds = -1;
-    }
-    //#endregion
 
 
     public double getProgress(long nowMillis)
@@ -55,17 +45,13 @@ public class RespawnTimer
         return (int) Math.ceil(diff / 1000.0);
     }
 
-    /**
-     * compare with another timer for finding which is respawning sooner
-     * @param otherTimer the timer to compare to
-     * @return whether this timer is for a sooner time than the other timer
-     */
-    public Boolean isSoonerThan(RespawnTimer otherTimer){
-        return (this.respawnAt < otherTimer.respawnAt);
-    }
 
-    public Boolean isInFuture(){
-        long now = Instant.now().toEpochMilli();
-        return (this.respawnAt > now);
+    /**
+     *
+     * @param nowMillis the result of Instant.now().toEpochMilli();
+     * @return whether the timer is for a point in the future
+     */
+    public Boolean isInFuture(long nowMillis){
+        return (this.respawnAt > nowMillis);
     }
 }
