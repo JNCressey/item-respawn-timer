@@ -11,6 +11,7 @@ x,y,z,baseRespawnTicks,itemId,quantity
 3206,3208,0,100,558,1
 3208,3214,0,100
 3209,3214,0,100,"",1
+3196,9822,0,500,1641,1
 
 # todo populate this data.
 # - Wiki is useful for respawn times.

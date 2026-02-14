@@ -13,7 +13,10 @@ import net.runelite.client.game.WorldService;
 import net.runelite.client.plugins.Plugin;
 import net.runelite.client.plugins.PluginDescriptor;
 
+import net.runelite.client.task.Schedule;
 import net.runelite.client.util.AsyncBufferedImage;
+
+import java.time.temporal.ChronoUnit;
 import java.util.HashMap;
 import java.time.Instant;
 import java.util.List;
@@ -231,6 +234,18 @@ public class ItemRespawnTimerPlugin extends Plugin
 		}
 		return 0;
 
+	}
+
+
+	@Schedule(
+			period = 1,
+			unit = ChronoUnit.SECONDS
+	)
+	public void updateSidePanel()
+	{
+		// Your code here
+		//System.out.println("This runs every second!");
+		((WorldTimersSidePanel) navButton.getPanel()).updateMessage(activeTimers);
 	}
 
 }

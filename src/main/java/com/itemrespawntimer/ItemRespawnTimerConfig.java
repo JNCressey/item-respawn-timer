@@ -50,7 +50,6 @@ public interface ItemRespawnTimerConfig extends Config
 		return true;
 	}
 
-	//todo put tracked spawns within a collapsed section
 	@ConfigItem(
 			keyName = "trackedSpawns",
 			name = "Tracked Item Spawns",
