@@ -2,6 +2,7 @@ package com.itemrespawntimer;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Optional;
 
 public class ActiveTimers {
 
@@ -36,5 +37,22 @@ public class ActiveTimers {
                 .computeIfAbsent(location.getWorldId(),key -> new OrderedTimerCollection())
                 .add(timer); //todo filter for item value
     }
+
+
+    /**
+     * remove the wolrd timer if it has no remaining future timers
+     * @param worldId
+     * @param nowMillis
+     */
+    void removeWorldIfPast(int worldId, long nowMillis){
+        Optional.ofNullable(activeWorldTimers.get(worldId))
+                .ifPresent(c -> {
+                    c.removeIfPast(nowMillis);
+                    if (c.isEmpty()){
+                        activeWorldTimers.remove(worldId);
+                    }
+                });
+    }
+
 
 }

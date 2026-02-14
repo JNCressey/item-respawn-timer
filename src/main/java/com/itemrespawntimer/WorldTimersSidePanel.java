@@ -32,11 +32,13 @@ public class WorldTimersSidePanel extends PluginPanel {
      *
      * @param activeTimers
      * @param nowMillis the result of Instant.now().toEpochMilli();
+     * @param worldId
      */
-    public void updateMessage(ActiveTimers activeTimers, long nowMillis){
+    public void updateMessage(ActiveTimers activeTimers, long nowMillis, int worldId){
         Map<Integer, OrderedTimerCollection> worldTimers = activeTimers.getActiveWorldTimers();
+        activeTimers.removeWorldIfPast(worldId, nowMillis);
         String txt = worldTimers.entrySet().stream()
-                .sorted(Comparator.comparingLong(entry -> entry.getValue().getRespawnAt()))
+                .sorted(Comparator.comparingLong(entry -> entry.getValue().getSecondsRemaining(nowMillis)))
                 .map(entry -> {
                     long secondsRemaining = entry.getValue().getSecondsRemaining(nowMillis);
                     return String.format("%s %s", entry.getKey(), secondsRemaining);
