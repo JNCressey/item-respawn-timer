@@ -215,14 +215,16 @@ public class ItemRespawnTimerPlugin extends Plugin
 	{
 		int worldId = client.getWorld();
 		WorldIdAndWorldPoint location = new WorldIdAndWorldPoint(worldId, wp);
-
-		//todo move this calc into RespawnTimer constructor
 		int worldPopulation = getCurrentWorldPopulation();
-		int respawnTicks = (int)Math.floor(spawn.getBaseRespawnTicks() * ((4000D-worldPopulation)/4000));
-		int respawnSeconds = (int)(respawnTicks*0.6);
-		long respawnAt = nowMillis + respawnSeconds * 1000L;
 
-		activeTimers.put(location, new RespawnTimer(respawnAt, respawnSeconds));
+		RespawnTimer timer = new RespawnTimer(worldPopulation,spawn,nowMillis);
+		activeTimers.put(location, timer);
+		timer.getFinished().thenRun(()-> {
+			int thenWorldId = client.getWorld();
+			long thenMillis = Instant.now().toEpochMilli();
+			activeTimers.removeWorldIfPast(thenWorldId, thenMillis);
+			System.out.print("timer completed ItemRespawnPlugin::handleStaticItemPickup");
+		});
 	}
 	//#endregion
 
@@ -240,6 +242,13 @@ public class ItemRespawnTimerPlugin extends Plugin
 		}
 		return 0;
 
+	}
+
+	@Subscribe
+	public void onWorldChanged(WorldChanged event){
+		int worldId = client.getWorld();
+		long nowMillis = Instant.now().toEpochMilli();
+		activeTimers.removeWorldIfPast(worldId, nowMillis);
 	}
 
 

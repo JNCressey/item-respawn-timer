@@ -3,7 +3,6 @@ package com.itemrespawntimer;
 import javax.swing.*;
 import javax.inject.Inject;
 import java.awt.*;
-import java.time.Instant;
 import java.util.Comparator;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -36,7 +35,7 @@ public class WorldTimersSidePanel extends PluginPanel {
      */
     public void updateMessage(ActiveTimers activeTimers, long nowMillis, int worldId){
         Map<Integer, OrderedTimerCollection> worldTimers = activeTimers.getActiveWorldTimers();
-        activeTimers.removeWorldIfPast(worldId, nowMillis);
+
         String txt = worldTimers.entrySet().stream()
                 .sorted(Comparator.comparingLong(entry -> entry.getValue().getSecondsRemaining(nowMillis)))
                 .map(entry -> {

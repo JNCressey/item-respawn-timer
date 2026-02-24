@@ -2,6 +2,9 @@ package com.itemrespawntimer;
 
 import lombok.Getter;
 
+import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.TimeUnit;
+
 public class RespawnTimer
 {
     @Getter
@@ -10,11 +13,26 @@ public class RespawnTimer
     @Getter
     private final int totalSeconds;
 
+    /**
+     * Future that will be completed when the respawnAt time is reached
+     */
+    @Getter
+    private final CompletableFuture<Void> finished;
 
-    public RespawnTimer(long respawnAt, int totalSeconds)
+
+
+    public RespawnTimer(int worldPopulation,StaticSpawn spawn,long nowMillis)
     {
-        this.respawnAt = respawnAt;
-        this.totalSeconds = totalSeconds;
+        int respawnDelayTicks = (int)Math.floor(spawn.getBaseRespawnTicks() * ((4000D-worldPopulation)/4000));
+        int respawnDelaySeconds = (int)(respawnDelayTicks*0.6);
+
+        this.respawnAt = nowMillis + respawnDelaySeconds * 1000L;
+        this.totalSeconds = respawnDelaySeconds;
+
+        this.finished = CompletableFuture.runAsync(
+            ()->{},
+            CompletableFuture.delayedExecutor(respawnDelaySeconds, TimeUnit.SECONDS)
+        );
     }
 
 

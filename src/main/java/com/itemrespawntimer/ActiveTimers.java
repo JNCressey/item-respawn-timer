@@ -40,11 +40,12 @@ public class ActiveTimers {
 
 
     /**
-     * remove the wolrd timer if it has no remaining future timers
+     * remove the world timer if it has no remaining future timers
      * @param worldId
      * @param nowMillis
      */
     void removeWorldIfPast(int worldId, long nowMillis){
+        //todo also remvove from activeTimers
         Optional.ofNullable(activeWorldTimers.get(worldId))
                 .ifPresent(c -> {
                     c.removeIfPast(nowMillis);
