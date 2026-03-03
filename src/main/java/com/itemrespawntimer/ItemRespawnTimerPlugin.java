@@ -18,17 +18,19 @@ import net.runelite.client.task.Schedule;
 import net.runelite.client.util.AsyncBufferedImage;
 
 import java.time.temporal.ChronoUnit;
-import java.util.HashMap;
+import java.util.*;
 import java.time.Instant;
-import java.util.List;
-import java.util.Map;
 
 import net.runelite.client.ui.ClientToolbar;
 import net.runelite.client.ui.NavigationButton;
 import net.runelite.client.ui.NavigationButton.NavigationButtonBuilder;
 import net.runelite.client.ui.overlay.OverlayManager;
 import net.runelite.api.events.ItemDespawned;
+import net.runelite.client.util.HotkeyListener;
 import net.runelite.http.api.worlds.WorldResult;
+import net.runelite.client.callback.ClientThread;
+import net.runelite.client.input.KeyManager;
+import net.runelite.client.util.WorldUtil;
 
 
 @Slf4j
@@ -88,6 +90,8 @@ public class ItemRespawnTimerPlugin extends Plugin
 		loadStaticSpawns();
 
 		startupSidePanel();
+
+		keyManager.registerKeyListener(quickHopListener);
 
 	}
 
@@ -264,5 +268,84 @@ public class ItemRespawnTimerPlugin extends Plugin
 				.updateMessage(activeTimers,nowMillis,worldId);
 	}
 
+
+	//#region hopping
+	//todo: cleanup hopping code. delegate code to appropriate classes.
+	@Inject
+	private KeyManager keyManager;
+	@Inject
+	private ClientThread clientThread;
+
+	private final HotkeyListener quickHopListener = new HotkeyListener(() -> config.quickHopHotkey())
+	{
+		@Override
+		public void hotkeyPressed()
+		{
+			clientThread.invoke(() -> hop());
+		}
+	};
+
+
+	/**
+	 * Hop to the world that is at the top of the world timers list.
+	 * @see #hop(net.runelite.api.World)
+	 */
+	private void hop(){
+		Map<Integer, OrderedTimerCollection> worldTimers = activeTimers.getActiveWorldTimers();
+
+		long nowMillis = Instant.now().toEpochMilli();
+		int currentWorldId = client.getWorld();
+
+		Optional<Integer> worldId = worldTimers.entrySet().stream()
+				.filter(entry->entry.getKey()!=currentWorldId)
+				.min(Comparator.comparingLong(entry -> entry.getValue().getSecondsRemaining(nowMillis)))
+				.map(Map.Entry::getKey);
+
+		worldId.ifPresent(this::hop);
+	}
+
+
+	/**
+	 * Overload of {@link #hop(net.runelite.api.World)},
+	 * but provide numeric world id.
+	 * @param worldId the world to hop to
+	 */
+	private void hop(int worldId){
+		Optional<net.runelite.api.World> world = Optional.ofNullable(getWorldFromId(worldId));
+		world.ifPresent(this::hop);
+	}
+
+
+	/**
+	 * hop to world or change world if at login screen
+	 * @param world the world to hop to
+	 */
+	private void hop(net.runelite.api.World world){
+		assert client.isClientThread();
+		if (client.getGameState() == GameState.LOGIN_SCREEN) {
+			client.changeWorld(world);
+		} else {
+			client.hopToWorld(world);
+		}
+	}
+
+
+	private net.runelite.api.World getWorldFromId(int worldId){
+		net.runelite.http.api.worlds.World world = worldService.getWorlds().findWorld(worldId);
+		if (world == null)
+		{
+			return null;
+		}
+		final net.runelite.api.World rsWorld = client.createWorld();
+		rsWorld.setActivity(world.getActivity());
+		rsWorld.setAddress(world.getAddress());
+		rsWorld.setId(world.getId());
+		rsWorld.setPlayerCount(world.getPlayers());
+		rsWorld.setLocation(world.getLocation());
+		rsWorld.setTypes(WorldUtil.toWorldTypes(world.getTypes()));
+		return rsWorld;
+	}
+
+	//#endregion
 
 }

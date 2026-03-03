@@ -1,9 +1,8 @@
 package com.itemrespawntimer;
 
-import net.runelite.client.config.Config;
-import net.runelite.client.config.ConfigGroup;
-import net.runelite.client.config.ConfigItem;
-import net.runelite.client.config.ConfigSection;
+import net.runelite.client.config.*;
+import java.awt.event.InputEvent;
+import java.awt.event.KeyEvent;
 
 @ConfigGroup("itemrespawntimer")
 public interface ItemRespawnTimerConfig extends Config
@@ -62,5 +61,14 @@ public interface ItemRespawnTimerConfig extends Config
 		return TrackedSpawnsDefaultFileReader.readResource();
 	}
 
-
+	@ConfigItem(
+			keyName = "quickHopHotkey",
+			name = "Quick-hop Hotkey",
+			description = "When you press this hotkey you'll hop to the world at the top of the world timers list.",
+			position = 2
+	)
+	default Keybind quickHopHotkey()
+	{
+		return null;//new Keybind(KeyEvent.VK_Z, InputEvent.CTRL_DOWN_MASK | InputEvent.SHIFT_DOWN_MASK);
+	}
 }
