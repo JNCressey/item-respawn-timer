@@ -1,6 +1,9 @@
 package com.itemrespawntimer;
 
 import com.google.inject.Provides;
+
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import javax.inject.Inject;
 import lombok.extern.slf4j.Slf4j;
 import net.runelite.api.*;
@@ -299,7 +302,7 @@ public class ItemRespawnTimerPlugin extends Plugin
 		Optional<Integer> worldId = worldTimers.entrySet().stream()
 				.filter(entry->entry.getKey()!=currentWorldId)
 				.min(Comparator.comparingLong(entry -> entry.getValue().getSecondsRemaining(nowMillis)))
-				.map(Map.Entry::getKey);
+				.map(Map.Entry::getKey); //todo: remove code duplication. selecting the top world here and sorting the worlds for the side panel
 
 		worldId.ifPresent(this::hop);
 	}
@@ -312,6 +315,7 @@ public class ItemRespawnTimerPlugin extends Plugin
 	 */
 	private void hop(int worldId){
 		Optional<net.runelite.api.World> world = Optional.ofNullable(getWorldFromId(worldId));
+
 		world.ifPresent(this::hop);
 	}
 
@@ -320,7 +324,7 @@ public class ItemRespawnTimerPlugin extends Plugin
 	 * hop to world or change world if at login screen
 	 * @param world the world to hop to
 	 */
-	private void hop(net.runelite.api.World world){
+	private void hop(@Nonnull net.runelite.api.World world){
 		assert client.isClientThread();
 		if (client.getGameState() == GameState.LOGIN_SCREEN) {
 			client.changeWorld(world);
@@ -330,20 +334,26 @@ public class ItemRespawnTimerPlugin extends Plugin
 	}
 
 
+	/**
+	 *
+	 * @param worldId The world to get.
+	 * @return The world, or null if no such world.
+	 */
+	@Nullable
 	private net.runelite.api.World getWorldFromId(int worldId){
-		net.runelite.http.api.worlds.World world = worldService.getWorlds().findWorld(worldId);
-		if (world == null)
-		{
-			return null;
-		}
-		final net.runelite.api.World rsWorld = client.createWorld();
-		rsWorld.setActivity(world.getActivity());
-		rsWorld.setAddress(world.getAddress());
-		rsWorld.setId(world.getId());
-		rsWorld.setPlayerCount(world.getPlayers());
-		rsWorld.setLocation(world.getLocation());
-		rsWorld.setTypes(WorldUtil.toWorldTypes(world.getTypes()));
-		return rsWorld;
+		return Optional.ofNullable(worldService.getWorlds())
+				.map(r -> r.findWorld(worldId))
+				.map(world -> { // convert to the other world type
+					final net.runelite.api.World rsWorld = client.createWorld();
+					rsWorld.setActivity(world.getActivity());
+					rsWorld.setAddress(world.getAddress());
+					rsWorld.setId(world.getId());
+					rsWorld.setPlayerCount(world.getPlayers());
+					rsWorld.setLocation(world.getLocation());
+					rsWorld.setTypes(WorldUtil.toWorldTypes(world.getTypes()));
+					return rsWorld;
+				})
+				.orElse(null);
 	}
 
 	//#endregion
