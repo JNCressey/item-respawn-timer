@@ -37,7 +37,7 @@ public class WorldTimersSidePanel extends PluginPanel {
         Map<Integer, OrderedTimerCollection> worldTimers = activeTimers.getActiveWorldTimers();
 
         String txt = worldTimers.entrySet().stream()
-                .sorted(Comparator.comparingLong(entry -> entry.getValue().getSecondsRemaining(nowMillis)))
+                .sorted(Comparator.comparingLong(entry -> entry.getValue().getRespawnAt()))
                 .map(entry -> {
                     long secondsRemaining = entry.getValue().getSecondsRemaining(nowMillis);
                     return String.format("%s %s", entry.getKey(), secondsRemaining);
