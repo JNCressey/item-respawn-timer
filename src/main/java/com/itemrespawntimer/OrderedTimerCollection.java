@@ -48,4 +48,15 @@ public class OrderedTimerCollection {
                 .orElse(-1);
     }
 
+    /**
+     *
+     * @return the respawnAt of the earliest timer, or else -1 if no timers
+     */
+    long getRespawnAt(){
+        return timers.stream()
+                .findFirst()
+                .map(t->t.getRespawnAt())
+                .orElse(-1L); //todo remove duplication of sorting code
+    }
+
 }
