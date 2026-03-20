@@ -2,6 +2,9 @@ package com.itemrespawntimer;
 
 import lombok.Getter;
 
+import java.time.Instant;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.TimeUnit;
 import java.beans.PropertyChangeListener;
@@ -9,41 +12,74 @@ import java.beans.PropertyChangeSupport;
 
 public class RespawnTimer
 {
-    @Getter
-    private long respawnAt;
 
     @Getter
-    private int totalSeconds;
+    private final StaticSpawn spawn; // item and location information
+
+
+    //#region state summary values
+    @Getter
+    private long respawnAt; // the time when the item will respawn
 
     @Getter
-    private boolean observedPickup;
+    private int totalSeconds; // the total time that the timer is counting out of
 
     @Getter
-    private final StaticSpawn spawn;
+    private boolean didObservedPickup; // whether this timer is based on direct observation of the item being picked up
 
     @Getter
-    private boolean finished;
+    private boolean isFinished; // whether the target time has been exceeded
+    //#endregion
+
+    //#region observation collections
+    private final List<Long> observedPickups = new ArrayList<>();
+    private final List<Long> observedEnteredAreaNoItem = new ArrayList<>();
+    private final List<Long> observedLeftAreaNoItem = new ArrayList<>();
+
+    //#endregion
+
 
     private final PropertyChangeSupport pcs = new PropertyChangeSupport(this);
 
 
+    //#region initialisation
+    public RespawnTimer(StaticSpawn spawn){
+        this.spawn = spawn;
+    }
 
     public RespawnTimer(int worldPopulation,StaticSpawn spawn,long nowMillis)
     {
-        this.spawn = spawn;
+        //this.spawn = spawn;
+        this(spawn);
         submitObservationPickup(worldPopulation,nowMillis);
     }
 
+    /**
+     * reset the values to as if freshly constructed
+     */
+    private void reset(){
+        respawnAt = 0;
+        totalSeconds = 0;
+        didObservedPickup = false;
+        isFinished = false;
+        observedPickups.clear();
+        observedEnteredAreaNoItem.clear();
+        observedLeftAreaNoItem.clear();
+    }
+    //#endregion
 
 
-    //#obserations
 
+    //#region submit observations
     /**
      * when the item is observed at the moment it is taken, submit the details with this method
+     * @param worldPopulation The current population of the world
+     * @param nowMillis the result of Instant.now().toEpochMilli();
      */
     public void submitObservationPickup(int worldPopulation, long nowMillis){
-        observedPickup = true;
-        finished = false;
+        observedPickups.add(nowMillis);
+        didObservedPickup = true;
+        isFinished = false;
         int respawnDelayTicks = (int)Math.floor(this.spawn.getBaseRespawnTicks() * ((4000D-worldPopulation)/4000));
         int respawnDelaySeconds = (int)(respawnDelayTicks*0.6);
 
@@ -51,13 +87,50 @@ public class RespawnTimer
         this.totalSeconds = respawnDelaySeconds;
 
         CompletableFuture.runAsync(
-                ()->{setFinished(true);},
+                this::processObservations,
                 CompletableFuture.delayedExecutor(respawnDelaySeconds, TimeUnit.SECONDS)
         );
 
     }
 
+    /**
+     * when the item is observed as being present, submit this observation
+     * @param nowMillis the result of Instant.now().toEpochMilli();
+     */
+    public void submitObservationItemPresent(long nowMillis){
+        reset();
+    }
+
+    /**
+     * when the area is entered and the item is not present, submit this observation
+     * @param nowMillis the result of Instant.now().toEpochMilli();
+     */
+    public void submitObservationEnteredAreaNoItem(long nowMillis){
+        observedEnteredAreaNoItem.add(nowMillis);
+        processObservations();
+    }
+
+    /**
+     * when the area is left and the item is not present, submit this observation
+     * @param nowMillis the result of Instant.now().toEpochMilli();
+     */
+    public void submitObservationLeftAreaNoItem(long nowMillis){
+        observedLeftAreaNoItem.add(nowMillis);
+        processObservations();
+    }
     //#endregion
+
+    /**
+     * based on the observations, calculate the summary values for the timer and submit a "finished" property change event if appropriate
+     */
+    private void processObservations(){
+        long nowMillis = Instant.now().toEpochMilli();
+        //todo only set finished if appropriate
+        //todo process other predicted values based on observations
+        setFinished();
+    }
+
+
 
     //#region property change support
     // Add a listener
@@ -70,12 +143,18 @@ public class RespawnTimer
         pcs.removePropertyChangeListener(listener);
     }
 
-    private void setFinished(boolean newValue){
-        boolean oldValue = finished;
-        finished = newValue;
-        pcs.firePropertyChange("finished",oldValue,newValue);
+    /**
+     * set the value for `isFinished` to true and fire a corresponding property change event
+     */
+    private void setFinished(){
+        boolean newValue = true;
+        boolean oldValue = isFinished;
+        isFinished = newValue;
+        pcs.firePropertyChange("isFinished",oldValue,newValue);
     }
     //#endregion
+
+
 
     //#region getters
     public double getProgress(long nowMillis)

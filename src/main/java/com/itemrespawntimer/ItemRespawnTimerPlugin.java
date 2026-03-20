@@ -210,7 +210,7 @@ public class ItemRespawnTimerPlugin extends Plugin
 
 
 
-	//todo trigger to remove timer if we see the item
+	//todo: handle observations to submit to timers: entering the area, leaving the area, seeing the item has returned.
 
 	/**
 	 *
@@ -227,10 +227,10 @@ public class ItemRespawnTimerPlugin extends Plugin
 		RespawnTimer timer = new RespawnTimer(worldPopulation,spawn,nowMillis);
 		activeTimers.put(location, timer);
 		timer.addPropertyChangeListener(evt ->{
-			if("finished".equals(evt.getPropertyName()) && evt.getNewValue().equals(Boolean.TRUE)){
+			if("isFinished".equals(evt.getPropertyName()) && evt.getNewValue().equals(Boolean.TRUE)){
 				int thenWorldId = client.getWorld();
 				long thenMillis = Instant.now().toEpochMilli();
-				activeTimers.removeWorldIfPast(thenWorldId, thenMillis);
+				activeTimers.removeWorldIfPast(thenWorldId, thenMillis); //todo: change process of removing timers based on the wider set of observations being supported
 				System.out.print("timer completed ItemRespawnPlugin::handleStaticItemPickup");
 			}
 		});
