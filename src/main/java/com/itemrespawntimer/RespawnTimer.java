@@ -4,38 +4,61 @@ import lombok.Getter;
 
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.TimeUnit;
+import java.beans.PropertyChangeListener;
 
 public class RespawnTimer
 {
     @Getter
-    private final long respawnAt;
+    private long respawnAt;
 
     @Getter
-    private final int totalSeconds;
+    private int totalSeconds;
+
+    @Getter
+    private boolean observedPickup;
+
+    private final StaticSpawn spawn;
 
     /**
      * Future that will be completed when the respawnAt time is reached
      */
     @Getter
-    private final CompletableFuture<Void> finished;
+    private CompletableFuture<Void> finished;
 
 
 
     public RespawnTimer(int worldPopulation,StaticSpawn spawn,long nowMillis)
     {
-        int respawnDelayTicks = (int)Math.floor(spawn.getBaseRespawnTicks() * ((4000D-worldPopulation)/4000));
+        this.spawn = spawn;
+        submitObservationPickup(worldPopulation,nowMillis);
+    }
+
+
+
+    //#obserations
+
+    /**
+     * when the item is observed at the moment it is taken, submit the details with this method
+     */
+    public void submitObservationPickup(int worldPopulation, long nowMillis){
+        this.observedPickup = true;
+        int respawnDelayTicks = (int)Math.floor(this.spawn.getBaseRespawnTicks() * ((4000D-worldPopulation)/4000));
         int respawnDelaySeconds = (int)(respawnDelayTicks*0.6);
 
         this.respawnAt = nowMillis + respawnDelaySeconds * 1000L;
         this.totalSeconds = respawnDelaySeconds;
 
         this.finished = CompletableFuture.runAsync(
-            ()->{},
-            CompletableFuture.delayedExecutor(respawnDelaySeconds, TimeUnit.SECONDS)
+                ()->{},
+                CompletableFuture.delayedExecutor(respawnDelaySeconds, TimeUnit.SECONDS)
         );
+
     }
 
+    //#endregion
 
+
+    //#region getters
     public double getProgress(long nowMillis)
     {
         int totalSeconds = this.totalSeconds > 0 ? this.totalSeconds : 60; // default for handling when no total provided
@@ -72,4 +95,5 @@ public class RespawnTimer
     public Boolean isInFuture(long nowMillis){
         return (this.respawnAt > nowMillis);
     }
+    //#endregion
 }
