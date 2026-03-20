@@ -5,6 +5,7 @@ import lombok.Getter;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.TimeUnit;
 import java.beans.PropertyChangeListener;
+import java.beans.PropertyChangeSupport;
 
 public class RespawnTimer
 {
@@ -17,13 +18,13 @@ public class RespawnTimer
     @Getter
     private boolean observedPickup;
 
+    @Getter
     private final StaticSpawn spawn;
 
-    /**
-     * Future that will be completed when the respawnAt time is reached
-     */
     @Getter
-    private CompletableFuture<Void> finished;
+    private boolean finished;
+
+    private final PropertyChangeSupport pcs = new PropertyChangeSupport(this);
 
 
 
@@ -41,15 +42,16 @@ public class RespawnTimer
      * when the item is observed at the moment it is taken, submit the details with this method
      */
     public void submitObservationPickup(int worldPopulation, long nowMillis){
-        this.observedPickup = true;
+        observedPickup = true;
+        finished = false;
         int respawnDelayTicks = (int)Math.floor(this.spawn.getBaseRespawnTicks() * ((4000D-worldPopulation)/4000));
         int respawnDelaySeconds = (int)(respawnDelayTicks*0.6);
 
         this.respawnAt = nowMillis + respawnDelaySeconds * 1000L;
         this.totalSeconds = respawnDelaySeconds;
 
-        this.finished = CompletableFuture.runAsync(
-                ()->{},
+        CompletableFuture.runAsync(
+                ()->{setFinished(true);},
                 CompletableFuture.delayedExecutor(respawnDelaySeconds, TimeUnit.SECONDS)
         );
 
@@ -57,6 +59,23 @@ public class RespawnTimer
 
     //#endregion
 
+    //#region property change support
+    // Add a listener
+    public void addPropertyChangeListener(PropertyChangeListener listener) {
+        pcs.addPropertyChangeListener(listener);
+    }
+
+    // Remove a listener
+    public void removePropertyChangeListener(PropertyChangeListener listener) {
+        pcs.removePropertyChangeListener(listener);
+    }
+
+    private void setFinished(boolean newValue){
+        boolean oldValue = finished;
+        finished = newValue;
+        pcs.firePropertyChange("finished",oldValue,newValue);
+    }
+    //#endregion
 
     //#region getters
     public double getProgress(long nowMillis)
