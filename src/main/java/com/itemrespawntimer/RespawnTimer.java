@@ -25,7 +25,12 @@ public class RespawnTimer
     private int totalSeconds; // the total time that the timer is counting out of
 
     @Getter
-    private boolean didObservedPickup; // whether this timer is based on direct observation of the item being picked up
+    private boolean didObservePickup; // whether this timer is based on direct observation of the item being picked up
+
+    @Getter
+    private boolean isHiddenFromWorldPanel; // whether this timer should be omitted from the side-panel
+    //todo: automatically set hidden when value is below configed value
+    //todo: add method for setting hidden
 
     @Getter
     private boolean isFinished; // whether the target time has been exceeded
@@ -60,7 +65,7 @@ public class RespawnTimer
     private void reset(){
         respawnAt = 0;
         totalSeconds = 0;
-        didObservedPickup = false;
+        didObservePickup = false;
         isFinished = false;
         observedPickups.clear();
         observedEnteredAreaNoItem.clear();
@@ -78,7 +83,7 @@ public class RespawnTimer
      */
     public void submitObservationPickup(int worldPopulation, long nowMillis){
         observedPickups.add(nowMillis);
-        didObservedPickup = true;
+        didObservePickup = true;
         isFinished = false;
         int respawnDelayTicks = (int)Math.floor(this.spawn.getBaseRespawnTicks() * ((4000D-worldPopulation)/4000));
         int respawnDelaySeconds = (int)(respawnDelayTicks*0.6);
