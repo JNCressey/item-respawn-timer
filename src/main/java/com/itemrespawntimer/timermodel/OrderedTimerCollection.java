@@ -6,8 +6,6 @@ import java.util.List;
 
 //todo: move responsibility of ordering into the clasess for the side panel,
 // model shouldn't need to maintain the order
-// and the deletion of expired timers should be handled individually
-// rather than based on them being ordered
 public class OrderedTimerCollection {
 
     // a list of timers kept sorted so that the most soon timer is first
@@ -25,14 +23,8 @@ public class OrderedTimerCollection {
         timers.sort(Comparator.comparingLong(RespawnTimer::getRespawnAt));
     }
 
-
-    /**
-     * @param nowMillis the result of Instant.now().toEpochMilli();
-     * remove any timers that are in the past
-     */
-    public void removeIfPast(long nowMillis){
-        //todo optimise by finding first future then dropping the number of elements from the top of the list
-        timers.removeIf(t->!t.isInFuture(nowMillis));
+    public void remove(RespawnTimer timer){
+        timers.remove(timer);
     }
 
 

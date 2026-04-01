@@ -34,7 +34,7 @@ public class RespawnTimer
     //todo: add method for setting hidden
 
     @Getter
-    private boolean isFinished; // whether the target time has been exceeded
+    private boolean isExpired; // whether the timer is no longer needed
     //#endregion
 
     //#region observation collections
@@ -67,7 +67,7 @@ public class RespawnTimer
         respawnAt = 0;
         totalSeconds = 0;
         didObservePickup = false;
-        isFinished = false;
+        isExpired = false;
         observedPickups.clear();
         observedEnteredAreaNoItem.clear();
         observedLeftAreaNoItem.clear();
@@ -85,7 +85,7 @@ public class RespawnTimer
     public void submitObservationPickup(int worldPopulation, long nowMillis){
         observedPickups.add(nowMillis);
         didObservePickup = true;
-        isFinished = false;
+        isExpired = false;
         int respawnDelayTicks = (int)Math.floor(this.spawn.getBaseRespawnTicks() * ((4000D-worldPopulation)/4000));
         int respawnDelaySeconds = (int)(respawnDelayTicks*0.6);
 
@@ -105,6 +105,7 @@ public class RespawnTimer
      */
     public void submitObservationItemPresent(long nowMillis){
         reset();
+        processObservations();//todo is this call needed?
     }
 
     /**
@@ -127,13 +128,16 @@ public class RespawnTimer
     //#endregion
 
     /**
-     * based on the observations, calculate the summary values for the timer and submit a "finished" property change event if appropriate
+     * based on the observations, calculate the summary values for the timer and submit a "expired" property change event if appropriate
      */
     private void processObservations(){
         long nowMillis = Instant.now().toEpochMilli();
-        //todo only set finished if appropriate
+        //todo only set expired if appropriate
         //todo process other predicted values based on observations
-        setFinished();
+        if(nowMillis>= respawnAt){ //todo should be when timer is no longer needed
+            setExpired();
+        }
+        //todo should schedule a followup processing at the next time it will be needed
     }
 
 
@@ -150,13 +154,13 @@ public class RespawnTimer
     }
 
     /**
-     * set the value for `isFinished` to true and fire a corresponding property change event
+     * set the value for `isExpired` to true and fire a corresponding property change event
      */
-    private void setFinished(){
+    private void setExpired(){
         boolean newValue = true;
-        boolean oldValue = isFinished;
-        isFinished = newValue;
-        pcs.firePropertyChange("isFinished",oldValue,newValue);
+        boolean oldValue = isExpired;
+        isExpired = newValue;
+        pcs.firePropertyChange("isExpired",oldValue,newValue);
     }
     //#endregion
 

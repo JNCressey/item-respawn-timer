@@ -19,18 +19,6 @@ public class ActiveTimers {
 
 
 
-
-//    Map<WorldIdAndWorldPoint, RespawnTimer> getActiveTimers()
-//    {
-//        return activeTimers;
-//    }
-
-//    Map<Integer, OrderedTimerCollection> getActiveWorldTimers()
-//    {
-//        return activeWorldTimers;
-//    }
-
-
     public void clear(){
         activeTimers.clear();
         activeWorldTimers.clear();
@@ -42,24 +30,26 @@ public class ActiveTimers {
         activeWorldTimers
                 .computeIfAbsent(location.getWorldId(),key -> new OrderedTimerCollection())
                 .add(timer); //todo filter for item value
+        ActiveTimers thisActiveTimers = this;
+        timer.addPropertyChangeListener(evt ->{
+            if("isExpired".equals(evt.getPropertyName()) && evt.getNewValue().equals(Boolean.TRUE)){
+                thisActiveTimers.remove(location,timer);
+                System.out.print("timer completed ActiveTimers::put");
+            }
+        });
     }
 
-
-    /**
-     * remove the world timer if it has no remaining future timers
-     * @param worldId
-     * @param nowMillis
-     */
-    public void removeWorldIfPast(int worldId, long nowMillis){
-        //todo also remvove from activeTimers
-        Optional.ofNullable(activeWorldTimers.get(worldId))
-                .ifPresent(c -> {
-                    c.removeIfPast(nowMillis);
-                    if (c.isEmpty()){
-                        activeWorldTimers.remove(worldId);
+    public void remove(WorldIdAndWorldPoint location, RespawnTimer timer){
+        activeTimers.remove(location,timer);
+        int worldId = location.getWorldId();
+        Optional.ofNullable(activeWorldTimers.get(worldId)).ifPresent(
+                worldTimerCollection -> {
+                    worldTimerCollection.remove(timer);
+                    if(worldTimerCollection.isEmpty()){
+                        activeWorldTimers.remove(worldId,worldTimerCollection);
                     }
-                });
+                }
+        );
     }
-
 
 }

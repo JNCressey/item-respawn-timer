@@ -234,14 +234,6 @@ public class ItemRespawnTimerPlugin extends Plugin
 
 		RespawnTimer timer = new RespawnTimer(worldPopulation,spawn,nowMillis);
 		activeTimers.put(location, timer);
-		timer.addPropertyChangeListener(evt ->{
-			if("isFinished".equals(evt.getPropertyName()) && evt.getNewValue().equals(Boolean.TRUE)){
-				int thenWorldId = client.getWorld();
-				long thenMillis = Instant.now().toEpochMilli();
-				activeTimers.removeWorldIfPast(thenWorldId, thenMillis); //todo: change process of removing timers based on the wider set of observations being supported
-				System.out.print("timer completed ItemRespawnPlugin::handleStaticItemPickup");
-			}
-		});
 	}
 	//#endregion
 
@@ -261,12 +253,6 @@ public class ItemRespawnTimerPlugin extends Plugin
 
 	}
 
-	@Subscribe
-	public void onWorldChanged(WorldChanged event){
-		int worldId = client.getWorld();
-		long nowMillis = Instant.now().toEpochMilli();
-		activeTimers.removeWorldIfPast(worldId, nowMillis);
-	}
 
 
 	@Schedule(
