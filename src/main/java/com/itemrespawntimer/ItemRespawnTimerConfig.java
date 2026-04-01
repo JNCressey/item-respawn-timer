@@ -1,8 +1,7 @@
 package com.itemrespawntimer;
 
+import com.itemrespawntimer.staticspawndata.TrackedSpawnsDefaultFileReader;
 import net.runelite.client.config.*;
-import java.awt.event.InputEvent;
-import java.awt.event.KeyEvent;
 
 @ConfigGroup("itemrespawntimer")
 public interface ItemRespawnTimerConfig extends Config

@@ -1,5 +1,6 @@
-package com.itemrespawntimer;
+package com.itemrespawntimer.timermodel;
 
+import com.itemrespawntimer.staticspawndata.StaticSpawn;
 import lombok.Getter;
 
 import java.time.Instant;

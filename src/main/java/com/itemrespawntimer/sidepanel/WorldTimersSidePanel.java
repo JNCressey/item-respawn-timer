@@ -1,4 +1,4 @@
-package com.itemrespawntimer;
+package com.itemrespawntimer.sidepanel;
 
 import javax.swing.*;
 import javax.inject.Inject;
@@ -7,6 +7,8 @@ import java.util.Comparator;
 import java.util.Map;
 import java.util.stream.Collectors;
 
+import com.itemrespawntimer.timermodel.ActiveTimers;
+import com.itemrespawntimer.timermodel.OrderedTimerCollection;
 import net.runelite.client.ui.PluginPanel;
 
 public class WorldTimersSidePanel extends PluginPanel {
