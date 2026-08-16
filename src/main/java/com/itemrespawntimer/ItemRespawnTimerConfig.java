@@ -14,12 +14,12 @@ import java.util.Set;
 public interface ItemRespawnTimerConfig extends Config
 {
 	@ConfigItem(
-			keyName = "enabled",
-			name = "Enable overlay",
-			description = "Show respawn timers for static spawns",
+			keyName = "overlayEnabled",
+			name = "Enable Overlay",
+			description = "Show timers, in the game screen, where the item will respawn.",
 			position = 0
 	)
-	default boolean enabled()
+	default boolean overlayEnabled()
 	{
 		return true;
 	}
@@ -46,9 +46,9 @@ public interface ItemRespawnTimerConfig extends Config
 		return new Keybind(KeyEvent.VK_UP, InputEvent.CTRL_DOWN_MASK | InputEvent.SHIFT_DOWN_MASK);
 	}
 
-	@ConfigItem(
+	@ConfigItem( //todo: implement this
 			keyName = "hotkeyRemoveExpired",
-			name = "Remove Expired Timers",
+			name = "Remove Expired",
 			section = hotkeysSection,
 			description = "When you press this hotkey, expired timers are removed.",
 			position = 1
@@ -59,13 +59,13 @@ public interface ItemRespawnTimerConfig extends Config
 	}
 
 	@ConfigItem(
-			keyName = "removeHotkeyMode",
-			name = "Remove hotkey mode",
+			keyName = "removeExpiredTimerHotkeyMode",
+			name = "Remove Mode",
 			section = hotkeysSection,
 			description = "How many expired timers to remove when you press the hotkey.",
 			position = 2
 	)
-	default RemoveExpiredTimerHotkeyMode removeHotkeyMode()
+	default RemoveExpiredTimerHotkeyMode removeExpiredTimerHotkeyMode()
 	{
 		return RemoveExpiredTimerHotkeyMode.SINGLE;
 	}
@@ -97,13 +97,14 @@ public interface ItemRespawnTimerConfig extends Config
 	}
 
 	@Range(
-			max=300
+			min=-999,
+			max=999
 	)
 	@ConfigItem(
 			keyName = "removeTimersX",
 			name = "X seconds (for above)",
 			section = removeTimersSection,
-			description = "The time 'X' in seconds for the above 'remove when at T+X' option.",
+			description = "The time 'X' in seconds for the above 'remove when at T+X' option. Use negative for before T or positive for after T.",
 			position = 1
 	)
 	default int removeTimersX()
