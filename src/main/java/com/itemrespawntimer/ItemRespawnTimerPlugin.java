@@ -58,8 +58,6 @@ public class ItemRespawnTimerPlugin extends Plugin
 	@Inject
 	private ClientToolbar clientToolbar;
 
-	private Boolean shuttingDown;
-
 	private NavigationButton navButton;
 
 	@Inject
@@ -86,7 +84,6 @@ public class ItemRespawnTimerPlugin extends Plugin
 	@Override
 	protected void startUp() throws Exception
 	{
-		shuttingDown = false;
 		log.debug("Item Respawn Timer plugin started!");
 		overlayManager.add(overlay);
 
@@ -115,7 +112,6 @@ public class ItemRespawnTimerPlugin extends Plugin
 	@Override
 	protected void shutDown() throws Exception
 	{
-		shuttingDown = true;
 		log.debug("Item Respawn Timer plugin  stopped!");
 		overlayManager.remove(overlay);
 		activeTimers.clear();
