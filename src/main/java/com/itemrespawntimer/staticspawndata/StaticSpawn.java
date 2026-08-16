@@ -1,4 +1,4 @@
-package com.itemrespawntimer;
+package com.itemrespawntimer.staticspawndata;
 
 import lombok.Builder;
 import lombok.Value;

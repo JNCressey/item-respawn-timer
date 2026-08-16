@@ -1,9 +1,10 @@
-package com.itemrespawntimer;
+package com.itemrespawntimer.staticspawndata;
 
 import java.util.*;
 import javax.inject.Inject;
 import javax.inject.Singleton;
 
+import com.itemrespawntimer.ItemRespawnTimerConfig;
 import lombok.extern.slf4j.Slf4j;
 import net.runelite.client.util.Text;
 

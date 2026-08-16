@@ -4,6 +4,9 @@ import java.awt.*;
 import java.time.Instant;
 import java.util.Map;
 import javax.inject.Inject;
+
+import com.itemrespawntimer.timermodel.RespawnTimer;
+import com.itemrespawntimer.timermodel.WorldIdAndWorldPoint;
 import net.runelite.api.Client;
 import net.runelite.api.coords.LocalPoint;
 import net.runelite.api.coords.WorldPoint;

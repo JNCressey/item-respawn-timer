@@ -1,4 +1,4 @@
-package com.itemrespawntimer;
+package com.itemrespawntimer.timermodel;
 
 import net.runelite.api.coords.WorldPoint;
 import lombok.Value;
