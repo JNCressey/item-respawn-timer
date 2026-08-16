@@ -16,7 +16,6 @@ import com.itemrespawntimer.timermodel.WorldIdAndWorldPoint;
 import lombok.extern.slf4j.Slf4j;
 import net.runelite.api.*;
 import net.runelite.api.coords.WorldPoint;
-import net.runelite.api.events.WorldChanged;
 import net.runelite.client.config.ConfigManager;
 import net.runelite.client.eventbus.Subscribe;
 import net.runelite.client.events.ConfigChanged;
@@ -258,7 +257,7 @@ public class ItemRespawnTimerPlugin extends Plugin
 	@Inject
 	private ClientThread clientThread;
 
-	private final HotkeyListener quickHopListener = new HotkeyListener(() -> config.quickHopHotkey())
+	private final HotkeyListener quickHopListener = new HotkeyListener(() -> config.hotkeyQuickHopTop())
 	{
 		@Override
 		public void hotkeyPressed()

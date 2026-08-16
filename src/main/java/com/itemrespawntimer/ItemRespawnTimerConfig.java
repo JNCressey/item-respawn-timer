@@ -1,9 +1,12 @@
 package com.itemrespawntimer;
 
 import com.itemrespawntimer.staticspawndata.TrackedSpawnsDefaultFileReader;
-import com.itemrespawntimer.timermodel.RemoveTimerEvent;
+import com.itemrespawntimer.timermodel.RemoveExpiredTimerEvent;
+import com.itemrespawntimer.timermodel.RemoveExpiredTimerHotkeyMode;
 import net.runelite.client.config.*;
 
+import java.awt.event.InputEvent;
+import java.awt.event.KeyEvent;
 import java.util.EnumSet;
 import java.util.Set;
 
@@ -46,6 +49,9 @@ public interface ItemRespawnTimerConfig extends Config
 		);
 	}
 
+	@Range(
+			max=300
+	)
 	@ConfigItem(
 			keyName = "removeTimersX",
 			name = "X seconds (for above)",
@@ -94,14 +100,50 @@ public interface ItemRespawnTimerConfig extends Config
 	}
 	//endregion trackedSpawnsSection
 
+
+	//region hotkeysSection
+	@ConfigSection(
+			name = "Hotkeys",
+			description = "Configure Hotkeys.",
+			position = 2,
+			closedByDefault = true
+	)
+	String hotkeysSection = "hotkeysSection";
+
 	@ConfigItem(
-			keyName = "quickHopHotkey",
-			name = "Quick-hop Hotkey",
-			description = "When you press this hotkey you'll hop to the world at the top of the world timers list.",
+			keyName = "hotkeyQuickHopTop",
+			name = "Quick-Hop",
+			section = hotkeysSection,
+			description = "When you press this hotkey, you'll hop to the world at the top of the list in the side panel.",
+			position = 0
+	)
+	default Keybind hotkeyQuickHopTop()
+	{
+		return new Keybind(KeyEvent.VK_UP, InputEvent.CTRL_DOWN_MASK | InputEvent.SHIFT_DOWN_MASK);
+	}
+
+	@ConfigItem(
+			keyName = "hotkeyRemoveExpired",
+			name = "Remove Expired Timers",
+			section = hotkeysSection,
+			description = "When you press this hotkey, expired timers are removed.",
+			position = 1
+	)
+	default Keybind hotkeyRemoveExpired()
+	{
+		return new Keybind(KeyEvent.VK_DOWN, InputEvent.CTRL_DOWN_MASK | InputEvent.SHIFT_DOWN_MASK);
+	}
+
+	@ConfigItem(
+			keyName = "removeHotkeyMode",
+			name = "Remove hotkey mode",
+			section = hotkeysSection,
+			description = "How many expired timers to remove when you press the hotkey.",
 			position = 2
 	)
-	default Keybind quickHopHotkey()
+	default RemoveExpiredTimerHotkeyMode removeHotkeyMode()
 	{
-		return null;//new Keybind(KeyEvent.VK_Z, InputEvent.CTRL_DOWN_MASK | InputEvent.SHIFT_DOWN_MASK);
+		return RemoveExpiredTimerHotkeyMode.SINGLE;
 	}
+	//endregion hotkeysSection
 }
