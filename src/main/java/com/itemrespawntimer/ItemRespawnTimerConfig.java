@@ -1,7 +1,11 @@
 package com.itemrespawntimer;
 
 import com.itemrespawntimer.staticspawndata.TrackedSpawnsDefaultFileReader;
+import com.itemrespawntimer.timermodel.RemoveTimerEvent;
 import net.runelite.client.config.*;
+
+import java.util.EnumSet;
+import java.util.Set;
 
 @ConfigGroup("itemrespawntimer")
 public interface ItemRespawnTimerConfig extends Config
@@ -17,17 +21,46 @@ public interface ItemRespawnTimerConfig extends Config
 		return true;
 	}
 
+
+	//region removeTimersSection
+	@ConfigSection(
+			name = "Automatically Remove Timers",
+			description = "Automatically remove the expired timers",
+			position = 1,
+			closedByDefault = true
+	)
+	String removeTimersSection = "removeTimersSection";
+
 	@ConfigItem(
-			keyName = "worldTrackerMinimumValue",
-			name = "World tracker minimum value",
-			description = "The minimum value for the world tracker side panel",
+			keyName = "removeTimersEvents",
+			name = "when",
+			section = removeTimersSection,
+			description = "Automatically remove timers at any of the selected conditions.",
 			position = 0
 	)
-	default int worldTrackerMinimumValue()
+	default Set<RemoveTimerEvent> removeTimersEvents()
 	{
-		return 0;
+		return EnumSet.of(
+				RemoveTimerEvent.CAN_SEE_LOCATION,
+				RemoveTimerEvent.TWICE_RESPAWN_TIME
+		);
 	}
 
+	@ConfigItem(
+			keyName = "removeTimersX",
+			name = "X seconds (for above)",
+			section = removeTimersSection,
+			description = "The time 'X' in seconds for the above 'remove when at T+X' option.",
+			position = 1
+	)
+	default int removeTimersX()
+	{
+		return 5;
+	}
+	//endregion removeTimersSection
+
+
+	//region trackedSpawnsSection
 	@ConfigSection(
 			name = "Tracked Spawns",
 			description = "Parameters of locations of spawns to track",
@@ -59,6 +92,7 @@ public interface ItemRespawnTimerConfig extends Config
 	{
 		return TrackedSpawnsDefaultFileReader.readResource();
 	}
+	//endregion trackedSpawnsSection
 
 	@ConfigItem(
 			keyName = "quickHopHotkey",
