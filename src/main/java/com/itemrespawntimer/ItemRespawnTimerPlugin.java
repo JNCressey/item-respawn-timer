@@ -18,15 +18,14 @@ import net.runelite.client.plugins.Plugin;
 import net.runelite.client.plugins.PluginDescriptor;
 
 import net.runelite.client.task.Schedule;
-import net.runelite.client.util.AsyncBufferedImage;
 
 import java.time.temporal.ChronoUnit;
 import java.util.*;
 import java.time.Instant;
+import java.awt.image.BufferedImage;
 
 import net.runelite.client.ui.ClientToolbar;
 import net.runelite.client.ui.NavigationButton;
-import net.runelite.client.ui.NavigationButton.NavigationButtonBuilder;
 import net.runelite.client.ui.overlay.OverlayManager;
 import net.runelite.api.events.ItemDespawned;
 import net.runelite.client.util.HotkeyListener;
@@ -34,6 +33,7 @@ import net.runelite.http.api.worlds.WorldResult;
 import net.runelite.client.callback.ClientThread;
 import net.runelite.client.input.KeyManager;
 import net.runelite.client.util.WorldUtil;
+import net.runelite.client.util.ImageUtil;
 
 
 @Slf4j
@@ -99,24 +99,16 @@ public class ItemRespawnTimerPlugin extends Plugin
 	}
 
 	private void startupSidePanel(){
-		AsyncBufferedImage itemIcon = itemManager.getImage(245); //Wine of Zamorak
-
 		WorldTimersSidePanel panel = injector.getInstance(WorldTimersSidePanel.class);
+		final BufferedImage icon = ImageUtil.loadImageResource(ItemRespawnTimerPlugin.class, "/icon.png");
 
-		NavigationButtonBuilder navButtonBuilder = NavigationButton.builder()
-				.tooltip("Item Respawns")
-				.panel(panel);
+		NavigationButton navButton = NavigationButton.builder()
+			.tooltip("Item Respawns")
+			.panel(panel)
+			.icon(icon)
+			.build();
 
-		itemIcon.onLoaded(()->{
-			navButton = navButtonBuilder
-				.icon(itemIcon)
-				.build();
-
-			clientToolbar.addNavigation(navButton);
-			if (shuttingDown){ // ensure it is removed if onLoaded adds the navigation after it's supposed to be shutting down
-				clientToolbar.removeNavigation(navButton);
-			}
-		});
+		clientToolbar.addNavigation(navButton);
 	}
 
 
