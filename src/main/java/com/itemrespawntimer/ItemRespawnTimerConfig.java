@@ -38,11 +38,11 @@ public interface ItemRespawnTimerConfig extends Config
 			description = "Automatically remove timers at any of the selected conditions.",
 			position = 0
 	)
-	default Set<RemoveTimerEvent> removeTimersEvents()
+	default Set<RemoveExpiredTimerEvent> removeTimersEvents()
 	{
 		return EnumSet.of(
-				RemoveTimerEvent.CAN_SEE_LOCATION,
-				RemoveTimerEvent.TWICE_RESPAWN_TIME
+				RemoveExpiredTimerEvent.CAN_SEE_LOCATION,
+				RemoveExpiredTimerEvent.TWICE_RESPAWN_TIME
 		);
 	}
 
