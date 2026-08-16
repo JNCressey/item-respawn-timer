@@ -99,7 +99,7 @@ public class ItemRespawnTimerPlugin extends Plugin
 		WorldTimersSidePanel panel = injector.getInstance(WorldTimersSidePanel.class);
 		final BufferedImage icon = ImageUtil.loadImageResource(ItemRespawnTimerPlugin.class, "/icon.png");
 
-		NavigationButton navButton = NavigationButton.builder()
+		navButton = NavigationButton.builder()
 			.tooltip("Item Respawns")
 			.panel(panel)
 			.icon(icon)
