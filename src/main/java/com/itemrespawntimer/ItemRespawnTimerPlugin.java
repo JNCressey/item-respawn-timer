@@ -12,7 +12,6 @@ import net.runelite.api.events.WorldChanged;
 import net.runelite.client.config.ConfigManager;
 import net.runelite.client.eventbus.Subscribe;
 import net.runelite.client.events.ConfigChanged;
-import net.runelite.client.game.ItemManager;
 import net.runelite.client.game.WorldService;
 import net.runelite.client.plugins.Plugin;
 import net.runelite.client.plugins.PluginDescriptor;
@@ -59,10 +58,6 @@ public class ItemRespawnTimerPlugin extends Plugin
 	private ClientToolbar clientToolbar;
 
 	private NavigationButton navButton;
-
-	@Inject
-	private ItemManager itemManager;
-
 
 
 	//region objects
