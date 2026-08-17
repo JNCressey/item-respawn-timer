@@ -84,7 +84,7 @@ public interface ItemRespawnTimerConfig extends Config
 			keyName = "removeTimersEvents",
 			name = "when",
 			section = removeTimersSection,
-			description = "Automatically remove timers at any of the selected conditions.",
+			description = "Automatically remove timers when any of the selected conditions are met.",
 			position = 0
 	)
 	default Set<RemoveExpiredTimerEvent> removeTimersEvents()
@@ -100,15 +100,31 @@ public interface ItemRespawnTimerConfig extends Config
 			max=999
 	)
 	@ConfigItem(
-			keyName = "removeTimersX",
-			name = "X seconds (for above)",
+			keyName = "removeTimersCustom1",
+			name = "Custom Offset 1 (s)",
 			section = removeTimersSection,
-			description = "The time 'X' in seconds for the above 'remove when at T+X' option. Use negative for before T or positive for after T.",
+			description = "The custom offset in seconds for the above 'remove when at T + custom offset 1' option. Use negative for before T or positive for after T.",
 			position = 1
 	)
-	default int removeTimersX()
+	default int removeTimersCustom1()
 	{
-		return 5;
+		return 10;
+	}
+
+	@Range(
+			min=-999,
+			max=999
+	)
+	@ConfigItem(
+			keyName = "removeTimersCustom2",
+			name = "Custom Offset 2 (s)",
+			section = removeTimersSection,
+			description = "The custom offset in seconds for the above 'remove when at 2T + custom offset 2' option. (Where 2T is after twice the respawn time). Use negative for before 2T or positive for after 2T.",
+			position = 2
+	)
+	default int removeTimersCustom2()
+	{
+		return -10;
 	}
 	//endregion removeTimersSection
 
