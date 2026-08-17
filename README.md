@@ -4,17 +4,38 @@ Show timers for respawning items
 Predictions can be slightly off. Because the respawn time depends on how many players are currently in the world, and the world populations are only periodically sent to the client.
 
 ## dev to-dos
+- change plan to not predict unobserved pickups
+  - remove the observation methods
+  - remove the auto discovery mode
+  - add a debug mode that logs in chat predictions for what baserespawntime is for items spawns it observes
+- change plan to have the side panel not group worlds together
+  - remove the world-grouped version of the active timers hashmap
+- change the scheduled automatic timer removal to run from the tick event instead of schedule
+  - removal method should take the current time, the current world, and the current location, and current config options for automatic removal then pass to each timer.
+    - timer should know from the config and the passed variables whether it meets a condition for removal
+- unconditional timer removal based on event of the item being there
+  - clear the timer when an item spawn event
+  - clear the timer if load the area (world login or movement into area) and the item is already there 
 - don't start timer from going up some stairs or running away, only when item is taken
 - work for all respawning items, not just Lumbridge castle mind rune
   - fill the csv file
   - handle item names
-- clear the timer if respawn is witnessed
-- side panel to track worlds where you're waiting for a respawn
-  - hop to world on click
-  - filter minimum item to track value
-  - sort list by smallest time until respawn
-- make circle progress display smaller
-- add an option for another style of timer that stars when you discover an item is missing but did not witness it being taken
-  - should be styled different (different color) (accessible for colorblind? putting less than symbol before the number)
-  - user option to disable this kind
-  - this is useful for predicting a maximum time to wait.
+- side panel to track timers that you're waiting for a respawn
+  - make each timer have a widget in the list
+    - item icon
+    - item name
+    - world id
+    - timer countdown as format "T-#" or "T+#"
+    - button to hop to world on click
+    - button to remove timer
+    - button to hide/unhide
+  - button to filter or show the manually hidden widgets
+- action button in config panel
+  - clear the manually hidden from the side panel
+  - add/remove/change a static spawn data
+    - store overrides in a persistent data store but remove that big textbox from the config panel
+  - reset the static spawn data
+- circle progress display appearance
+  - make a consistent size
+  - centred in the tile
+  - appropriate height on ground or on top of table
