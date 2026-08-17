@@ -2,7 +2,6 @@ package com.itemrespawntimer;
 
 import com.itemrespawntimer.staticspawndata.TrackedSpawnsDefaultFileReader;
 import com.itemrespawntimer.timermodel.RemoveExpiredTimerEvent;
-import com.itemrespawntimer.timermodel.RemoveExpiredTimerHotkeyMode;
 import net.runelite.client.config.*;
 
 import java.awt.event.InputEvent;
@@ -47,27 +46,27 @@ public interface ItemRespawnTimerConfig extends Config
 	}
 
 	@ConfigItem( //todo: implement this
-			keyName = "hotkeyRemoveExpired",
-			name = "Remove Expired",
+			keyName = "hotkeyRemoveExpiredSingle",
+			name = "Remove One Expired",
 			section = hotkeysSection,
-			description = "When you press this hotkey, expired timers are removed.",
+			description = "When you press this hotkey, a single expired timer is removed.",
 			position = 1
 	)
-	default Keybind hotkeyRemoveExpired()
+	default Keybind hotkeyRemoveExpiredSingle()
 	{
 		return new Keybind(KeyEvent.VK_DOWN, InputEvent.CTRL_DOWN_MASK | InputEvent.SHIFT_DOWN_MASK);
 	}
 
-	@ConfigItem(
-			keyName = "removeExpiredTimerHotkeyMode",
-			name = "Remove Mode",
+	@ConfigItem( //todo: implement this
+			keyName = "hotkeyRemoveExpiredAll",
+			name = "Remove All Expired",
 			section = hotkeysSection,
-			description = "How many expired timers to remove when you press the hotkey.",
+			description = "When you press this hotkey, all expired timers are removed.",
 			position = 2
 	)
-	default RemoveExpiredTimerHotkeyMode removeExpiredTimerHotkeyMode()
+	default Keybind hotkeyRemoveExpiredAll()
 	{
-		return RemoveExpiredTimerHotkeyMode.SINGLE;
+		return null;
 	}
 	//endregion hotkeysSection
 
