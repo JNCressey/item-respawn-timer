@@ -4,13 +4,14 @@ x,y,z,baseRespawnTicks,itemId,quantity
 # itemId: the numerical id of the item. optional. If not provided, the timer will react to any item in that position.
 # quantity: the quantity of the item. optional. not currently used.
 
+# todo can't omit id, it's used for side panel item name
 # if you want to omit itemId but put a quantity, put the itemId value as "", for example:
 # 3209,3214,0,100,"",1
 
 
 3206,3208,0,100,558,1
-3208,3214,0,100
-3209,3214,0,100,"",1
+3208,3214,0,100,1923,1
+3209,3214,0,100,1931,1
 3196,9822,0,500,1641,1
 
 # todo populate this data.

@@ -244,9 +244,9 @@ public class ItemRespawnTimerPlugin extends Plugin
 	public void updateSidePanel()
 	{
 		long nowMillis = Instant.now().toEpochMilli();
-		int worldId = client.getWorld();
+		int currentWorldId = client.getWorld();
 		((WorldTimersSidePanel) navButton.getPanel())
-				.updateMessage(activeTimers,nowMillis,worldId);
+				.updateMessage(activeTimers,nowMillis,currentWorldId);
 	}
 
 

@@ -8,7 +8,9 @@ import java.util.Map;
 import java.util.stream.Collectors;
 
 import com.itemrespawntimer.timermodel.ActiveTimers;
-import com.itemrespawntimer.timermodel.OrderedTimerCollection;
+import com.itemrespawntimer.timermodel.RespawnTimer;
+import com.itemrespawntimer.timermodel.WorldIdAndWorldPoint;
+import net.runelite.client.game.ItemManager;
 import net.runelite.client.ui.PluginPanel;
 
 public class WorldTimersSidePanel extends PluginPanel {
@@ -29,20 +31,40 @@ public class WorldTimersSidePanel extends PluginPanel {
     }
 
 
+    @Inject
+    private ItemManager itemManager;
+
+    public String getItemName(int itemId)
+    {
+        return itemManager.getItemComposition(itemId).getName();
+    }
+
+
     /**
      *
      * @param activeTimers
      * @param nowMillis the result of Instant.now().toEpochMilli();
-     * @param worldId
+     * @param currentWorldId
      */
-    public void updateMessage(ActiveTimers activeTimers, long nowMillis, int worldId){
-        Map<Integer, OrderedTimerCollection> worldTimers = activeTimers.getActiveWorldTimers();
+    public void updateMessage(ActiveTimers activeTimers, long nowMillis, int currentWorldId){
+        Map<WorldIdAndWorldPoint, RespawnTimer> timers = activeTimers.getActiveTimers();
 
-        String txt = worldTimers.entrySet().stream()
-                .sorted(Comparator.comparingLong(entry -> entry.getValue().getRespawnAt()))
-                .map(entry -> {
-                    long secondsRemaining = entry.getValue().getSecondsRemaining(nowMillis);
-                    return String.format("%s %s", entry.getKey(), secondsRemaining);
+        String txt = timers.entrySet().stream()
+                .sorted(Comparator
+                        .comparingLong((Map.Entry<WorldIdAndWorldPoint, RespawnTimer> entry) -> entry.getValue().getRespawnAt())
+                        .thenComparingInt( entry -> entry.getKey().getWorldId())
+                )
+                .map(entry-> {
+                    RespawnTimer t = entry.getValue();
+                    String itemName = getItemName(t.getSpawn().getItemId());
+                    String countdown = t.getTMinusCountdown(nowMillis);
+                    int worldId = entry.getKey().getWorldId();
+                    String currentWorldIndicator = (worldId == currentWorldId)? "*" : "";
+                    /*
+                        item-name [hide button]
+                        [remove timer button] T-# [hop button] W#
+                     */
+                    return String.format("%s [-]\n[x] %s\t[h] W%s%s", itemName, countdown, worldId, currentWorldIndicator);
                 })
                 .collect(Collectors.joining("\n"));
 

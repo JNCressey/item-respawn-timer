@@ -196,6 +196,20 @@ public class RespawnTimer
 
 
     /**
+     * Get the countdown to the respawn time, formatted as a T-minus type countdown.
+     * Negative for before respawn time, positive for after respawn time.
+     * @return the countdown
+    */
+    public String getTMinusCountdown(long nowMillis)
+    {
+        int countdownSeconds = (int) ((nowMillis - respawnAt)/ 1000.0);
+        return (countdownSeconds == 0)
+                ? "T-0"
+                : String.format("T%+d", countdownSeconds);
+    }
+
+
+    /**
      *
      * @param nowMillis the result of Instant.now().toEpochMilli();
      * @return whether the timer is for a point in the future
