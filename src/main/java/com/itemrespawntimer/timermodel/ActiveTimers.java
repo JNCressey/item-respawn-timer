@@ -3,9 +3,11 @@ package com.itemrespawntimer.timermodel;
 import lombok.Getter;
 
 import javax.inject.Singleton;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
+import java.util.stream.Stream;
 
 @Singleton
 public class ActiveTimers {
@@ -19,7 +21,18 @@ public class ActiveTimers {
     @Getter
     private final Map<Integer, OrderedTimerCollection> activeWorldTimers = new HashMap<>();
 
-
+    /**
+     * Get a stream of the entries of activeTimers, ordered by respawnAt then by worldId
+     * @return the stream
+     */
+    public Stream<Map.Entry<WorldIdAndWorldPoint, RespawnTimer>> getOrderedStream(){
+        //todo: maintain a list that is ordered at insertion time
+        return activeTimers.entrySet().stream()
+                .sorted(Comparator
+                        .comparingLong((Map.Entry<WorldIdAndWorldPoint, RespawnTimer> entry) -> entry.getValue().getRespawnAt())
+                        .thenComparingInt( entry -> entry.getKey().getWorldId())
+                );
+    }
 
     public void clear(){
         activeTimers.clear();

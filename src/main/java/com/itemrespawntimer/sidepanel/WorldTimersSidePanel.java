@@ -54,11 +54,7 @@ public class WorldTimersSidePanel extends PluginPanel {
         long nowMillis = Instant.now().toEpochMilli();
         Map<WorldIdAndWorldPoint, RespawnTimer> timers = activeTimers.getActiveTimers();
 
-        String txt = timers.entrySet().stream()
-                .sorted(Comparator
-                        .comparingLong((Map.Entry<WorldIdAndWorldPoint, RespawnTimer> entry) -> entry.getValue().getRespawnAt())
-                        .thenComparingInt( entry -> entry.getKey().getWorldId())
-                )
+        String txt = activeTimers.getOrderedStream()
                 .map(entry-> {
                     RespawnTimer t = entry.getValue();
                     String itemName = getItemName(t.getSpawn().getItemId());

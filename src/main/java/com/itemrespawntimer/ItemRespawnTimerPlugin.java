@@ -273,15 +273,11 @@ public class ItemRespawnTimerPlugin extends Plugin
 	private void hop(){
 		int currentWorldId = client.getWorld();
 
-		Optional<Integer> worldId = activeTimers.getActiveTimers().entrySet().stream()
-				.filter(entry->entry.getKey().getWorldId()!=currentWorldId)
-				.min(Comparator
-						.comparingLong((Map.Entry<WorldIdAndWorldPoint,RespawnTimer> entry) -> entry.getValue().getRespawnAt())
-						.thenComparingInt(entry -> entry.getKey().getWorldId())
-				)
-				.map(entry -> entry.getKey().getWorldId());//todo: remove code duplication. selecting the top world here and sorting the worlds for the side panel
-
-		worldId.ifPresent(this::hop);
+		activeTimers.getOrderedStream()
+				.map(entry -> entry.getKey().getWorldId())
+				.filter(worldId -> worldId!=currentWorldId)
+				.findFirst()
+				.ifPresent(this::hop);
 	}
 
 
