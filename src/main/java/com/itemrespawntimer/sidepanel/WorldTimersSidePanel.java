@@ -52,7 +52,6 @@ public class WorldTimersSidePanel extends PluginPanel {
     public void updateSidePanel()
     {
         long nowMillis = Instant.now().toEpochMilli();
-        Map<WorldIdAndWorldPoint, RespawnTimer> timers = activeTimers.getActiveTimers();
 
         String txt = activeTimers.getOrderedStream()
                 .map(entry-> {
