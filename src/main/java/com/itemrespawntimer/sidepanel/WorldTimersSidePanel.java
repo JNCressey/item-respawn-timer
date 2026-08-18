@@ -3,6 +3,7 @@ package com.itemrespawntimer.sidepanel;
 import javax.swing.*;
 import javax.inject.Inject;
 import java.awt.*;
+import java.time.Instant;
 import java.util.Comparator;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -10,6 +11,7 @@ import java.util.stream.Collectors;
 import com.itemrespawntimer.timermodel.ActiveTimers;
 import com.itemrespawntimer.timermodel.RespawnTimer;
 import com.itemrespawntimer.timermodel.WorldIdAndWorldPoint;
+import lombok.Setter;
 import net.runelite.client.game.ItemManager;
 import net.runelite.client.ui.PluginPanel;
 
@@ -22,7 +24,7 @@ public class WorldTimersSidePanel extends PluginPanel {
     public WorldTimersSidePanel()
     {
         /*
-        todo: make list of worlds with timers
+        todo: make tiles with buttons for each timer
          */
         setLayout(new BorderLayout());
         textArea = new JTextArea("Hello RuneLite!");
@@ -31,22 +33,25 @@ public class WorldTimersSidePanel extends PluginPanel {
     }
 
 
+
+    @Inject
+    private ActiveTimers activeTimers;
+
+    @Setter
+    private int currentWorldId;
+
     @Inject
     private ItemManager itemManager;
 
-    public String getItemName(int itemId)
+    private String getItemName(int itemId)
     {
         return itemManager.getItemComposition(itemId).getName();
     }
 
 
-    /**
-     *
-     * @param activeTimers
-     * @param nowMillis the result of Instant.now().toEpochMilli();
-     * @param currentWorldId
-     */
-    public void updateMessage(ActiveTimers activeTimers, long nowMillis, int currentWorldId){
+    public void updateSidePanel()
+    {
+        long nowMillis = Instant.now().toEpochMilli();
         Map<WorldIdAndWorldPoint, RespawnTimer> timers = activeTimers.getActiveTimers();
 
         String txt = timers.entrySet().stream()

@@ -2,10 +2,12 @@ package com.itemrespawntimer.timermodel;
 
 import lombok.Getter;
 
+import javax.inject.Singleton;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
 
+@Singleton
 public class ActiveTimers {
 
     // WorldIdAndWorldPoint -> RespawnTimer

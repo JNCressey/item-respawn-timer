@@ -64,6 +64,7 @@ public class ItemRespawnTimerPlugin extends Plugin
 	@Inject
 	private ClientToolbar clientToolbar;
 
+	private WorldTimersSidePanel panel;
 	private NavigationButton navButton;
 
 
@@ -98,7 +99,7 @@ public class ItemRespawnTimerPlugin extends Plugin
 	}
 
 	private void startupSidePanel(){
-		WorldTimersSidePanel panel = injector.getInstance(WorldTimersSidePanel.class);
+		panel = injector.getInstance(WorldTimersSidePanel.class);
 		final BufferedImage icon = ImageUtil.loadImageResource(ItemRespawnTimerPlugin.class, "/icon.png");
 
 		navButton = NavigationButton.builder()
@@ -243,10 +244,8 @@ public class ItemRespawnTimerPlugin extends Plugin
 	)
 	public void updateSidePanel()
 	{
-		long nowMillis = Instant.now().toEpochMilli();
-		int currentWorldId = client.getWorld();
-		((WorldTimersSidePanel) navButton.getPanel())
-				.updateMessage(activeTimers,nowMillis,currentWorldId);
+		panel.setCurrentWorldId(client.getWorld());
+		panel.updateSidePanel();
 	}
 
 
