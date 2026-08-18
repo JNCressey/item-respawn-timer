@@ -47,22 +47,18 @@ public class ItemRespawnTimerOverlay extends Overlay
 
         for (Map.Entry<WorldIdAndWorldPoint, RespawnTimer> entry : plugin.getActiveTimers().entrySet())
         {
-            WorldIdAndWorldPoint location = entry.getKey();
+            RespawnTimer timer = entry.getValue();
 
-            if (location.getWorldId() != currentWorldId){
+            if (timer.getWorldId() != currentWorldId){
                 continue; // skip rendering this timer because it's for another world
             }
 
-            WorldPoint wp = location.getWorldPoint();
-            RespawnTimer timer = entry.getValue();
-
             if (timer.getRespawnAt() <= now)
             {
-                // Let plugin clean these up if desired; we just skip drawing
-                continue;
+                continue;// skip rendering expired timers
             }
 
-            LocalPoint lp = LocalPoint.fromWorld(client, wp);
+            LocalPoint lp = LocalPoint.fromWorld(client, timer.getWorldPoint());
             if (lp == null)
             {
                 continue;

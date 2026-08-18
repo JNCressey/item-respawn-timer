@@ -55,7 +55,7 @@ public class WorldTimersSidePanel extends PluginPanel {
                     RespawnTimer t = entry.getValue();
                     String itemName = getItemName(t.getSpawn().getItemId());
                     String countdown = t.getTMinusCountdown(nowMillis);
-                    int worldId = entry.getKey().getWorldId();
+                    int worldId = t.getWorldId();
                     String currentWorldIndicator = (worldId == currentWorldId)? "*" : "";
                     /*
                         item-name [hide button]

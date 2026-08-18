@@ -33,7 +33,7 @@ public class ActiveTimers {
         return activeTimers.entrySet().stream()
                 .sorted(Comparator
                         .comparingLong((Map.Entry<WorldIdAndWorldPoint, RespawnTimer> entry) -> entry.getValue().getRespawnAt())
-                        .thenComparingInt( entry -> entry.getKey().getWorldId())
+                        .thenComparingInt( entry -> entry.getValue().getWorldId())
                 );
     }
 

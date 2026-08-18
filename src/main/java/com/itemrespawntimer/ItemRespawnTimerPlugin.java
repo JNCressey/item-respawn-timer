@@ -273,7 +273,7 @@ public class ItemRespawnTimerPlugin extends Plugin
 		int currentWorldId = client.getWorld();
 
 		activeTimers.getOrderedStream()
-				.map(entry -> entry.getKey().getWorldId())
+				.map(entry -> entry.getValue().getWorldId())
 				.filter(worldId -> worldId!=currentWorldId)
 				.findFirst()
 				.ifPresent(this::hop);
