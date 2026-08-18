@@ -20,7 +20,7 @@ public class RespawnTimer
 
     //#region state summary values
     @Getter
-    private long respawnAt; // the time when the item will respawn
+    private long respawnAt; // the time when the item will respawn, as a millisecond timestamp
 
     @Getter
     private int totalSeconds; // the total time that the timer is counting out of
@@ -198,14 +198,22 @@ public class RespawnTimer
     /**
      * Get the countdown to the respawn time, formatted as a T-minus type countdown.
      * Negative for before respawn time, positive for after respawn time.
+     * Either T-# for a number of seconds, or like T-#:## if minutes are needed.
      * @return the countdown
     */
     public String getTMinusCountdown(long nowMillis)
     {
-        int countdownSeconds = (int) ((nowMillis - respawnAt)/ 1000.0);
-        return (countdownSeconds == 0)
-                ? "T-0"
-                : String.format("T%+d", countdownSeconds);
+        long countdownSeconds = Math.round((nowMillis - respawnAt)/ 1000.0);
+
+        char sign = (countdownSeconds <= 0)? '-' : '+';
+        long minutesPart = Math.abs(countdownSeconds) / 60;
+        long secondsPart = Math.abs(countdownSeconds) % 60;
+
+        if (totalSeconds>=60 || minutesPart!=0){ // with a minute part
+            return String.format("T%c%d:%02d", sign, minutesPart, secondsPart);
+        } else { // without a minute part
+            return String.format("T%c%d", sign, secondsPart);
+        }
     }
 
 
