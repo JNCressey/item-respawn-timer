@@ -267,18 +267,19 @@ public class ItemRespawnTimerPlugin extends Plugin
 
 
 	/**
-	 * Hop to the world that is at the top of the world timers list.
+	 * Hop to the world that is at the top of the timers list (skipping timers for the current world).
 	 * @see #hop(net.runelite.api.World)
 	 */
 	private void hop(){
-		Map<Integer, OrderedTimerCollection> worldTimers = activeTimers.getActiveWorldTimers();
-
 		int currentWorldId = client.getWorld();
 
-		Optional<Integer> worldId = worldTimers.entrySet().stream()
-				.filter(entry->entry.getKey()!=currentWorldId)
-				.min(Comparator.comparingLong(entry -> entry.getValue().getRespawnAt()))
-				.map(Map.Entry::getKey); //todo: remove code duplication. selecting the top world here and sorting the worlds for the side panel
+		Optional<Integer> worldId = activeTimers.getActiveTimers().entrySet().stream()
+				.filter(entry->entry.getKey().getWorldId()!=currentWorldId)
+				.min(Comparator
+						.comparingLong((Map.Entry<WorldIdAndWorldPoint,RespawnTimer> entry) -> entry.getValue().getRespawnAt())
+						.thenComparingInt(entry -> entry.getKey().getWorldId())
+				)
+				.map(entry -> entry.getKey().getWorldId());//todo: remove code duplication. selecting the top world here and sorting the worlds for the side panel
 
 		worldId.ifPresent(this::hop);
 	}
