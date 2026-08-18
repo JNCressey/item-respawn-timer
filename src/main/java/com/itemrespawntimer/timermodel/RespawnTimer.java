@@ -2,6 +2,7 @@ package com.itemrespawntimer.timermodel;
 
 import com.itemrespawntimer.staticspawndata.StaticSpawn;
 import lombok.Getter;
+import net.runelite.api.coords.WorldPoint;
 
 import java.time.Instant;
 import java.util.ArrayList;
@@ -17,6 +18,11 @@ public class RespawnTimer
     @Getter
     private final StaticSpawn spawn; // item and location information
 
+    @Getter
+    int worldId;
+
+    @Getter
+    WorldPoint worldPoint;
 
     //#region state summary values
     @Getter
@@ -49,14 +55,25 @@ public class RespawnTimer
 
 
     //#region initialisation
-    public RespawnTimer(StaticSpawn spawn){
+    public RespawnTimer(
+            StaticSpawn spawn,
+            int worldId,
+            WorldPoint worldPoint
+    ){
         this.spawn = spawn;
+        this.worldId = worldId;
+        this.worldPoint = worldPoint;
     }
 
-    public RespawnTimer(int worldPopulation,StaticSpawn spawn,long nowMillis)
+    public RespawnTimer(
+            StaticSpawn spawn,
+            int worldId,
+            WorldPoint worldPoint,
+            int worldPopulation,
+            long nowMillis
+    )
     {
-        //this.spawn = spawn;
-        this(spawn);
+        this(spawn, worldId, worldPoint);
         submitObservationPickup(worldPopulation,nowMillis);
     }
 

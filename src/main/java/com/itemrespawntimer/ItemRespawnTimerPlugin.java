@@ -214,7 +214,7 @@ public class ItemRespawnTimerPlugin extends Plugin
 		WorldIdAndWorldPoint location = new WorldIdAndWorldPoint(worldId, wp);
 		int worldPopulation = getCurrentWorldPopulation();
 
-		RespawnTimer timer = new RespawnTimer(worldPopulation,spawn,nowMillis);
+		RespawnTimer timer = new RespawnTimer(spawn,worldId,wp,worldPopulation,nowMillis);
 		activeTimers.put(location, timer);
 	}
 	//#endregion
