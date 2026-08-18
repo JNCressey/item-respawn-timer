@@ -8,8 +8,6 @@ Predictions can be slightly off. Because the respawn time depends on how many pl
   - remove the observation methods
   - remove the auto discovery mode
   - add a debug mode that logs in chat predictions for what baserespawntime is for items spawns it observes
-- change plan to have the side panel not group worlds together
-  - remove the world-grouped version of the active timers hashmap
 - change the scheduled automatic timer removal to run from the tick event instead of schedule
   - removal method should take the current time, the current world, and the current location, and current config options for automatic removal then pass to each timer.
     - timer should know from the config and the passed variables whether it meets a condition for removal

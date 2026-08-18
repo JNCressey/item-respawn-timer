@@ -4,13 +4,10 @@ import javax.swing.*;
 import javax.inject.Inject;
 import java.awt.*;
 import java.time.Instant;
-import java.util.Comparator;
-import java.util.Map;
 import java.util.stream.Collectors;
 
 import com.itemrespawntimer.timermodel.ActiveTimers;
 import com.itemrespawntimer.timermodel.RespawnTimer;
-import com.itemrespawntimer.timermodel.WorldIdAndWorldPoint;
 import lombok.Setter;
 import net.runelite.client.game.ItemManager;
 import net.runelite.client.ui.PluginPanel;
