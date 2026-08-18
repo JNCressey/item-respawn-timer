@@ -15,6 +15,7 @@ import com.itemrespawntimer.timermodel.WorldIdAndWorldPoint;
 import lombok.extern.slf4j.Slf4j;
 import net.runelite.api.*;
 import net.runelite.api.coords.WorldPoint;
+import net.runelite.api.events.GameTick;
 import net.runelite.client.config.ConfigManager;
 import net.runelite.client.eventbus.Subscribe;
 import net.runelite.client.events.ConfigChanged;
@@ -243,6 +244,8 @@ public class ItemRespawnTimerPlugin extends Plugin
 	)
 	public void updateSidePanel()
 	{
+	@Subscribe
+	public void onGameTick(GameTick event) {
 		panel.setCurrentWorldId(client.getWorld());
 		panel.updateSidePanel();
 	}
