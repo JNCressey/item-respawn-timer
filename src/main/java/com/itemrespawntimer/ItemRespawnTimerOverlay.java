@@ -49,34 +49,33 @@ public class ItemRespawnTimerOverlay extends Overlay
 
         long now = Instant.now().toEpochMilli();
 
-        for (Map.Entry<WorldIdAndWorldPoint, RespawnTimer> entry : activeTimers.getActiveTimers().entrySet())
-        {
+        activeTimers.getOrderedStream().forEach(entry -> {
             RespawnTimer timer = entry.getValue();
 
             if (timer.getWorldId() != currentWorldId){
-                continue; // skip rendering this timer because it's for another world
+                return; // skip rendering this timer because it's for another world
             }
 
             if (timer.getRespawnAt() <= now)
             {
-                continue;// skip rendering expired timers
+                return;// skip rendering expired timers
             }
 
             LocalPoint lp = LocalPoint.fromWorld(client, timer.getWorldPoint());
             if (lp == null)
             {
-                continue;
+                return;
             }
 
             Polygon poly = Perspective.getCanvasTileAreaPoly(client, lp, 1);
             if (poly == null)
             {
-                continue;
+                return;
             }
 
             double progress = timer.getProgress(now); // 0.0 -> 1.0
             drawCircularTimer(g, poly, progress, timer.getSecondsRemaining(now));
-        }
+        });
 
         return null;
     }
