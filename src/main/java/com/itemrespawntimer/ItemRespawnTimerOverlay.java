@@ -5,6 +5,7 @@ import java.time.Instant;
 import java.util.Map;
 import javax.inject.Inject;
 
+import com.itemrespawntimer.timermodel.ActiveTimers;
 import com.itemrespawntimer.timermodel.RespawnTimer;
 import com.itemrespawntimer.timermodel.WorldIdAndWorldPoint;
 import net.runelite.api.Client;
@@ -20,6 +21,9 @@ public class ItemRespawnTimerOverlay extends Overlay
     private final Client client;
     private final ItemRespawnTimerPlugin plugin;
     private final ItemRespawnTimerConfig config;
+
+    @Inject
+    private ActiveTimers activeTimers;
 
 
     @Inject
@@ -45,7 +49,7 @@ public class ItemRespawnTimerOverlay extends Overlay
 
         long now = Instant.now().toEpochMilli();
 
-        for (Map.Entry<WorldIdAndWorldPoint, RespawnTimer> entry : plugin.getActiveTimers().entrySet())
+        for (Map.Entry<WorldIdAndWorldPoint, RespawnTimer> entry : activeTimers.getActiveTimers().entrySet())
         {
             RespawnTimer timer = entry.getValue();
 

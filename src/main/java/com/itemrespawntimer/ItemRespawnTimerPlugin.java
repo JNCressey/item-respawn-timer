@@ -132,13 +132,6 @@ public class ItemRespawnTimerPlugin extends Plugin
 	//endregion
 
 
-
-	Map<WorldIdAndWorldPoint, RespawnTimer> getActiveTimers()
-	{
-		return activeTimers.getActiveTimers();
-	}
-
-
 	//#region reloading spawn data
 	@Subscribe
 	public void onConfigChanged(ConfigChanged event)
@@ -237,13 +230,6 @@ public class ItemRespawnTimerPlugin extends Plugin
 	}
 
 
-
-	@Schedule(
-			period = 1,
-			unit = ChronoUnit.SECONDS
-	)
-	public void updateSidePanel()
-	{
 	@Subscribe
 	public void onGameTick(GameTick event) {
 		panel.setCurrentWorldId(client.getWorld());
