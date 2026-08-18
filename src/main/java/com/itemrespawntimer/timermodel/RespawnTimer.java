@@ -203,7 +203,7 @@ public class RespawnTimer
     */
     public String getTMinusCountdown(long nowMillis)
     {
-        long countdownSeconds = Math.round((nowMillis - respawnAt)/ 1000.0);
+        long countdownSeconds = (nowMillis/1000) - (respawnAt/1000);
 
         char sign = (countdownSeconds <= 0)? '-' : '+';
         long minutesPart = Math.abs(countdownSeconds) / 60;
