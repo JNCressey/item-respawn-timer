@@ -90,7 +90,8 @@ public class ItemRespawnTimerPlugin extends Plugin
 
 		startupSidePanel();
 
-		keyManager.registerKeyListener(quickHopListener);
+		keyManager.registerKeyListener(quickHopTopListener);
+		keyManager.registerKeyListener(quickHopNextListener);
 		keyManager.registerKeyListener(removeExpiredSingleListener);
 		keyManager.registerKeyListener(removeExpiredAllListener);
 		keyManager.registerKeyListener(clearTimersListener);
@@ -271,12 +272,36 @@ public class ItemRespawnTimerPlugin extends Plugin
 	@Inject
 	private ClientThread clientThread;
 
-	private final HotkeyListener quickHopListener = new HotkeyListener(() -> config.hotkeyQuickHopTop())
+
+	/**
+	 * The timers visited by quick hopping.
+	 */
+	private final Set<RespawnTimer> timersHoppedTo = new HashSet<>();
+
+
+	private void addHoppedToTimers(int hoppedToWorldId){
+		timersHoppedTo.removeIf(RespawnTimer::isDeleted);
+		activeTimers.getActiveTimers().stream()
+				.filter(timer -> timer.getWorldId()==hoppedToWorldId)
+				.forEach(timersHoppedTo::add);
+	}
+
+
+	private final HotkeyListener quickHopTopListener = new HotkeyListener(() -> config.hotkeyQuickHopTop())
 	{
 		@Override
 		public void hotkeyPressed()
 		{
 			clientThread.invoke(() -> hopTop());
+		}
+	};
+
+	private final HotkeyListener quickHopNextListener = new HotkeyListener(() -> config.hotkeyQuickHopNext())
+	{
+		@Override
+		public void hotkeyPressed()
+		{
+			clientThread.invoke(() -> hopNext());
 		}
 	};
 
@@ -287,13 +312,32 @@ public class ItemRespawnTimerPlugin extends Plugin
 	 */
 	private void hopTop(){
 		int currentWorldId = client.getWorld();
-
 		activeTimers.getActiveTimers().stream()
 				.map(RespawnTimer::getWorldId)
-				.distinct()
 				.filter(worldId -> worldId!=currentWorldId)
 				.findFirst()
-				.ifPresent(this::hop);
+				.ifPresent(worldId->{
+					timersHoppedTo.clear();
+					hop(worldId);
+				});
+	}
+
+
+	/**
+	 * Hop to the world that is at the top of the timers list (skipping timers for the current world).
+	 * @see #hop(net.runelite.api.World)
+	 */
+	private void hopNext(){
+		int currentWorldId = client.getWorld();
+		activeTimers.getActiveTimers().stream()
+				.filter(timer -> timer.getWorldId()!=currentWorldId)
+				.filter(timer -> !timersHoppedTo.contains(timer))
+				.findFirst()
+				.map(RespawnTimer::getWorldId)
+				.ifPresentOrElse(
+						this::hop,
+						this::hopTop
+				);
 	}
 
 
@@ -304,8 +348,8 @@ public class ItemRespawnTimerPlugin extends Plugin
 	private void hop(int worldId){
 		Optional<net.runelite.api.World> worldOptional = Optional.ofNullable(getWorldFromId(worldId));
 
-		world.ifPresent(this::hop);
 		worldOptional.ifPresent(world -> {
+			addHoppedToTimers(worldId);
 			hop(world);
 		});
 	}

@@ -54,7 +54,7 @@ public interface ItemRespawnTimerConfig extends Config
 	)
 	default Keybind hotkeyQuickHopNext()
 	{
-		return new Keybind(KeyEvent.VK_UP, InputEvent.CTRL_DOWN_MASK | InputEvent.SHIFT_DOWN_MASK);
+		return new Keybind(KeyEvent.VK_DOWN, InputEvent.CTRL_DOWN_MASK | InputEvent.SHIFT_DOWN_MASK);
 	}
 
 	@ConfigItem(
@@ -66,7 +66,7 @@ public interface ItemRespawnTimerConfig extends Config
 	)
 	default Keybind hotkeyRemoveExpiredSingle()
 	{
-		return new Keybind(KeyEvent.VK_DOWN, InputEvent.CTRL_DOWN_MASK | InputEvent.SHIFT_DOWN_MASK);
+		return Keybind.NOT_SET;
 	}
 
 	@ConfigItem(
