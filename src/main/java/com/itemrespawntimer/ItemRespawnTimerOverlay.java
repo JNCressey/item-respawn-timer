@@ -47,8 +47,6 @@ public class ItemRespawnTimerOverlay extends Overlay
             return null;
         }
 
-        long now = Instant.now().toEpochMilli();
-
         activeTimers.getActiveTimers().stream()
                 .filter(timer -> timer.getWorldId() == currentWorldId)
                 .filter(timer -> !timer.isExpired())
@@ -65,8 +63,8 @@ public class ItemRespawnTimerOverlay extends Overlay
                         return;
                     }
 
-                    double progress = timer.getProgress(now); // 0.0 -> 1.0
-                    drawCircularTimer(g, poly, progress, timer.getSecondsRemaining(now));
+                    double progress = timer.getProgress(); // 0.0 -> 1.0
+                    drawCircularTimer(g, poly, progress, timer.getSecondsRemaining());
                 });
 
         return null;

@@ -111,9 +111,13 @@ public class RespawnTimer
     }
 
 
-    public double getProgress(long nowMillis)
+    /**
+     * The proportion of progress out of totalSeconds, for drawing the dial.
+     * @return number from 0.0 to 1.0
+     */
+    public double getProgress()
     {//todo, use min and max to clamp between 0 to 1
-        //todo: long nowMillis = Instant.now().toEpochMilli();
+        long nowMillis = Instant.now().toEpochMilli();
         long elapsed = nowMillis - start;
         if (elapsed <= 0)
         {
@@ -127,9 +131,9 @@ public class RespawnTimer
     }
 
 
-    public int getSecondsRemaining(long nowMillis)
+    public int getSecondsRemaining()
     {
-        //todo: long nowMillis = Instant.now().toEpochMilli();
+        long nowMillis = Instant.now().toEpochMilli();
         long diff = respawnAt - nowMillis;
         if (diff <= 0)
         {
