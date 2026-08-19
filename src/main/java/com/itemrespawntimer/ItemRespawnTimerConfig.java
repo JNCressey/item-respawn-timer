@@ -35,7 +35,7 @@ public interface ItemRespawnTimerConfig extends Config
 
 	@ConfigItem(
 			keyName = "hotkeyQuickHopTop",
-			name = "Quick-Hop",
+			name = "Quick-Hop Top",
 			section = hotkeysSection,
 			description = "When you press this hotkey, you'll hop to the world at the top of the list in the side panel.",
 			position = 0
@@ -46,11 +46,23 @@ public interface ItemRespawnTimerConfig extends Config
 	}
 
 	@ConfigItem(
+			keyName = "hotkeyQuickHopNext",
+			name = "Quick-Hop Next",
+			section = hotkeysSection,
+			description = "When you press this hotkey, you'll hop to the next world of the list in the side panel.",
+			position = 1
+	)
+	default Keybind hotkeyQuickHopNext()
+	{
+		return new Keybind(KeyEvent.VK_UP, InputEvent.CTRL_DOWN_MASK | InputEvent.SHIFT_DOWN_MASK);
+	}
+
+	@ConfigItem(
 			keyName = "hotkeyRemoveExpiredSingle",
 			name = "Remove One Expired",
 			section = hotkeysSection,
 			description = "When you press this hotkey, a single expired timer is removed.",
-			position = 1
+			position = 2
 	)
 	default Keybind hotkeyRemoveExpiredSingle()
 	{
@@ -62,7 +74,7 @@ public interface ItemRespawnTimerConfig extends Config
 			name = "Remove All Expired",
 			section = hotkeysSection,
 			description = "When you press this hotkey, all expired timers are removed.",
-			position = 2
+			position = 3
 	)
 	default Keybind hotkeyRemoveExpiredAll()
 	{
@@ -74,7 +86,7 @@ public interface ItemRespawnTimerConfig extends Config
 			name = "Clear All Timers",
 			section = hotkeysSection,
 			description = "When you press this hotkey, all timers are removed.",
-			position = 3
+			position = 4
 	)
 	default Keybind hotkeyClearTimers()
 	{

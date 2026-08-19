@@ -276,7 +276,7 @@ public class ItemRespawnTimerPlugin extends Plugin
 		@Override
 		public void hotkeyPressed()
 		{
-			clientThread.invoke(() -> hop());
+			clientThread.invoke(() -> hopTop());
 		}
 	};
 
@@ -285,11 +285,12 @@ public class ItemRespawnTimerPlugin extends Plugin
 	 * Hop to the world that is at the top of the timers list (skipping timers for the current world).
 	 * @see #hop(net.runelite.api.World)
 	 */
-	private void hop(){
+	private void hopTop(){
 		int currentWorldId = client.getWorld();
 
 		activeTimers.getActiveTimers().stream()
 				.map(RespawnTimer::getWorldId)
+				.distinct()
 				.filter(worldId -> worldId!=currentWorldId)
 				.findFirst()
 				.ifPresent(this::hop);
@@ -297,14 +298,16 @@ public class ItemRespawnTimerPlugin extends Plugin
 
 
 	/**
-	 * Overload of {@link #hop(net.runelite.api.World)},
-	 * but provide numeric world id.
+	 * Get world from worldId and if present add timers to {@link #timersHoppedTo} and hop as {@link #hop(net.runelite.api.World)}
 	 * @param worldId the world to hop to
 	 */
 	private void hop(int worldId){
-		Optional<net.runelite.api.World> world = Optional.ofNullable(getWorldFromId(worldId));
+		Optional<net.runelite.api.World> worldOptional = Optional.ofNullable(getWorldFromId(worldId));
 
 		world.ifPresent(this::hop);
+		worldOptional.ifPresent(world -> {
+			hop(world);
+		});
 	}
 
 
