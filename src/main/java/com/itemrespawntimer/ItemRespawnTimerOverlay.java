@@ -51,7 +51,7 @@ public class ItemRespawnTimerOverlay extends Overlay
 
         activeTimers.getActiveTimers().stream()
                 .filter(timer -> timer.getWorldId() == currentWorldId)
-                .filter(timer -> timer.getRespawnAt() >= now)
+                .filter(timer -> !timer.isExpired())
                 .forEach(timer -> {
                     LocalPoint lp = LocalPoint.fromWorld(client, timer.getWorldPoint());
                     if (lp == null)

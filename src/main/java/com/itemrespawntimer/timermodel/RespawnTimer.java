@@ -6,6 +6,7 @@ import net.runelite.api.coords.WorldPoint;
 
 import java.beans.PropertyChangeListener;
 import java.beans.PropertyChangeSupport;
+import java.time.Instant;
 
 public class RespawnTimer
 {
@@ -97,10 +98,10 @@ public class RespawnTimer
     //#region getters
     /**
      * Check if current time exceeds {@link #}respawnAt}.
-     * @param nowMillis the current time
      * @return Whether time T-0 has passed.
      */
-    public boolean isExpired(long nowMillis){//todo use this check for the removing expired methods
+    public boolean isExpired(){
+        long nowMillis = Instant.now().toEpochMilli();
         return nowMillis > respawnAt;
     }
 

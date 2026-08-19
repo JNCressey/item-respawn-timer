@@ -69,15 +69,13 @@ public class ActiveTimers {
     public void removeTick(){
         /*
         todo
-        - change the scheduled automatic timer removal to run from the tick event instead of schedule
           - removal method should take the current time, the current world, and the current location, and current config options for automatic removal then pass to each timer.
             - timer should know from the config and the passed variables whether it meets a condition for removal
          */
-        long nowMillis = Instant.now().toEpochMilli();
         Set<RemoveExpiredTimerEvent> removeTimersEvents = config.removeTimersEvents();
         if(removeTimersEvents.contains(RemoveExpiredTimerEvent.T_MINUS_ZERO)) {
             activeTimers.stream()
-                    .filter(timer -> timer.getRespawnAt()<nowMillis)
+                    .filter(RespawnTimer::isExpired)
                     .forEach(RespawnTimer::delete);
         }
         clearDeletedTimers();
@@ -85,18 +83,16 @@ public class ActiveTimers {
 
 
     public void removeExpiredSingle(){
-        long nowMillis = Instant.now().toEpochMilli();
         activeTimers.stream()
                 .findFirst()
-                .filter(timer -> timer.getRespawnAt()<nowMillis)//todo: make this check a method of RespawnTimer
+                .filter(RespawnTimer::isExpired)
                 .ifPresent(RespawnTimer::delete);
     }
 
 
     public void removeExpiredAll(){
-        long nowMillis = Instant.now().toEpochMilli();
         activeTimers.stream()
-                .filter(timer -> timer.getRespawnAt()<nowMillis)//todo: make this check a method of RespawnTimer
+                .filter(RespawnTimer::isExpired)
                 .forEach(RespawnTimer::delete);
     }
 }
