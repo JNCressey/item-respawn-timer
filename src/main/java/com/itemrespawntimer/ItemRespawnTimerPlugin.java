@@ -15,6 +15,7 @@ import com.itemrespawntimer.worldhopper.WorldHopper;
 import lombok.extern.slf4j.Slf4j;
 import net.runelite.api.*;
 import net.runelite.api.coords.WorldPoint;
+import net.runelite.api.events.GameStateChanged;
 import net.runelite.api.events.GameTick;
 import net.runelite.client.config.ConfigManager;
 import net.runelite.client.eventbus.Subscribe;
@@ -131,7 +132,6 @@ public class ItemRespawnTimerPlugin extends Plugin
 		return configManager.getConfig(ItemRespawnTimerConfig.class);
 	}
 	//endregion
-	//endregion
 
 
 	//#region reloading spawn data
@@ -236,6 +236,17 @@ public class ItemRespawnTimerPlugin extends Plugin
 		activeTimers.removeTick();
 		panel.setCurrentWorldId(client.getWorld());
 		panel.updateSidePanel();
+	}
+
+	@Subscribe
+	public void onGameStateChanged(GameStateChanged event)
+	{
+		if (event.getGameState() == GameState.LOGGED_IN)
+		{
+			log.debug("joined world: {}", client.getWorld());
+			// This runs when the player has joined a world
+			worldHopper.joinedWorld();
+		}
 	}
 
 

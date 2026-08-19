@@ -63,6 +63,12 @@ public class WorldHopper {
     }
 
 
+    public void joinedWorld(){
+        int currentWorldId = client.getWorld();
+        addTimersToSkip(currentWorldId);
+    }
+
+
     private final HotkeyListener quickHopTopListener = new HotkeyListener(() -> config.hotkeyQuickHopTop())
     {
         @Override
@@ -133,12 +139,9 @@ public class WorldHopper {
      * @param worldId the world to hop to
      */
     private void hop(int worldId){
-        Optional<World> worldOptional = Optional.ofNullable(getWorldFromId(worldId));
+        Optional<World> world = Optional.ofNullable(getWorldFromId(worldId));
 
-        worldOptional.ifPresent(world -> {
-            addTimersToSkip(worldId);
-            hop(world);
-        });
+        world.ifPresent(this::hop);
     }
 
 
