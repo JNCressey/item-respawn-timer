@@ -26,11 +26,15 @@ public class RespawnTimer
 
 
     @Getter
-    private final long respawnAt; // the time when the item will respawn, as a millisecond timestamp
+    private final long start; // when the timer started, as a millisecond timestamp
 
 
     @Getter
-    private final long twiceRespawnTime; // the time after twice the respawn delay
+    private final long respawnAt; // when the item will respawn, as a millisecond timestamp
+
+
+    @Getter
+    private final long twiceRespawnTime; // the time after twice the respawn delay, as a millisecond timestamp
 
 
     @Getter
@@ -79,19 +83,20 @@ public class RespawnTimer
             int worldId,
             WorldPoint worldPoint,
             int worldPopulation,
-            long nowMillis
+            long startMillis
     )
     {
         this.spawn = spawn;
         this.worldId = worldId;
         this.worldPoint = worldPoint;
+        this.start = startMillis;
 
         int respawnDelayTicks = (int)Math.floor(this.spawn.getBaseRespawnTicks() * ((4000D-worldPopulation)/4000));
         int respawnDelaySeconds = (int)(respawnDelayTicks*0.6);
 
-        this.totalSeconds = respawnDelaySeconds;
-        this.respawnAt =        nowMillis + (    respawnDelaySeconds * 1000L);
-        this.twiceRespawnTime = nowMillis + (2 * respawnDelaySeconds * 1000L);
+        this.totalSeconds = Math.max(respawnDelaySeconds, 1); // fallback if somehow respawnDelaySeconds is 0, to avoid any divide by zeros
+        this.respawnAt =        startMillis + (    respawnDelaySeconds * 1000L);
+        this.twiceRespawnTime = startMillis + (2 * respawnDelaySeconds * 1000L);
     }
 
 
@@ -108,8 +113,6 @@ public class RespawnTimer
 
     public double getProgress(long nowMillis)
     {
-        int totalSeconds = this.totalSeconds > 0 ? this.totalSeconds : 60; // default for handling when no total provided
-        long start = respawnAt - totalSeconds * 1000L;
         long elapsed = nowMillis - start;
         if (elapsed <= 0)
         {
