@@ -106,12 +106,6 @@ public class WorldHopper {
      * @see #hop(net.runelite.api.World)
      */
     private void hopNext(){
-        /*int currentWorldId = client.getWorld();
-        activeTimers.getActiveTimers().stream()
-                .filter(timer -> timer.getWorldId()!=currentWorldId)
-                .filter(timer -> !timersToSkip.contains(timer))
-                .findFirst()
-                .map(RespawnTimer::getWorldId)*/
         findNextWorld()
                 .ifPresentOrElse(
                         this::hop,
