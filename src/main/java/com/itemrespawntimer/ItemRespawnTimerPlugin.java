@@ -11,6 +11,7 @@ import com.itemrespawntimer.staticspawndata.StaticSpawn;
 import com.itemrespawntimer.staticspawndata.StaticSpawnService;
 import com.itemrespawntimer.timermodel.ActiveTimers;
 import com.itemrespawntimer.timermodel.RespawnTimer;
+import com.itemrespawntimer.worldhopper.WorldHopper;
 import lombok.extern.slf4j.Slf4j;
 import net.runelite.api.*;
 import net.runelite.api.coords.WorldPoint;
@@ -34,7 +35,6 @@ import net.runelite.client.util.HotkeyListener;
 import net.runelite.http.api.worlds.WorldResult;
 import net.runelite.client.callback.ClientThread;
 import net.runelite.client.input.KeyManager;
-import net.runelite.client.util.WorldUtil;
 import net.runelite.client.util.ImageUtil;
 
 
@@ -74,6 +74,9 @@ public class ItemRespawnTimerPlugin extends Plugin
 	@Inject
 	private ActiveTimers activeTimers;
 
+	@Inject
+	private WorldHopper worldHopper;
+
 	// WorldPoint -> list of static spawns at that tile
 	private Map<WorldPoint, List<StaticSpawn>> staticSpawnsByTile = new HashMap<>();
 	//endregion
@@ -90,12 +93,11 @@ public class ItemRespawnTimerPlugin extends Plugin
 
 		startupSidePanel();
 
-		keyManager.registerKeyListener(quickHopTopListener);
-		keyManager.registerKeyListener(quickHopNextListener);
 		keyManager.registerKeyListener(removeExpiredSingleListener);
 		keyManager.registerKeyListener(removeExpiredAllListener);
 		keyManager.registerKeyListener(clearTimersListener);
 
+		worldHopper.registerKeyListeners();
 	}
 
 	private void startupSidePanel(){
@@ -237,6 +239,10 @@ public class ItemRespawnTimerPlugin extends Plugin
 	}
 
 
+	@Inject
+	private KeyManager keyManager;
+	@Inject
+	private ClientThread clientThread;
 
 	private final HotkeyListener removeExpiredSingleListener = new HotkeyListener(() -> config.hotkeyRemoveExpiredSingle())
 	{
@@ -264,133 +270,5 @@ public class ItemRespawnTimerPlugin extends Plugin
 			clientThread.invoke(() -> activeTimers.clear());
 		}
 	};
-
-	//#region hopping
-	//todo: cleanup hopping code. delegate code to appropriate classes.
-	@Inject
-	private KeyManager keyManager;
-	@Inject
-	private ClientThread clientThread;
-
-
-	/**
-	 * The timers visited by quick hopping.
-	 */
-	private final Set<RespawnTimer> timersHoppedTo = new HashSet<>();
-
-
-	private void addHoppedToTimers(int hoppedToWorldId){
-		timersHoppedTo.removeIf(RespawnTimer::isDeleted);
-		activeTimers.getActiveTimers().stream()
-				.filter(timer -> timer.getWorldId()==hoppedToWorldId)
-				.forEach(timersHoppedTo::add);
-	}
-
-
-	private final HotkeyListener quickHopTopListener = new HotkeyListener(() -> config.hotkeyQuickHopTop())
-	{
-		@Override
-		public void hotkeyPressed()
-		{
-			clientThread.invoke(() -> hopTop());
-		}
-	};
-
-	private final HotkeyListener quickHopNextListener = new HotkeyListener(() -> config.hotkeyQuickHopNext())
-	{
-		@Override
-		public void hotkeyPressed()
-		{
-			clientThread.invoke(() -> hopNext());
-		}
-	};
-
-
-	/**
-	 * Hop to the world that is at the top of the timers list (skipping timers for the current world).
-	 * @see #hop(net.runelite.api.World)
-	 */
-	private void hopTop(){
-		int currentWorldId = client.getWorld();
-		activeTimers.getActiveTimers().stream()
-				.map(RespawnTimer::getWorldId)
-				.filter(worldId -> worldId!=currentWorldId)
-				.findFirst()
-				.ifPresent(worldId->{
-					timersHoppedTo.clear();
-					hop(worldId);
-				});
-	}
-
-
-	/**
-	 * Hop to the world that is at the top of the timers list (skipping timers for the current world).
-	 * @see #hop(net.runelite.api.World)
-	 */
-	private void hopNext(){
-		int currentWorldId = client.getWorld();
-		activeTimers.getActiveTimers().stream()
-				.filter(timer -> timer.getWorldId()!=currentWorldId)
-				.filter(timer -> !timersHoppedTo.contains(timer))
-				.findFirst()
-				.map(RespawnTimer::getWorldId)
-				.ifPresentOrElse(
-						this::hop,
-						this::hopTop
-				);
-	}
-
-
-	/**
-	 * Get world from worldId and if present add timers to {@link #timersHoppedTo} and hop as {@link #hop(net.runelite.api.World)}
-	 * @param worldId the world to hop to
-	 */
-	private void hop(int worldId){
-		Optional<net.runelite.api.World> worldOptional = Optional.ofNullable(getWorldFromId(worldId));
-
-		worldOptional.ifPresent(world -> {
-			addHoppedToTimers(worldId);
-			hop(world);
-		});
-	}
-
-
-	/**
-	 * hop to world or change world if at login screen
-	 * @param world the world to hop to
-	 */
-	private void hop(@Nonnull net.runelite.api.World world){
-		assert client.isClientThread();
-		if (client.getGameState() == GameState.LOGIN_SCREEN) {
-			client.changeWorld(world);
-		} else {
-			client.hopToWorld(world);
-		}
-	}
-
-
-	/**
-	 *
-	 * @param worldId The world to get.
-	 * @return The world, or null if no such world.
-	 */
-	@Nullable
-	private net.runelite.api.World getWorldFromId(int worldId){
-		return Optional.ofNullable(worldService.getWorlds())
-				.map(r -> r.findWorld(worldId))
-				.map(world -> { // convert to the other world type
-					final net.runelite.api.World rsWorld = client.createWorld();
-					rsWorld.setActivity(world.getActivity());
-					rsWorld.setAddress(world.getAddress());
-					rsWorld.setId(world.getId());
-					rsWorld.setPlayerCount(world.getPlayers());
-					rsWorld.setLocation(world.getLocation());
-					rsWorld.setTypes(WorldUtil.toWorldTypes(world.getTypes()));
-					return rsWorld;
-				})
-				.orElse(null);
-	}
-
-	//#endregion
 
 }
