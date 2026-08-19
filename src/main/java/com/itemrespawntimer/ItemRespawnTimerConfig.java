@@ -66,7 +66,7 @@ public interface ItemRespawnTimerConfig extends Config
 	)
 	default Keybind hotkeyRemoveExpiredAll()
 	{
-		return new Keybind(KeyEvent.VK_A, InputEvent.CTRL_DOWN_MASK | InputEvent.SHIFT_DOWN_MASK);
+		return Keybind.NOT_SET;
 	}
 	//endregion hotkeysSection
 
