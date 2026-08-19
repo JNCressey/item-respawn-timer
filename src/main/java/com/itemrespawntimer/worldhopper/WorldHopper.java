@@ -43,12 +43,35 @@ public class WorldHopper {
     //endregion
 
 
+    //region hotkeys
     public void registerKeyListeners() {
         keyManager.registerKeyListener(quickHopTopListener);
         keyManager.registerKeyListener(quickHopNextListener);
     }
 
 
+    private final HotkeyListener quickHopTopListener = new HotkeyListener(() -> config.hotkeyQuickHopTop())
+    {
+        @Override
+        public void hotkeyPressed()
+        {
+            clientThread.invoke(() -> hopTop());
+        }
+    };
+
+
+    private final HotkeyListener quickHopNextListener = new HotkeyListener(() -> config.hotkeyQuickHopNext())
+    {
+        @Override
+        public void hotkeyPressed()
+        {
+            clientThread.invoke(() -> hopNext());
+        }
+    };
+    //endregion
+
+
+    //region timersToSkip
     /**
      * The timers visited by quick hopping.
      */
@@ -67,30 +90,12 @@ public class WorldHopper {
         int currentWorldId = client.getWorld();
         addTimersToSkip(currentWorldId);
     }
-
-
-    private final HotkeyListener quickHopTopListener = new HotkeyListener(() -> config.hotkeyQuickHopTop())
-    {
-        @Override
-        public void hotkeyPressed()
-        {
-            clientThread.invoke(() -> hopTop());
-        }
-    };
-
-    private final HotkeyListener quickHopNextListener = new HotkeyListener(() -> config.hotkeyQuickHopNext())
-    {
-        @Override
-        public void hotkeyPressed()
-        {
-            clientThread.invoke(() -> hopNext());
-        }
-    };
+    //endregion
 
 
     /**
      * Hop to the world that is at the top of the timers list (skipping timers for the current world).
-     * @see #hop(net.runelite.api.World)
+     * @see #hop(int)
      */
     private void hopTop(){
         timersToSkip.clear();
@@ -109,7 +114,7 @@ public class WorldHopper {
 
     /**
      * Hop to the world that is next in the timers list (skipping visited timers and current world).
-     * @see #hop(net.runelite.api.World)
+     * @see #hop(int)
      */
     private void hopNext(){
         findNextWorld()
@@ -134,6 +139,7 @@ public class WorldHopper {
     }
 
 
+    //region hop(int worldId)
     /**
      * Get world from worldId and if present add timers to {@link #timersToSkip} and hop as {@link #hop(net.runelite.api.World)}
      * @param worldId the world to hop to
@@ -180,5 +186,6 @@ public class WorldHopper {
                 })
                 .orElse(null);
     }
+    //endregion
 
 }
