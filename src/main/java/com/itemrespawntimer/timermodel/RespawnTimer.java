@@ -12,33 +12,54 @@ public class RespawnTimer
 {
 
     //region final values
+    /**
+     * item and location information
+     */
     @Getter
-    private final StaticSpawn spawn; // item and location information
+    private final StaticSpawn spawn;
 
 
+    /**
+     * the world that the item will respawn in
+     */
     @Getter
-    private final int worldId; // the world that the item will respawn in
+    private final int worldId;
 
 
     //todo put world point inside staticspawn and use a getter here getWorldPoint(){return spawn.getWorldPoint()}
+    /**
+     * the location in the world where the spawn is
+     */
     @Getter
-    private final WorldPoint worldPoint; // the location in the world where the spawn is
+    private final WorldPoint worldPoint;
 
 
+    /**
+     * when the timer started, as a millisecond timestamp
+     */
     @Getter
-    private final long start; // when the timer started, as a millisecond timestamp
+    private final long start;
 
 
+    /**
+     * when the item will respawn, as a millisecond timestamp
+     */
     @Getter
-    private final long respawnAt; // when the item will respawn, as a millisecond timestamp
+    private final long respawnAt;
 
 
+    /**
+     * the time after twice the respawn delay, as a millisecond timestamp
+     */
     @Getter
-    private final long twiceRespawnTime; // the time after twice the respawn delay, as a millisecond timestamp
+    private final long twiceRespawnTime;
 
 
+    /**
+     * the total time that the timer is counting out of
+     */
     @Getter
-    private final int totalSeconds; // the total time that the timer is counting out of
+    private final int totalSeconds;
     //endregion
 
 
@@ -132,7 +153,10 @@ public class RespawnTimer
     }
     //endregion getProgress
 
-
+    /**
+     *
+     * @return The time remaining in seconds.
+     */
     public int getSecondsRemaining()
     {
         long nowMillis = Instant.now().toEpochMilli();
