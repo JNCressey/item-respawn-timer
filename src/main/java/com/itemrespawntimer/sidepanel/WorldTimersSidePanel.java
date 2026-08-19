@@ -50,12 +50,11 @@ public class WorldTimersSidePanel extends PluginPanel {
     {
         long nowMillis = Instant.now().toEpochMilli();
 
-        String txt = activeTimers.getOrderedStream()
-                .map(entry-> {
-                    RespawnTimer t = entry.getValue();
-                    String itemName = getItemName(t.getSpawn().getItemId());
-                    String countdown = t.getTMinusCountdown(nowMillis);
-                    int worldId = t.getWorldId();
+        String txt = activeTimers.getActiveTimers().stream()
+                .map(timer -> {
+                    String itemName = getItemName(timer.getSpawn().getItemId());
+                    String countdown = timer.getTMinusCountdown(nowMillis);
+                    int worldId = timer.getWorldId();
                     String currentWorldIndicator = (worldId == currentWorldId)? "*" : "";
                     /*
                         item-name [hide button]

@@ -11,7 +11,6 @@ import com.itemrespawntimer.staticspawndata.StaticSpawn;
 import com.itemrespawntimer.staticspawndata.StaticSpawnService;
 import com.itemrespawntimer.timermodel.ActiveTimers;
 import com.itemrespawntimer.timermodel.RespawnTimer;
-import com.itemrespawntimer.timermodel.WorldIdAndWorldPoint;
 import lombok.extern.slf4j.Slf4j;
 import net.runelite.api.*;
 import net.runelite.api.coords.WorldPoint;
@@ -23,9 +22,6 @@ import net.runelite.client.game.WorldService;
 import net.runelite.client.plugins.Plugin;
 import net.runelite.client.plugins.PluginDescriptor;
 
-import net.runelite.client.task.Schedule;
-
-import java.time.temporal.ChronoUnit;
 import java.util.*;
 import java.time.Instant;
 import java.awt.image.BufferedImage;
@@ -205,11 +201,10 @@ public class ItemRespawnTimerPlugin extends Plugin
 	private void handleStaticItemPickup(WorldPoint wp, StaticSpawn spawn, long nowMillis)
 	{
 		int worldId = client.getWorld();
-		WorldIdAndWorldPoint location = new WorldIdAndWorldPoint(worldId, wp);
 		int worldPopulation = getCurrentWorldPopulation();
 
 		RespawnTimer timer = new RespawnTimer(spawn,worldId,wp,worldPopulation,nowMillis);
-		activeTimers.put(location, timer);
+		activeTimers.add(timer);
 	}
 	//#endregion
 
@@ -232,6 +227,7 @@ public class ItemRespawnTimerPlugin extends Plugin
 
 	@Subscribe
 	public void onGameTick(GameTick event) {
+		activeTimers.removeExpiredIfMetConfigConditions();
 		panel.setCurrentWorldId(client.getWorld());
 		panel.updateSidePanel();
 	}
@@ -261,8 +257,8 @@ public class ItemRespawnTimerPlugin extends Plugin
 	private void hop(){
 		int currentWorldId = client.getWorld();
 
-		activeTimers.getOrderedStream()
-				.map(entry -> entry.getValue().getWorldId())
+		activeTimers.getActiveTimers().stream()
+				.map(RespawnTimer::getWorldId)
 				.filter(worldId -> worldId!=currentWorldId)
 				.findFirst()
 				.ifPresent(this::hop);

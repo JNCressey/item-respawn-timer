@@ -19,10 +19,10 @@ public class RespawnTimer
     private final StaticSpawn spawn; // item and location information
 
     @Getter
-    int worldId;
+    private final int worldId;
 
     @Getter
-    WorldPoint worldPoint;
+    private final WorldPoint worldPoint;
 
     //#region state summary values
     @Getter
@@ -180,7 +180,6 @@ public class RespawnTimer
         pcs.firePropertyChange("isExpired",oldValue,newValue);
     }
     //#endregion
-
 
 
     //#region getters
