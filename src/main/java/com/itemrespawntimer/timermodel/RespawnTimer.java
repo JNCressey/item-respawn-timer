@@ -24,6 +24,19 @@ public class RespawnTimer
     @Getter
     private final WorldPoint worldPoint;
 
+    /**
+     * Whether the timer is to be discarded
+     */
+    @Getter
+    private boolean deleted;
+
+    /**
+     * The timer is to be discarded.
+     */
+    public void delete(){
+        deleted = true;
+    }
+
     //#region state summary values
     @Getter
     private long respawnAt; // the time when the item will respawn, as a millisecond timestamp
@@ -242,4 +255,5 @@ public class RespawnTimer
         return (this.respawnAt > nowMillis);
     }
     //#endregion
+
 }

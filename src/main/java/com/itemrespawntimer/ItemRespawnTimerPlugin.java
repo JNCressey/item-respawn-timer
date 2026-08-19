@@ -230,7 +230,7 @@ public class ItemRespawnTimerPlugin extends Plugin
 
 	@Subscribe
 	public void onGameTick(GameTick event) {
-		activeTimers.removeExpiredIfMetConfigConditions();
+		activeTimers.removeTick();
 		panel.setCurrentWorldId(client.getWorld());
 		panel.updateSidePanel();
 	}

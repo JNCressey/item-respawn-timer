@@ -61,8 +61,12 @@ public class ActiveTimers {
         activeTimers.clear();
     }
 
+    private void clearDeletedTimers(){
+        activeTimers.removeIf(RespawnTimer::isDeleted);
+    }
 
-    public void removeExpiredIfMetConfigConditions(){
+
+    public void removeTick(){
         /*
         todo
         - change the scheduled automatic timer removal to run from the tick event instead of schedule
@@ -72,22 +76,27 @@ public class ActiveTimers {
         long nowMillis = Instant.now().toEpochMilli();
         Set<RemoveExpiredTimerEvent> removeTimersEvents = config.removeTimersEvents();
         if(removeTimersEvents.contains(RemoveExpiredTimerEvent.T_MINUS_ZERO)) {
-            activeTimers.removeIf(timer -> timer.getRespawnAt()<nowMillis);
+            activeTimers.stream()
+                    .filter(timer -> timer.getRespawnAt()<nowMillis)
+                    .forEach(RespawnTimer::delete);
         }
+        clearDeletedTimers();
     }
 
 
     public void removeExpiredSingle(){
         long nowMillis = Instant.now().toEpochMilli();
-        if(activeTimers.getFirst().getRespawnAt()<nowMillis) {//todo: make this check a method of RespawnTimer
-            activeTimers.removeFirst();
-        }
+        activeTimers.stream()
+                .findFirst()
+                .filter(timer -> timer.getRespawnAt()<nowMillis)//todo: make this check a method of RespawnTimer
+                .ifPresent(RespawnTimer::delete);
     }
 
 
     public void removeExpiredAll(){
         long nowMillis = Instant.now().toEpochMilli();
-        activeTimers.removeIf(timer -> timer.getRespawnAt()<nowMillis); //todo: make this check a method of RespawnTimer
-
+        activeTimers.stream()
+                .filter(timer -> timer.getRespawnAt()<nowMillis)//todo: make this check a method of RespawnTimer
+                .forEach(RespawnTimer::delete);
     }
 }
