@@ -2,8 +2,6 @@ package com.itemrespawntimer;
 
 import com.google.inject.Provides;
 
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
 import javax.inject.Inject;
 
 import com.itemrespawntimer.sidepanel.WorldTimersSidePanel;
@@ -260,7 +258,7 @@ public class ItemRespawnTimerPlugin extends Plugin
 		@Override
 		public void hotkeyPressed()
 		{
-			clientThread.invoke(() -> activeTimers.removeExpiredSingle());
+			clientThread.invoke(() -> activeTimers.deleteExpiredSingle());
 		}
 	};
 
@@ -269,7 +267,7 @@ public class ItemRespawnTimerPlugin extends Plugin
 		@Override
 		public void hotkeyPressed()
 		{
-			clientThread.invoke(() -> activeTimers.removeExpiredAll());
+			clientThread.invoke(() -> activeTimers.deleteExpiredAll());
 		}
 	};
 
