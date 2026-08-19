@@ -68,6 +68,18 @@ public interface ItemRespawnTimerConfig extends Config
 	{
 		return Keybind.NOT_SET;
 	}
+
+	@ConfigItem(
+			keyName = "hotkeyClearTimers",
+			name = "Clear All Timers",
+			section = hotkeysSection,
+			description = "When you press this hotkey, all timers are removed.",
+			position = 3
+	)
+	default Keybind hotkeyClearTimers()
+	{
+		return Keybind.NOT_SET;
+	}
 	//endregion hotkeysSection
 
 

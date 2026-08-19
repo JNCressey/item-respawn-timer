@@ -93,6 +93,7 @@ public class ItemRespawnTimerPlugin extends Plugin
 		keyManager.registerKeyListener(quickHopListener);
 		keyManager.registerKeyListener(removeExpiredSingleListener);
 		keyManager.registerKeyListener(removeExpiredAllListener);
+		keyManager.registerKeyListener(clearTimersListener);
 
 	}
 
@@ -251,6 +252,15 @@ public class ItemRespawnTimerPlugin extends Plugin
 		public void hotkeyPressed()
 		{
 			clientThread.invoke(() -> activeTimers.removeExpiredAll());
+		}
+	};
+
+	private final HotkeyListener clearTimersListener = new HotkeyListener(() -> config.hotkeyClearTimers())
+	{
+		@Override
+		public void hotkeyPressed()
+		{
+			clientThread.invoke(() -> activeTimers.clear());
 		}
 	};
 
