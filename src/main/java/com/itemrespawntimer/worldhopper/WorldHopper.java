@@ -52,14 +52,14 @@ public class WorldHopper {
     /**
      * The timers visited by quick hopping.
      */
-    private final Set<RespawnTimer> timersHoppedTo = new HashSet<>();
+    private final Set<RespawnTimer> timersToSkip = new HashSet<>();
 
 
-    private void addHoppedToTimers(int hoppedToWorldId){
-        timersHoppedTo.removeIf(RespawnTimer::isDeleted);
+    private void addTimersToSkip(int hoppedToWorldId){
+        timersToSkip.removeIf(RespawnTimer::isDeleted);
         activeTimers.getActiveTimers().stream()
                 .filter(timer -> timer.getWorldId()==hoppedToWorldId)
-                .forEach(timersHoppedTo::add);
+                .forEach(timersToSkip::add);
     }
 
 
@@ -87,29 +87,32 @@ public class WorldHopper {
      * @see #hop(net.runelite.api.World)
      */
     private void hopTop(){
+        timersToSkip.clear();
+        if (activeTimers.getActiveTimers().isEmpty()) { return; }
+
         int currentWorldId = client.getWorld();
-        activeTimers.getActiveTimers().stream()
-                .map(RespawnTimer::getWorldId)
-                .filter(worldId -> worldId!=currentWorldId)
-                .findFirst()
-                .ifPresent(worldId->{
-                    timersHoppedTo.clear();
-                    hop(worldId);
-                });
+        int firstTimerWorldId = activeTimers.getActiveTimers().getFirst().getWorldId();
+        if (firstTimerWorldId!=currentWorldId){
+            hop(firstTimerWorldId);
+        } else {
+            addTimersToSkip(firstTimerWorldId);
+            findNextWorld().ifPresent(this::hop);
+        }
     }
 
 
     /**
-     * Hop to the world that is at the top of the timers list (skipping timers for the current world).
+     * Hop to the world that is next in the timers list (skipping visited timers and current world).
      * @see #hop(net.runelite.api.World)
      */
     private void hopNext(){
-        int currentWorldId = client.getWorld();
+        /*int currentWorldId = client.getWorld();
         activeTimers.getActiveTimers().stream()
                 .filter(timer -> timer.getWorldId()!=currentWorldId)
-                .filter(timer -> !timersHoppedTo.contains(timer))
+                .filter(timer -> !timersToSkip.contains(timer))
                 .findFirst()
-                .map(RespawnTimer::getWorldId)
+                .map(RespawnTimer::getWorldId)*/
+        findNextWorld()
                 .ifPresentOrElse(
                         this::hop,
                         this::hopTop
@@ -118,14 +121,28 @@ public class WorldHopper {
 
 
     /**
-     * Get world from worldId and if present add timers to {@link #timersHoppedTo} and hop as {@link #hop(net.runelite.api.World)}
+     * Find the next world that isn't the current world or in {@link #timersToSkip}.
+     * @return the worldId if such exists
+     */
+    private Optional<Integer> findNextWorld(){
+        int currentWorldId = client.getWorld();
+        return activeTimers.getActiveTimers().stream()
+                .filter(timer -> timer.getWorldId()!=currentWorldId)
+                .filter(timer -> !timersToSkip.contains(timer))
+                .findFirst()
+                .map(RespawnTimer::getWorldId);
+    }
+
+
+    /**
+     * Get world from worldId and if present add timers to {@link #timersToSkip} and hop as {@link #hop(net.runelite.api.World)}
      * @param worldId the world to hop to
      */
     private void hop(int worldId){
         Optional<World> worldOptional = Optional.ofNullable(getWorldFromId(worldId));
 
         worldOptional.ifPresent(world -> {
-            addHoppedToTimers(worldId);
+            addTimersToSkip(worldId);
             hop(world);
         });
     }
