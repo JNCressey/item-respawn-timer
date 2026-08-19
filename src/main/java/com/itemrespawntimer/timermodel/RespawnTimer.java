@@ -61,7 +61,7 @@ public class RespawnTimer
     //endregion
 
 
-    //#region property change listener support
+    //region property change listener support
     private final PropertyChangeSupport pcs = new PropertyChangeSupport(this);
 
 
@@ -75,7 +75,7 @@ public class RespawnTimer
     public void removePropertyChangeListener(PropertyChangeListener listener) {
         pcs.removePropertyChangeListener(listener);
     }
-    //#endregion
+    //endregion
 
 
     public RespawnTimer(
@@ -100,7 +100,7 @@ public class RespawnTimer
     }
 
 
-    //#region getters
+    //region getters
     /**
      * Check if current time exceeds {@link #}respawnAt}.
      * @return Whether time T-0 has passed.
@@ -166,6 +166,6 @@ public class RespawnTimer
             return String.format("T%c%d", sign, secondsPart);
         }
     }
-    //#endregion
+    //endregion
 
 }

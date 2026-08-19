@@ -134,7 +134,7 @@ public class ItemRespawnTimerPlugin extends Plugin
 	//endregion
 
 
-	//#region reloading spawn data
+	//region reloading spawn data
 	@Subscribe
 	public void onConfigChanged(ConfigChanged event)
 	{
@@ -154,11 +154,11 @@ public class ItemRespawnTimerPlugin extends Plugin
 	}
 
 
-	//#endregion
+	//endregion
 
 
 
-	//#region react to items in game
+	//region react to items in game
 	@Subscribe
 	public void onItemDespawned(ItemDespawned event)
 	{
@@ -212,7 +212,7 @@ public class ItemRespawnTimerPlugin extends Plugin
 		RespawnTimer timer = new RespawnTimer(spawn,worldId,wp,worldPopulation,nowMillis);
 		activeTimers.add(timer);
 	}
-	//#endregion
+	//endregion
 
 	private int getCurrentWorldPopulation(){
 		int currentWorldId = client.getWorld();
