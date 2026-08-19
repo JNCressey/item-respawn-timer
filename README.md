@@ -9,7 +9,6 @@ Predictions can be slightly off. Because the respawn time depends on how many pl
   - clear overrides can fireach location remove all past first index: list.subList(1, list.size()).clear()
   - file load should write over index 0 if there's a collision, and should give warning
 - change plan to not predict unobserved pickups
-  - remove the observation methods
   - remove the auto discovery mode
   - add a debug mode that logs in chat predictions for what baserespawntime is for items spawns it observes
 - unconditional timer removal based on event of the item being there
