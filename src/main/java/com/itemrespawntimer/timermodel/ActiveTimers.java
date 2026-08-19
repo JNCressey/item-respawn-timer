@@ -1,7 +1,9 @@
 package com.itemrespawntimer.timermodel;
 
+import com.itemrespawntimer.ItemRespawnTimerConfig;
 import lombok.Getter;
 
+import javax.inject.Inject;
 import javax.inject.Singleton;
 import java.time.Instant;
 import java.util.*;
@@ -16,6 +18,9 @@ public class ActiveTimers {
      */
     @Getter
     public final LinkedList<RespawnTimer> activeTimers = new LinkedList<>();
+
+    @Inject
+    private ItemRespawnTimerConfig config;
 
 
     private final Comparator<RespawnTimer> ordering =  Comparator
@@ -58,9 +63,17 @@ public class ActiveTimers {
 
 
     public void removeExpiredIfMetConfigConditions(){
-        //todo
+        /*
+        todo
+        - change the scheduled automatic timer removal to run from the tick event instead of schedule
+          - removal method should take the current time, the current world, and the current location, and current config options for automatic removal then pass to each timer.
+            - timer should know from the config and the passed variables whether it meets a condition for removal
+         */
         long nowMillis = Instant.now().toEpochMilli();
-        activeTimers.removeIf(timer -> timer.getRespawnAt()<(nowMillis-5000));
+        Set<RemoveExpiredTimerEvent> removeTimersEvents = config.removeTimersEvents();
+        if(removeTimersEvents.contains(RemoveExpiredTimerEvent.T_MINUS_ZERO)) {
+            activeTimers.removeIf(timer -> timer.getRespawnAt()<nowMillis);
+        }
     }
 
 

@@ -8,9 +8,6 @@ Predictions can be slightly off. Because the respawn time depends on how many pl
   - remove the observation methods
   - remove the auto discovery mode
   - add a debug mode that logs in chat predictions for what baserespawntime is for items spawns it observes
-- change the scheduled automatic timer removal to run from the tick event instead of schedule
-  - removal method should take the current time, the current world, and the current location, and current config options for automatic removal then pass to each timer.
-    - timer should know from the config and the passed variables whether it meets a condition for removal
 - unconditional timer removal based on event of the item being there
   - clear the timer when an item spawn event
   - clear the timer if load the area (world login or movement into area) and the item is already there 
