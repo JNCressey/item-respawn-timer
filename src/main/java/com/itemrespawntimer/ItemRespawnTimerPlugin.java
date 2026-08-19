@@ -163,6 +163,7 @@ public class ItemRespawnTimerPlugin extends Plugin
 		/*todo filter out events that aren't the item being taken
 		- going up stairs
 		- walking away (teleporting away doesn't trigger it)
+		the bad events happen when I leave an area while an item is there and then return to the area
 		*/
 		Tile tile = event.getTile();
 		TileItem item = event.getItem();

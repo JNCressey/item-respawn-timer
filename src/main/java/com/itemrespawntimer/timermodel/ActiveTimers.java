@@ -112,10 +112,13 @@ public class ActiveTimers {
                 .anyMatch(selectedRemoveTimerEvent -> {
                     switch(selectedRemoveTimerEvent){
                         case CAN_SEE_LOCATION:
-                            return timer.isExpired() && false; //todo implement
+                            return timer.isExpired()
+                                    && (timer.getWorldId()==currentWorldId)
+                                    && timer.isSpawnLocationWithinViewDistance(playerPoint);
 
                         case  SAME_WORLD:
-                            return timer.isExpired() && (timer.getWorldId()==currentWorldId);
+                            return timer.isExpired()
+                                    && (timer.getWorldId()==currentWorldId);
 
                         case T_MINUS_ZERO:
                             return timer.isExpired();
