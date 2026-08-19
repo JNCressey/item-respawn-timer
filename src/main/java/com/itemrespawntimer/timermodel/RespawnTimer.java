@@ -112,7 +112,8 @@ public class RespawnTimer
 
 
     public double getProgress(long nowMillis)
-    {
+    {//todo, use min and max to clamp between 0 to 1
+        //todo: long nowMillis = Instant.now().toEpochMilli();
         long elapsed = nowMillis - start;
         if (elapsed <= 0)
         {
@@ -128,6 +129,7 @@ public class RespawnTimer
 
     public int getSecondsRemaining(long nowMillis)
     {
+        //todo: long nowMillis = Instant.now().toEpochMilli();
         long diff = respawnAt - nowMillis;
         if (diff <= 0)
         {
@@ -145,6 +147,7 @@ public class RespawnTimer
     */
     public String getTMinusCountdown(long nowMillis)
     {
+        //todo: long nowMillis = Instant.now().toEpochMilli();
         long countdownSeconds = (nowMillis/1000) - (respawnAt/1000);
 
         char sign = (countdownSeconds <= 0)? '-' : '+';
