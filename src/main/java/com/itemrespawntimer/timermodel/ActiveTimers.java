@@ -64,7 +64,7 @@ public class ActiveTimers {
     }
 
 
-    public void removeExpiredSingle(){//todo keybind
+    public void removeExpiredSingle(){
         long nowMillis = Instant.now().toEpochMilli();
         if(activeTimers.getFirst().getRespawnAt()<nowMillis) {//todo: make this check a method of RespawnTimer
             activeTimers.removeFirst();
@@ -72,7 +72,7 @@ public class ActiveTimers {
     }
 
 
-    public void removeExpiredAll(){//todo keybind
+    public void removeExpiredAll(){
         long nowMillis = Instant.now().toEpochMilli();
         activeTimers.removeIf(timer -> timer.getRespawnAt()<nowMillis); //todo: make this check a method of RespawnTimer
 

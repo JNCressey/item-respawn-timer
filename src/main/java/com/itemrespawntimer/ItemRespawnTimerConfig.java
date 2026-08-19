@@ -45,7 +45,7 @@ public interface ItemRespawnTimerConfig extends Config
 		return new Keybind(KeyEvent.VK_UP, InputEvent.CTRL_DOWN_MASK | InputEvent.SHIFT_DOWN_MASK);
 	}
 
-	@ConfigItem( //todo: implement this
+	@ConfigItem(
 			keyName = "hotkeyRemoveExpiredSingle",
 			name = "Remove One Expired",
 			section = hotkeysSection,
@@ -57,7 +57,7 @@ public interface ItemRespawnTimerConfig extends Config
 		return new Keybind(KeyEvent.VK_DOWN, InputEvent.CTRL_DOWN_MASK | InputEvent.SHIFT_DOWN_MASK);
 	}
 
-	@ConfigItem( //todo: implement this
+	@ConfigItem(
 			keyName = "hotkeyRemoveExpiredAll",
 			name = "Remove All Expired",
 			section = hotkeysSection,
@@ -66,7 +66,7 @@ public interface ItemRespawnTimerConfig extends Config
 	)
 	default Keybind hotkeyRemoveExpiredAll()
 	{
-		return null;
+		return new Keybind(KeyEvent.VK_A, InputEvent.CTRL_DOWN_MASK | InputEvent.SHIFT_DOWN_MASK);
 	}
 	//endregion hotkeysSection
 

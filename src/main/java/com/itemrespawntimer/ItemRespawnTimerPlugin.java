@@ -91,6 +91,8 @@ public class ItemRespawnTimerPlugin extends Plugin
 		startupSidePanel();
 
 		keyManager.registerKeyListener(quickHopListener);
+		keyManager.registerKeyListener(removeExpiredSingleListener);
+		keyManager.registerKeyListener(removeExpiredAllListener);
 
 	}
 
@@ -232,6 +234,25 @@ public class ItemRespawnTimerPlugin extends Plugin
 		panel.updateSidePanel();
 	}
 
+
+
+	private final HotkeyListener removeExpiredSingleListener = new HotkeyListener(() -> config.hotkeyRemoveExpiredSingle())
+	{
+		@Override
+		public void hotkeyPressed()
+		{
+			clientThread.invoke(() -> activeTimers.removeExpiredSingle());
+		}
+	};
+
+	private final HotkeyListener removeExpiredAllListener = new HotkeyListener(() -> config.hotkeyRemoveExpiredAll())
+	{
+		@Override
+		public void hotkeyPressed()
+		{
+			clientThread.invoke(() -> activeTimers.removeExpiredAll());
+		}
+	};
 
 	//#region hopping
 	//todo: cleanup hopping code. delegate code to appropriate classes.
