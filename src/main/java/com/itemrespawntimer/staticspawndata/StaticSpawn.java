@@ -10,7 +10,7 @@ public class StaticSpawn
 {
     int baseRespawnTicks;
 
-    @Builder.Default
+    @Builder.Default // remove default, always want an item id
     int itemId = -1;
 
     @Builder.Default

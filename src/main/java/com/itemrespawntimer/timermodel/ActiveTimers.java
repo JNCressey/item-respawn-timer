@@ -1,15 +1,24 @@
 package com.itemrespawntimer.timermodel;
 
 import com.itemrespawntimer.ItemRespawnTimerConfig;
+import com.itemrespawntimer.staticspawndata.StaticSpawn;
 import lombok.Getter;
+import lombok.extern.slf4j.Slf4j;
 import net.runelite.api.Client;
+import net.runelite.api.Tile;
+import net.runelite.api.TileItem;
 import net.runelite.api.coords.WorldPoint;
+import net.runelite.api.events.ItemDespawned;
+import net.runelite.api.events.ItemSpawned;
+import net.runelite.client.game.WorldService;
+import net.runelite.http.api.worlds.WorldResult;
 
 import javax.inject.Inject;
 import javax.inject.Singleton;
 import java.time.Instant;
 import java.util.*;
 
+@Slf4j
 @Singleton
 public class ActiveTimers {
     //region head
@@ -19,6 +28,10 @@ public class ActiveTimers {
 
     @Inject
     private ItemRespawnTimerConfig config;
+
+
+    @Inject
+    private WorldService worldService;
     //endregion
 
 
@@ -71,13 +84,108 @@ public class ActiveTimers {
     }
     //endregion
 
+    public void onGameTick(){//todo can i make this subscribe?
+        addTick();
+        removeTick();
+    }
+
+    //region addTick
+    /*
+    todo: still gets an eroneous event if you left when the item is there, and then return when the item is not there
+    world hopping doesn't cause these bad events
+    bad event when left when there was an item and returned when there wasn't
+    different combinations of stairs, running, and teleports sometimes have the bad events
+
+     */
+
+    /**
+     *
+     * the items that have been taken this tick. This buffer is needed because sometimes a tick will fire onItemDespawn then onItemSpawn for the same item
+     */
+    private final Map<WorldPoint, StaticSpawn> newStaticSpawnsToProcess = new HashMap<>();
+
+
+    //todo move staticSpawnsByTile to activeTimers having a property for the StaticSpawnService
+    public void queueNewTimer(ItemDespawned event, Map<WorldPoint, List<StaticSpawn>> staticSpawnsByTile){
+        Tile tile = event.getTile();
+        TileItem item = event.getItem();
+        if (tile == null || item == null)
+        {
+            return;
+        }
+
+        WorldPoint wp = tile.getWorldLocation();
+        List<StaticSpawn> spawns = staticSpawnsByTile.get(wp);
+
+        if (spawns == null || spawns.isEmpty())
+        {
+            return;
+        }
+
+        for (StaticSpawn spawn : spawns)
+        {
+            if (spawn.getItemId()==item.getId())
+            {
+                log.debug("queueNewTimer: {}", item.getId());
+                newStaticSpawnsToProcess.put(wp,spawn);
+                break;
+            }
+        }
+    }
+
+
+    public void cancelNewTimer(ItemSpawned event){
+        log.debug("cancelNewTimer");
+        Tile tile = event.getTile();
+        if (tile!=null){
+            WorldPoint wp = tile.getWorldLocation();
+            newStaticSpawnsToProcess.remove(wp);
+        }
+    }
+
+
+    private void addTick(){
+        if (newStaticSpawnsToProcess.isEmpty()){ return; }
+
+        long nowMillis = Instant.now().toEpochMilli();
+        int worldId = client.getWorld();
+        int worldPopulation = getCurrentWorldPopulation();
+
+        for( Map.Entry<WorldPoint, StaticSpawn> entry : newStaticSpawnsToProcess.entrySet()){//todo make spawn contain the worldpoint so this can loop over values instead of entryset
+            StaticSpawn spawn = entry.getValue();
+            WorldPoint wp = entry.getKey();
+            RespawnTimer timer = new RespawnTimer(spawn,worldId,wp,worldPopulation,nowMillis);
+            activeTimers.add(timer);
+            log.debug("add timer {}",spawn.getItemId());
+        }
+
+        newStaticSpawnsToProcess.clear();
+    }
+
+
+    private int getCurrentWorldPopulation(){
+        int currentWorldId = client.getWorld();
+        WorldResult worlds = worldService.getWorlds();
+
+        if (worlds != null)
+        {
+            net.runelite.http.api.worlds.World world = worlds.findWorld(currentWorldId);
+            if (world != null)
+            {
+                return world.getPlayers();
+            }
+        }
+        return 0;
+    }
+    //endregion
+
 
     //region removeTick
     /**
      * Sets the deleted state for timers matching the config auto-removal conditions. Then calls {@link #clearDeletedTimers}.
      * @see RespawnTimer#delete
      */
-    public void removeTick(){
+    private void removeTick(){
         activeTimers.stream()
                 .filter(timer -> toAutomaticallyDelete(
                         timer,

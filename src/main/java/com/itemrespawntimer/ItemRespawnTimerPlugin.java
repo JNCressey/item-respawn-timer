@@ -8,22 +8,20 @@ import com.itemrespawntimer.sidepanel.WorldTimersSidePanel;
 import com.itemrespawntimer.staticspawndata.StaticSpawn;
 import com.itemrespawntimer.staticspawndata.StaticSpawnService;
 import com.itemrespawntimer.timermodel.ActiveTimers;
-import com.itemrespawntimer.timermodel.RespawnTimer;
 import com.itemrespawntimer.worldhopper.WorldHopper;
 import lombok.extern.slf4j.Slf4j;
 import net.runelite.api.*;
 import net.runelite.api.coords.WorldPoint;
 import net.runelite.api.events.GameStateChanged;
 import net.runelite.api.events.GameTick;
+import net.runelite.api.events.ItemSpawned;
 import net.runelite.client.config.ConfigManager;
 import net.runelite.client.eventbus.Subscribe;
 import net.runelite.client.events.ConfigChanged;
-import net.runelite.client.game.WorldService;
 import net.runelite.client.plugins.Plugin;
 import net.runelite.client.plugins.PluginDescriptor;
 
 import java.util.*;
-import java.time.Instant;
 import java.awt.image.BufferedImage;
 
 import net.runelite.client.ui.ClientToolbar;
@@ -31,7 +29,6 @@ import net.runelite.client.ui.NavigationButton;
 import net.runelite.client.ui.overlay.OverlayManager;
 import net.runelite.api.events.ItemDespawned;
 import net.runelite.client.util.HotkeyListener;
-import net.runelite.http.api.worlds.WorldResult;
 import net.runelite.client.callback.ClientThread;
 import net.runelite.client.input.KeyManager;
 import net.runelite.client.util.ImageUtil;
@@ -47,38 +44,42 @@ public class ItemRespawnTimerPlugin extends Plugin
 	@Inject
 	private Client client;
 
+
 	@Inject
 	private ItemRespawnTimerConfig config;
+
 
 	@Inject
 	private OverlayManager overlayManager;
 
-	@Inject
-	private WorldService worldService;
 
 	@Inject
 	private ClientToolbar clientToolbar;
+
+
+	@Inject
+	private ItemRespawnTimerOverlay overlay;
+
+
+	@Inject
+	private StaticSpawnService staticSpawnService;
+
+
+	@Inject
+	private ActiveTimers activeTimers;
+
+
+	@Inject
+	private WorldHopper worldHopper;
+	//endregion
+
 
 	private WorldTimersSidePanel panel;
 	private NavigationButton navButton;
 
 
-	//region objects
-	@Inject
-	private ItemRespawnTimerOverlay overlay;
-
-	@Inject
-	private StaticSpawnService staticSpawnService;
-
-	@Inject
-	private ActiveTimers activeTimers;
-
-	@Inject
-	private WorldHopper worldHopper;
-
 	// WorldPoint -> list of static spawns at that tile
 	private Map<WorldPoint, List<StaticSpawn>> staticSpawnsByTile = new HashMap<>();
-	//endregion
 
 
 	//region set up
@@ -158,81 +159,23 @@ public class ItemRespawnTimerPlugin extends Plugin
 
 	//region react to items in game
 	@Subscribe
+	public void onItemSpawned(ItemSpawned event)
+	{
+		activeTimers.cancelNewTimer(event);
+	}
+
+	@Subscribe
 	public void onItemDespawned(ItemDespawned event)
 	{
-		/*todo filter out events that aren't the item being taken
-		- going up stairs
-		- walking away (teleporting away doesn't trigger it)
-		the bad events happen when I leave an area while an item is there and then return to the area
-		*/
-		Tile tile = event.getTile();
-		TileItem item = event.getItem();
-
-		if (tile == null || item == null)
-		{
-			return;
-		}
-
-		WorldPoint wp = tile.getWorldLocation();
-		List<StaticSpawn> spawns = staticSpawnsByTile.get(wp);
-
-		if (spawns == null || spawns.isEmpty())
-		{
-			return;
-		}
-
-		long nowMillis = Instant.now().toEpochMilli();
-		for (StaticSpawn spawn : spawns)
-		{
-			if (spawn.getItemId()==item.getId() || spawn.getItemId()==-1)
-			{
-
-				handleStaticItemPickup(wp, spawn, nowMillis);
-				break;
-			}
-		}
-	}
-
-
-
-	//todo: handle observations to submit to timers: entering the area, leaving the area, seeing the item has returned.
-
-	/**
-	 *
-	 * @param wp
-	 * @param spawn
-	 * @param nowMillis the result of Instant.now().toEpochMilli();
-	 */
-	private void handleStaticItemPickup(WorldPoint wp, StaticSpawn spawn, long nowMillis)
-	{
-		int worldId = client.getWorld();
-		int worldPopulation = getCurrentWorldPopulation();
-
-		RespawnTimer timer = new RespawnTimer(spawn,worldId,wp,worldPopulation,nowMillis);
-		activeTimers.add(timer);
+		activeTimers.queueNewTimer(event, staticSpawnsByTile);
 	}
 	//endregion
-
-	private int getCurrentWorldPopulation(){
-		int currentWorldId = client.getWorld();
-		WorldResult worlds = worldService.getWorlds();
-
-		if (worlds != null)
-		{
-			net.runelite.http.api.worlds.World world = worlds.findWorld(currentWorldId);
-			if (world != null)
-			{
-				return world.getPlayers();
-			}
-		}
-		return 0;
-
-	}
 
 
 	@Subscribe
 	public void onGameTick(GameTick event) {
-		activeTimers.removeTick();
+		log.debug("onGameTick");
+		activeTimers.onGameTick();
 		panel.setCurrentWorldId(client.getWorld());
 		panel.updateSidePanel();
 	}
