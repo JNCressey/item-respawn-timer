@@ -63,43 +63,36 @@ public class TrackedSpawnsReader {
      */
     private static TrackedSpawnsParsedRecord parseTrackedSpawnFromCsvLine(String spawnDataCsvLine){
         String lineWithoutComment = spawnDataCsvLine.split("#",2)[0];
-        if (lineWithoutComment.isEmpty()){
-            return null; //skip empty lines
-        }
+
+        /*
+         * `lineData` is the record data:
+         * [0]:x,[1]:y,[2]:plane
+         * for positions to be tracked: [3]:baseRespawnTicks,[4]:itemId,[5]:quantity
+         * for positions not to be tracked: [3]:"null"
+         */
+        List<String> lineData = Text.fromCSV(lineWithoutComment);
 
         WorldPoint wp;
-        StaticSpawn.StaticSpawnBuilder s = StaticSpawn.builder();
 
-        try { // try build `s`
-            /*
-             * `lineData` is the record data:
-             * [0]:x,[1]:y,[2]:plane
-             * for positions to be tracked: [3]:baseRespawnTicks,[4]:itemId,[5]:quantity
-             * for positions not to be tracked: [3]:"null"
-             */
-            List<String> lineData = Text.fromCSV(lineWithoutComment);
-
+        try {
             wp = new WorldPoint(
                     Integer.parseInt(lineData.get(0)),
                     Integer.parseInt(lineData.get(1)),
                     Integer.parseInt(lineData.get(2)));
 
-            if (lineData.get(3).equals("null")){
-                return new TrackedSpawnsParsedRecord(wp,null); // entry indicates to not track this location
+            if (lineData.get(3).equals("null")){ // entry indicates to not track this location
+                return new TrackedSpawnsParsedRecord(wp,null);
             }
 
-            // set worldPoint
-            s.worldPoint(wp);
-
-            // set baseRespawnTicks
-            s.baseRespawnTicks( Integer.parseInt(lineData.get(3)) );
-
-            //todo handle item name
-            // set itemId
-            s.itemId(           Integer.parseInt(lineData.get(4)) );
-
-            // set quantity
-            s.quantity(         Integer.parseInt(lineData.get(5)) );
+            return new TrackedSpawnsParsedRecord(
+                    wp,
+                    StaticSpawn.builder()
+                            .worldPoint( wp )
+                            .baseRespawnTicks( lineData.get(3) )
+                            .itemId(           lineData.get(4) )
+                            .quantity(         lineData.get(5) )
+                            .build()
+            );
         }
         catch (
                 IndexOutOfBoundsException // skip this line if line doesn't have enough data cells
@@ -109,7 +102,6 @@ public class TrackedSpawnsReader {
             return null;
         }
 
-        return new TrackedSpawnsParsedRecord(wp,s.build());
     }
     //endregion
 

@@ -1,7 +1,6 @@
 package com.itemrespawntimer.timermodel;
 
 import com.itemrespawntimer.ItemRespawnTimerConfig;
-import com.itemrespawntimer.staticspawndata.StaticSpawn;
 import com.itemrespawntimer.staticspawndata.StaticSpawnService;
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
@@ -169,8 +168,8 @@ public class ActiveTimers {
         }
 
         staticSpawnService.getTrackedSpawn(wp)
-                .filter(spawn -> spawn.getItemId()==item.getId())
-                .ifPresent(spawn ->{
+                .filter(spawn -> spawn.matchItemId(item.getId()))
+                .ifPresent(spawn -> {
                     long nowMillis = Instant.now().toEpochMilli();
                     int worldId = client.getWorld();
                     int worldPopulation = getCurrentWorldPopulation();
