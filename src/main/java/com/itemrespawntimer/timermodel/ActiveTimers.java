@@ -33,6 +33,9 @@ public class ActiveTimers {
 
     @Inject
     private WorldService worldService;
+
+    @Inject
+    private StaticSpawnService staticSpawnService;
     //endregion
 
 
@@ -143,15 +146,13 @@ public class ActiveTimers {
                 .forEach(RespawnTimer::delete);
     }
 
-    //region public void onItemDespawned(ItemDespawned event)
-    //todo move staticSpawnsByTile to activeTimers having a property for the StaticSpawnService
 
     /**
      * Add a timer for picked up item.
      * @param event the item despawned
-     * @param staticSpawnsByTile
      */
-    public void onItemDespawned(ItemDespawned event, Map<WorldPoint, List<StaticSpawn>> staticSpawnsByTile){//todo can i make this subscribed
+    public void onItemDespawned(ItemDespawned event){//todo can i make this subscribed
+        Map<WorldPoint, List<StaticSpawn>> staticSpawnsByTile = staticSpawnService.getTrackedSpawns(); //todo make getter for single
         Tile tile = event.getTile();
         TileItem item = event.getItem();
         if (tile == null || item == null)
@@ -172,24 +173,25 @@ public class ActiveTimers {
 
         if (spawns == null || spawns.isEmpty())
         {
-            return;
+            return; // skip if no spawn data for this position
         }
 
-        for (StaticSpawn spawn : spawns) //todo change staticspawnservice to only provide one static spawn existing per world point
+        StaticSpawn spawn = spawns.get(spawns.size()-1);
+        if (spawn==null){
+            return; // skip if most priority spawn is null
+        }
+
+        if (spawn.getItemId()==item.getId())
         {
-            if (spawn.getItemId()==item.getId())
-            {
 
-                long nowMillis = Instant.now().toEpochMilli();
-                int worldId = client.getWorld();
-                int worldPopulation = getCurrentWorldPopulation();
+            long nowMillis = Instant.now().toEpochMilli();
+            int worldId = client.getWorld();
+            int worldPopulation = getCurrentWorldPopulation();
 
-                RespawnTimer timer = new RespawnTimer(spawn,worldId,worldPopulation,nowMillis);
+            RespawnTimer timer = new RespawnTimer(spawn,worldId,worldPopulation,nowMillis);
 
-                add(timer);
+            add(timer);
 
-                break;
-            }
         }
     }
 

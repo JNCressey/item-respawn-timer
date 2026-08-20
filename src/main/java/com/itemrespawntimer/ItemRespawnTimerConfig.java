@@ -183,7 +183,8 @@ public interface ItemRespawnTimerConfig extends Config
 	)
 	default String trackedSpawns()
 	{
-		return TrackedSpawnsDefaultFileReader.readResource();
+		//todo default value with explaining headers
+		return "";
 	}
 	//endregion trackedSpawnsSection
 }

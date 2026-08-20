@@ -78,10 +78,6 @@ public class ItemRespawnTimerPlugin extends Plugin
 	private NavigationButton navButton;
 
 
-	// WorldPoint -> list of static spawns at that tile
-	private Map<WorldPoint, List<StaticSpawn>> staticSpawnsByTile = new HashMap<>();
-
-
 	//region set up
 	@Override
 	protected void startUp() throws Exception
@@ -89,7 +85,7 @@ public class ItemRespawnTimerPlugin extends Plugin
 		log.debug("Item Respawn Timer plugin started!");
 		overlayManager.add(overlay);
 
-		loadStaticSpawns();
+		staticSpawnService.startUp();
 
 		startupSidePanel();
 
@@ -119,8 +115,8 @@ public class ItemRespawnTimerPlugin extends Plugin
 	{
 		log.debug("Item Respawn Timer plugin  stopped!");
 		overlayManager.remove(overlay);
-		activeTimers.clear();
-		staticSpawnsByTile.clear();
+		activeTimers.clear();//todo do i need to clear this?
+		//todo do i need a shutdown for staticSpawnService?
 		clientToolbar.removeNavigation(navButton);
 	}
 
@@ -133,7 +129,6 @@ public class ItemRespawnTimerPlugin extends Plugin
 	//endregion
 
 
-	//region reloading spawn data
 	@Subscribe
 	public void onConfigChanged(ConfigChanged event)
 	{
@@ -144,14 +139,9 @@ public class ItemRespawnTimerPlugin extends Plugin
 		// Example: trigger specific logic when a certain key changes
 		if (configKey.equals("trackedSpawns"))
 		{
-			loadStaticSpawns();
+			staticSpawnService.reloadConfigOverrides();
 		}
 	}
-
-	private void loadStaticSpawns(){
-		staticSpawnsByTile = staticSpawnService.loadStaticSpawns();
-	}
-	//endregion
 
 
 	@Subscribe
@@ -163,7 +153,7 @@ public class ItemRespawnTimerPlugin extends Plugin
 	@Subscribe
 	public void onItemDespawned(ItemDespawned event)
 	{
-		activeTimers.onItemDespawned(event, staticSpawnsByTile);
+		activeTimers.onItemDespawned(event);
 	}
 
 
