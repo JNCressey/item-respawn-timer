@@ -156,14 +156,6 @@ public class ItemRespawnTimerPlugin extends Plugin
 	//endregion
 
 
-
-	//region react to items in game
-	@Subscribe
-	public void onItemSpawned(ItemSpawned event)
-	{
-		activeTimers.cancelNewTimer(event);
-	}
-
 	@Subscribe
 	public void onItemDespawned(ItemDespawned event)
 	{
@@ -174,7 +166,6 @@ public class ItemRespawnTimerPlugin extends Plugin
 
 	@Subscribe
 	public void onGameTick(GameTick event) {
-		log.debug("onGameTick");
 		activeTimers.onGameTick();
 		panel.setCurrentWorldId(client.getWorld());
 		panel.updateSidePanel();
@@ -185,7 +176,6 @@ public class ItemRespawnTimerPlugin extends Plugin
 	{
 		if (event.getGameState() == GameState.LOGGED_IN)
 		{
-			log.debug("joined world: {}", client.getWorld());
 			// This runs when the player has joined a world
 			worldHopper.joinedWorld();
 		}
