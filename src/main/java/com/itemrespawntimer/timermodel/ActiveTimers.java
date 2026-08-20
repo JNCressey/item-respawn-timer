@@ -2,6 +2,7 @@ package com.itemrespawntimer.timermodel;
 
 import com.itemrespawntimer.ItemRespawnTimerConfig;
 import com.itemrespawntimer.staticspawndata.StaticSpawn;
+import com.itemrespawntimer.staticspawndata.StaticSpawnService;
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 import net.runelite.api.Client;
@@ -86,7 +87,7 @@ public class ActiveTimers {
     public void onGameTick(){//todo can i make this subscribe?
         addTick();
         removeTick();
-        previousTickPlayerLocation = client.getLocalPlayer().getWorldLocation();
+        recordThisTickPlayerLocation();
     }
 
     //region addTick
@@ -98,10 +99,40 @@ public class ActiveTimers {
      */
     private final Map<WorldPoint, StaticSpawn> newStaticSpawnsToProcess = new HashMap<>();
 
+
+    //region spawnLocationMayHaveEnteredViewDistanceThisTick(WorldPoint spawnPoint)
     /**
-     * the player location in the previous tick, so we can detect whether an onItemDespawn is actually from re-entering the area without directly observing it being taken.
+     * The player location in [0] this tick and [1] the previous tick, so we can detect whether an onItemDespawn is actually from re-entering the area without directly observing it being taken.
+     * Recording both to ensure we have the previous tick location:
+     *  - if updating fires early in the tick [0] would have this tick location.
+     *  - if updating fires late in the tick [1] would have location of 2 ticks ago.
      */
-    private WorldPoint previousTickPlayerLocation;
+    private final WorldPoint[] previousTickPlayerLocation = new WorldPoint[2];
+
+
+    /**
+     * Update values of {@link #previousTickPlayerLocation}.
+     */
+    private void recordThisTickPlayerLocation()
+    {
+
+        previousTickPlayerLocation[1] = previousTickPlayerLocation[0];
+        previousTickPlayerLocation[0] = client.getLocalPlayer().getWorldLocation();
+    }
+
+
+    /**
+     * Check if the spawn location was outside the view distance in this tick or the previous tick.
+     * @param spawnPoint The spawn location to check.
+     * @return Result of the check
+     */
+    private boolean spawnLocationMayHaveEnteredViewDistanceThisTick(WorldPoint spawnPoint){
+        return(
+               !StaticSpawnService.isSpawnLocationWithinViewDistance(spawnPoint,previousTickPlayerLocation[0])
+            || !StaticSpawnService.isSpawnLocationWithinViewDistance(spawnPoint,previousTickPlayerLocation[1])
+        );
+    }
+    //endregion
 
 
     //todo move staticSpawnsByTile to activeTimers having a property for the StaticSpawnService
@@ -142,10 +173,10 @@ public class ActiveTimers {
         for( Map.Entry<WorldPoint, StaticSpawn> entry : newStaticSpawnsToProcess.entrySet()){//todo make spawn contain the worldpoint so this can loop over values instead of entryset
             StaticSpawn spawn = entry.getValue();
             WorldPoint wp = entry.getKey();
-            RespawnTimer timer = new RespawnTimer(spawn,worldId,wp,worldPopulation,nowMillis);
-            if(!timer.isSpawnLocationWithinViewDistance(previousTickPlayerLocation)){
+            if(spawnLocationMayHaveEnteredViewDistanceThisTick(wp)){ //todo use overload that takes a staticspawn
                 continue; // filter out delayed despawn events from returning to a location but not directly witnessing the item being taken
             }
+            RespawnTimer timer = new RespawnTimer(spawn,worldId,wp,worldPopulation,nowMillis);
             activeTimers.add(timer);
         }
 
@@ -212,7 +243,7 @@ public class ActiveTimers {
                         case CAN_SEE_LOCATION:
                             return timer.isExpired()
                                     && (timer.getWorldId()==currentWorldId)
-                                    && timer.isSpawnLocationWithinViewDistance(playerPoint);
+                                    && StaticSpawnService.isSpawnLocationWithinViewDistance(timer,playerPoint);
 
                         case  SAME_WORLD:
                             return timer.isExpired()

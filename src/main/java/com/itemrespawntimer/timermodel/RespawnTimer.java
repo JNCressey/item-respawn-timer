@@ -190,18 +190,6 @@ public class RespawnTimer
             return String.format("T%c%d", sign, secondsPart);
         }
     }
-
-    /**
-     * Check if the spawn location is within the range that the player can see if the item respawns.
-     * @param playerPoint The current player position.
-     * @return The result of the check
-     */
-    boolean isSpawnLocationWithinViewDistance(WorldPoint playerPoint){
-        //can see the current zone plus a range of 3 zones, a 7zones*7zones area. (a zone is 8tiles*8tiles)
-        return (playerPoint.getPlane() == worldPoint.getPlane())
-                && Math.abs(playerPoint.getX()/8 - worldPoint.getX()/8) <= 3
-                && Math.abs(playerPoint.getY()/8 - worldPoint.getY()/8) <= 3;
-    }
     //endregion
 
 }

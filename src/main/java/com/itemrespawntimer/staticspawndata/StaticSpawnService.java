@@ -5,6 +5,7 @@ import javax.inject.Inject;
 import javax.inject.Singleton;
 
 import com.itemrespawntimer.ItemRespawnTimerConfig;
+import com.itemrespawntimer.timermodel.RespawnTimer;
 import lombok.extern.slf4j.Slf4j;
 import net.runelite.client.util.Text;
 
@@ -90,5 +91,39 @@ public class StaticSpawnService
             return null;
         }
     }
+
+
+    /**
+     * Check if the spawn location is within the range that the player can see if the item respawns.
+     * @param spawnPoint The spawn location
+     * @param playerPoint The current player position.
+     * @return The result of the check
+     */
+    public static boolean isSpawnLocationWithinViewDistance(WorldPoint spawnPoint, WorldPoint playerPoint){
+        //can see the current zone plus a range of 3 zones, a 7zones*7zones area. (a zone is 8tiles*8tiles)
+        return (playerPoint.getPlane() == spawnPoint.getPlane())
+                && Math.abs(playerPoint.getX()/8 - spawnPoint.getX()/8) <= 3
+                && Math.abs(playerPoint.getY()/8 - spawnPoint.getY()/8) <= 3;
+    }
+
+    /**
+     * Check if the spawn location is within the range that the player can see if the item respawns.
+     * @param timer The timer to check the spawn location of.
+     * @param playerPoint The current player position.
+     * @return The result of the check
+     */
+    public static boolean isSpawnLocationWithinViewDistance(RespawnTimer timer, WorldPoint playerPoint){
+        return isSpawnLocationWithinViewDistance(timer.getWorldPoint(), playerPoint);
+    }
+
+    /**
+     * Check if the spawn location is within the range that the player can see if the item respawns.
+     * @param spawn The static spawn data to check the spawn location of.
+     * @param playerPoint The current player position.
+     * @return The result of the check
+     */
+    /*public static boolean isSpawnLocationWithinViewDistance(StaticSpawn spawn, WorldPoint playerPoint){
+        return isSpawnLocationWithinViewDistance(spawn.getWorldPoint(), playerPoint);
+    }*/ //todo
 
 }
