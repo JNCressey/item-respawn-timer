@@ -155,6 +155,12 @@ public class ItemRespawnTimerPlugin extends Plugin
 
 
 	@Subscribe
+	public void onItemSpawned(ItemSpawned event)
+	{
+		activeTimers.onItemSpawned(event);
+	}
+
+	@Subscribe
 	public void onItemDespawned(ItemDespawned event)
 	{
 		activeTimers.onItemDespawned(event, staticSpawnsByTile);

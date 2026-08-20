@@ -10,6 +10,7 @@ import net.runelite.api.Tile;
 import net.runelite.api.TileItem;
 import net.runelite.api.coords.WorldPoint;
 import net.runelite.api.events.ItemDespawned;
+import net.runelite.api.events.ItemSpawned;
 import net.runelite.client.game.WorldService;
 import net.runelite.http.api.worlds.WorldResult;
 
@@ -89,9 +90,40 @@ public class ActiveTimers {
         recordThisTickPlayerLocation();
     }
 
+    /**
+     * Delete matching timer when observe an item spawn.
+     * @param event the item spawned
+     */
+    public void onItemSpawned(ItemSpawned event){ //todo can i make this subscribed
+        log.debug("#onItemSpawned");
+        Tile tile = event.getTile();
+        TileItem item = event.getItem();
+        if (tile == null || item == null) {
+            return;
+        }
+
+        WorldPoint spawnedWorldPoint = tile.getWorldLocation();
+        int spawnedItemId = item.getId();
+        int currentWorldId = client.getWorld();
+
+        activeTimers.stream()
+                .filter(timer -> (
+                        timer.getWorldPoint().equals(spawnedWorldPoint)
+                        && timer.getSpawn().getItemId() == spawnedItemId
+                        && timer.getWorldId() == currentWorldId
+                ))
+                .forEach(RespawnTimer::delete);
+    }
+
     //region public void onItemDespawned(ItemDespawned event)
     //todo move staticSpawnsByTile to activeTimers having a property for the StaticSpawnService
-    public void onItemDespawned(ItemDespawned event, Map<WorldPoint, List<StaticSpawn>> staticSpawnsByTile){
+
+    /**
+     * Add a timer for picked up item.
+     * @param event the item despawned
+     * @param staticSpawnsByTile
+     */
+    public void onItemDespawned(ItemDespawned event, Map<WorldPoint, List<StaticSpawn>> staticSpawnsByTile){//todo can i make this subscribed
         Tile tile = event.getTile();
         TileItem item = event.getItem();
         if (tile == null || item == null)
@@ -211,7 +243,6 @@ public class ActiveTimers {
             int currentWorldId,
             WorldPoint playerPoint
     ){
-        //todo should also remove unconditionally if item exists at the location
         return selectedRemoveTimerEvents.stream()
                 .anyMatch(selectedRemoveTimerEvent -> {
                     switch(selectedRemoveTimerEvent){

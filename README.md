@@ -11,9 +11,6 @@ Predictions can be slightly off. Because the respawn time depends on how many pl
 - change plan to not predict unobserved pickups
   - remove the auto discovery mode
   - add a debug mode that logs in chat predictions for what baserespawntime is for items spawns it observes
-- unconditional timer removal based on event of the item being there
-  - clear the timer when an item spawn event
-  - clear the timer if load the area (world login or movement into area) and the item is already there 
 - work for all respawning items, not just Lumbridge castle mind rune
   - fill the csv file
   - handle item names
