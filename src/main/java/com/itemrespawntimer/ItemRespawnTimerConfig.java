@@ -1,6 +1,5 @@
 package com.itemrespawntimer;
 
-import com.itemrespawntimer.staticspawndata.TrackedSpawnsDefaultFileReader;
 import com.itemrespawntimer.timermodel.RemoveExpiredTimerEvent;
 import net.runelite.client.config.*;
 
