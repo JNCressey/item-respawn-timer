@@ -4,12 +4,8 @@ Show timers for respawning items
 Predictions can be slightly off. Because the respawn time depends on how many players are currently in the world, and the world populations are only periodically sent to the client.
 
 ## dev to-dos
-- change plan to not predict unobserved pickups
-  - remove the auto discovery mode
-  - add a debug mode that logs in chat predictions for what baserespawntime is for items spawns it observes
 - work for all respawning items, not just Lumbridge castle mind rune
   - fill the csv file
-  - handle item names
 - side panel to track timers that you're waiting for a respawn
   - make each timer have a widget in the list
     - item icon
@@ -17,14 +13,9 @@ Predictions can be slightly off. Because the respawn time depends on how many pl
     - world id
     - timer countdown as format "T-#" or "T+#"
     - button to hop to world on click
-    - button to remove timer
-    - button to hide/unhide
+    - button to delete timer
+    - button to hide/unhide - add/remove from config list of hidden
   - button to filter or show the manually hidden widgets
-- action button in config panel
-  - clear the manually hidden from the side panel
-  - add/remove/change a static spawn data
-    - store overrides in a persistent data store but remove that big textbox from the config panel
-  - reset the static spawn data
 - circle progress display appearance
   - make a consistent size
   - centred in the tile

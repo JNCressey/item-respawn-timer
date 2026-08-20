@@ -151,39 +151,45 @@ public interface ItemRespawnTimerConfig extends Config
 	}
 	//endregion removeTimersSection
 
+	//todo section for hiding timers from sidepanel
+	// minimum value
+	// list of items to hide
 
-	//region trackedSpawnsSection
+	//region debugSection
 	@ConfigSection(
-			name = "Tracked Spawns",
-			description = "Parameters of locations of spawns to track",
+			name = "Debug Options",
+			description = "Debug options",
 			position = 3,
 			closedByDefault = true
 	)
-	String trackedSpawnsSection = "trackedSpawnsSection";
+	String debugSection = "debugSection";
 
 	@ConfigItem(
-			keyName = "discoveryModeEnabled",
-			name = "Enable Discovery Mode",
-			section = trackedSpawnsSection,
-			description = "Will attempt to automatically update the list of tracked spawns while you observe spawns.",
+			keyName = "debugModeEnabled",
+			name = "Enable Debug Mode",
+			section = debugSection,
+			description = "Will observe item spawns. Will notify if observe a spawn that isn't being tracked. Will attempt to guess baseRepsawnTicks and notify if different from expected.",
 			position = 0
 	)
-	default boolean discoveryModeEnabled()
+	default boolean debugModeEnabled()
 	{
 		return true;
-	}
+	}//todo implement
+	//todo add a debug mode that logs in chat predictions for what baserespawntime is for items spawns it observes
+	//todo add debug mode that automatically updates overides with observed baserespawntime
+	//todo add debug to shift+rightClick on the ground to add or remove tracking
+	//todo have a checkbox for whether to apply the overrides or not
 
 	@ConfigItem(
 			keyName = "trackedSpawns",
-			name = "Tracked Item Spawns",
-			section = trackedSpawnsSection,
-			description = "List of overrides to the tracked spawns.",
+			name = "Tracked Item Spawns Override Data",
+			section = debugSection,
+			description = "List of overrides to the tracked spawns. x, y, plane, baseRespawnTicks, itemId, quantity",
 			position = 1
 	)
-	default String trackedSpawns()
+	default String trackedSpawnsOverrides()
 	{
-		//todo default value with explaining headers
-		return "x, y, plane, baseRespawnTicks, itemId, quantity\nx, y, plane, \"null\"\n";
+		return "";
 	}
-	//endregion trackedSpawnsSection
+	//endregion debugSection
 }

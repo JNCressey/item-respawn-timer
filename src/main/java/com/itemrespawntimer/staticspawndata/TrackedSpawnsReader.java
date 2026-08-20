@@ -94,6 +94,7 @@ public class TrackedSpawnsReader {
             // set baseRespawnTicks
             s.baseRespawnTicks( Integer.parseInt(lineData.get(3)) );
 
+            //todo handle item name
             // set itemId
             s.itemId(           Integer.parseInt(lineData.get(4)) );
 

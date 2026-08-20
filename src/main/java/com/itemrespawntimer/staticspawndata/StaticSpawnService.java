@@ -20,8 +20,8 @@ public class StaticSpawnService
 
     /**
      * The static spawn data that is to be tracked.
-     * [0]: The data from TrackedSpawnsDefault.csv, or null if not in default set.
-     * [i>0]: The data from config.trackedSpawns(), or null if that config says not to track
+     * [0]: The data from TrackedSpawnsDefault.csv, or empty optional if not in default set.
+     * [i>0]: The data from config.trackedSpawnsOverrides(), or empty optional if that config says not to track
      * The priority will be that the last item of the list will be used.
      * If the last item is empty, then the spawn won't be tracked.
      * On reloading the config, can remove all except first of the list.
@@ -60,7 +60,7 @@ public class StaticSpawnService
     //region reloadConfigOverrides
     public void reloadConfigOverrides(){
         clearConfigOverrides();
-        String configTrackedSpawns = config.trackedSpawns();
+        String configTrackedSpawns = config.trackedSpawnsOverrides();
         TrackedSpawnsReader.parseTrackedSpawnsFromCsvText(configTrackedSpawns)
                 .forEach(e ->
                     trackedSpawns
