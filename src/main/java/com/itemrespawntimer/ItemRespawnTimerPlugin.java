@@ -157,7 +157,7 @@ public class ItemRespawnTimerPlugin extends Plugin
 	@Subscribe
 	public void onGameTick(GameTick event) {
 		activeTimers.onGameTick();
-		panel.setCurrentWorldId(client.getWorld());
+		panel.setCurrentWorldId(client.getWorld());//todo move to the onGameStateChanged event
 		panel.updateSidePanel();
 	}
 

@@ -151,7 +151,7 @@ public interface ItemRespawnTimerConfig extends Config
 	}
 	//endregion removeTimersSection
 
-	//todo section for hiding timers from sidepanel
+	//todo section for hiding timers from side panel
 	// minimum value
 	// list of items to hide
 
@@ -168,15 +168,15 @@ public interface ItemRespawnTimerConfig extends Config
 			keyName = "debugModeEnabled",
 			name = "Enable Debug Mode",
 			section = debugSection,
-			description = "Will observe item spawns. Will notify if observe a spawn that isn't being tracked. Will attempt to guess baseRepsawnTicks and notify if different from expected.",
+			description = "Will observe item spawns. Will notify if observe a spawn that isn't being tracked. Will attempt to guess baseRespawnTicks and notify if different from expected.",
 			position = 0
 	)
 	default boolean debugModeEnabled()
 	{
 		return true;
 	}//todo implement
-	//todo add a debug mode that logs in chat predictions for what baserespawntime is for items spawns it observes
-	//todo add debug mode that automatically updates overides with observed baserespawntime
+	//todo add a debug mode that logs in chat predictions for what baseRespawnTicks is for items spawns it observes
+	//todo add debug mode that automatically updates overrides with observed baseRespawnTicks
 	//todo add debug to shift+rightClick on the ground to add or remove tracking
 	//todo have a checkbox for whether to apply the overrides or not
 
@@ -184,7 +184,7 @@ public interface ItemRespawnTimerConfig extends Config
 			keyName = "trackedSpawns",
 			name = "Tracked Item Spawns Override Data",
 			section = debugSection,
-			description = "List of overrides to the tracked spawns. x, y, plane, baseRespawnTicks, itemId, quantity",
+			description = "List of overrides to the tracked spawns. x, y, plane, baseRespawnTicks, itemId, quantity | x, y, plane, null",
 			position = 1
 	)
 	default String trackedSpawnsOverrides()

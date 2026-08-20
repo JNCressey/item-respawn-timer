@@ -129,7 +129,6 @@ public class RespawnTimer
     }
 
 
-    //region getProgress
     /**
      * The proportion of progress out of totalSeconds, for drawing the dial.
      * @return number from 0.0 to 1.0
@@ -137,18 +136,14 @@ public class RespawnTimer
     public double getProgress()
     {
         long nowMillis = Instant.now().toEpochMilli();
-        long elapsed = nowMillis - start;
-        return clamp(
-                elapsed / (totalSeconds * 1000.0),
-                0.0,1.0);
+        long elapsedMillis = nowMillis - start;
+        double progress = elapsedMillis / (totalSeconds * 1000.0);
+
+        return Math.min(Math.max( // clamped progress between 0.0 and 1.0. Math.clamp is not available for java 11
+                progress,
+                0.0), 1.0);
     }
 
-
-    // Math.clamp is not available for java 11
-    private static double clamp(double value, double min, double max){
-        return Math.min(Math.max(value, min), max);
-    }
-    //endregion getProgress
 
     /**
      *
