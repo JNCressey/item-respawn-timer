@@ -1,7 +1,6 @@
 package com.itemrespawntimer.staticspawndata;
 
 import java.util.*;
-import java.util.stream.Collectors;
 import javax.inject.Inject;
 import javax.inject.Singleton;
 
@@ -24,7 +23,7 @@ public class StaticSpawnService
      * [0]: The data from TrackedSpawnsDefault.csv, or null if not in default set.
      * [i>0]: The data from config.trackedSpawns(), or null if that config says not to track
      * The priority will be that the last item of the list will be used.
-     * If the last item is set as null, then the spawn won't be tracked.//todo null->optional null
+     * If the last item is empty, then the spawn won't be tracked.
      * On reloading the config, can remove all except first of the list.
      */
     private final HashMap<WorldPoint, LinkedList<Optional<StaticSpawn>>> trackedSpawns = new HashMap<>();
@@ -41,32 +40,19 @@ public class StaticSpawnService
     }
 
 
-    private void debugTrackedSpawns(){//todo remove
-        String debug = "Tracked Spawns:\n"
-        + trackedSpawns.entrySet().stream()
-                .map(e -> {
-                    WorldPoint wp = e.getKey();
-                    return String.format("#%d, %d, %d:\n", wp.getX(),wp.getY(),wp.getPlane())
-                            + e.getValue().stream()
-                            .map(s ->
-                                s.map(spawn -> String.format("    %d",spawn.getItemId()))
-                                        .orElse("    null")
-                            )
-                            .collect(Collectors.joining("\n"));
-                })
-                .collect(Collectors.joining("\n"));
-        log.debug(debug);
-    }
-
-
     public void startUp(){
         TrackedSpawnsReader.getDefaultTrackedSpawns()
-                .forEach(e ->
+                .forEach(e -> {
+                    WorldPoint wp = e.getWorldPoint();
+                    if (trackedSpawns.containsKey(wp)){
+                        log.warn("repeated coordinates in default data: {}, {}, {}",
+                                wp.getX(),wp.getY(),wp.getPlane());
+                    }
                     trackedSpawns.put(
-                            e.getWorldPoint(),
+                            wp,
                             new LinkedList<>(Collections.singletonList(e.getStaticSpawn()))
-                    )
-                );
+                    );
+                });
         reloadConfigOverrides();
     }
 
@@ -84,8 +70,6 @@ public class StaticSpawnService
                             )
                             .add(e.getStaticSpawn())
                 );
-        log.debug("static spawn service: reloadConfigOverrides");
-        debugTrackedSpawns();
     }
 
     private void clearConfigOverrides(){
