@@ -177,7 +177,7 @@ public class ActiveTimers {
                 int worldId = client.getWorld();
                 int worldPopulation = getCurrentWorldPopulation();
 
-                RespawnTimer timer = new RespawnTimer(spawn,worldId,wp,worldPopulation,nowMillis);
+                RespawnTimer timer = new RespawnTimer(spawn,worldId,worldPopulation,nowMillis);
 
                 add(timer);
 

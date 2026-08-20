@@ -2,6 +2,7 @@ package com.itemrespawntimer.staticspawndata;
 
 import lombok.Builder;
 import lombok.Value;
+import net.runelite.api.coords.WorldPoint;
 
 
 @Value
@@ -15,4 +16,6 @@ public class StaticSpawn
 
     @Builder.Default
     int quantity = -1;
+
+    WorldPoint worldPoint;
 }

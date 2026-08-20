@@ -26,14 +26,6 @@ public class RespawnTimer
     private final int worldId;
 
 
-    //todo put world point inside staticspawn and use a getter here getWorldPoint(){return spawn.getWorldPoint()}
-    /**
-     * the location in the world where the spawn is
-     */
-    @Getter
-    private final WorldPoint worldPoint;
-
-
     /**
      * when the timer started, as a millisecond timestamp
      */
@@ -102,14 +94,12 @@ public class RespawnTimer
     public RespawnTimer(
             StaticSpawn spawn,
             int worldId,
-            WorldPoint worldPoint,
             int worldPopulation,
             long startMillis
     )
     {
         this.spawn = spawn;
         this.worldId = worldId;
-        this.worldPoint = worldPoint;
         this.start = startMillis;
 
         int respawnDelayTicks = (int)Math.floor(this.spawn.getBaseRespawnTicks() * ((4000D-worldPopulation)/4000));
@@ -122,6 +112,13 @@ public class RespawnTimer
 
 
     //region getters
+    /**
+     * the location in the world where the spawn is
+     */
+    public WorldPoint getWorldPoint(){
+        return spawn.getWorldPoint();
+    }
+
     /**
      * Check if current time exceeds {@link #}respawnAt}.
      * @return Whether time T-0 has passed.

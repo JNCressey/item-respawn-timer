@@ -73,6 +73,8 @@ public class StaticSpawnService
                 .map(this::tryParseIntElseNull)
                 .ifPresent(s::quantity); // set value of the static spawn
 
+        // set worldPoint
+        s.worldPoint(wp);
 
         spawns
                 .computeIfAbsent(wp,k -> new ArrayList<>())
@@ -93,6 +95,7 @@ public class StaticSpawnService
     }
 
 
+    //region isSpawnLocationWithinViewDistance
     /**
      * Check if the spawn location is within the range that the player can see if the item respawns.
      * @param spawnPoint The spawn location
@@ -106,6 +109,7 @@ public class StaticSpawnService
                 && Math.abs(playerPoint.getY()/8 - spawnPoint.getY()/8) <= 3;
     }
 
+
     /**
      * Check if the spawn location is within the range that the player can see if the item respawns.
      * @param timer The timer to check the spawn location of.
@@ -116,14 +120,16 @@ public class StaticSpawnService
         return isSpawnLocationWithinViewDistance(timer.getWorldPoint(), playerPoint);
     }
 
+
     /**
      * Check if the spawn location is within the range that the player can see if the item respawns.
      * @param spawn The static spawn data to check the spawn location of.
      * @param playerPoint The current player position.
      * @return The result of the check
      */
-    /*public static boolean isSpawnLocationWithinViewDistance(StaticSpawn spawn, WorldPoint playerPoint){
+    public static boolean isSpawnLocationWithinViewDistance(StaticSpawn spawn, WorldPoint playerPoint){
         return isSpawnLocationWithinViewDistance(spawn.getWorldPoint(), playerPoint);
-    }*/ //todo
+    }
+    //endregion
 
 }
