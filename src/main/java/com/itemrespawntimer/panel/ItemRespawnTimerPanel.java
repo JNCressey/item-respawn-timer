@@ -1,4 +1,4 @@
-package com.itemrespawntimer.sidepanel;
+package com.itemrespawntimer.panel;
 
 import javax.swing.*;
 import javax.inject.Inject;
@@ -12,13 +12,13 @@ import lombok.Setter;
 import net.runelite.client.game.ItemManager;
 import net.runelite.client.ui.PluginPanel;
 
-public class WorldTimersSidePanel extends PluginPanel {
+public class ItemRespawnTimerPanel extends PluginPanel {
 
     //protected JLabel label;
     protected JTextArea textArea;
 
     @Inject
-    public WorldTimersSidePanel()
+    public ItemRespawnTimerPanel()
     {
         /*
         todo: make tiles with buttons for each timer

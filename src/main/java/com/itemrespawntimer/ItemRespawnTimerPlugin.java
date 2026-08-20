@@ -4,7 +4,7 @@ import com.google.inject.Provides;
 
 import javax.inject.Inject;
 
-import com.itemrespawntimer.sidepanel.WorldTimersSidePanel;
+import com.itemrespawntimer.panel.ItemRespawnTimerPanel;
 import com.itemrespawntimer.staticspawnservice.StaticSpawnService;
 import com.itemrespawntimer.timermodel.ActiveTimers;
 import com.itemrespawntimer.worldhopper.WorldHopper;
@@ -71,7 +71,7 @@ public class ItemRespawnTimerPlugin extends Plugin
 	//endregion
 
 
-	private WorldTimersSidePanel panel;
+	private ItemRespawnTimerPanel panel;
 	private NavigationButton navButton;
 
 
@@ -94,7 +94,7 @@ public class ItemRespawnTimerPlugin extends Plugin
 	}
 
 	private void startupSidePanel(){
-		panel = injector.getInstance(WorldTimersSidePanel.class);
+		panel = injector.getInstance(ItemRespawnTimerPanel.class);
 		final BufferedImage icon = ImageUtil.loadImageResource(ItemRespawnTimerPlugin.class, "/icon.png");
 
 		navButton = NavigationButton.builder()
