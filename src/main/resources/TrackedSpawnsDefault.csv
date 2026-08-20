@@ -1,12 +1,8 @@
-x,y,z,baseRespawnTicks,itemId,quantity
-# x,y,z: world coordinates. x,y for the position, z for the plane. *required
-# baseRespawnTicks: the number of ticks used as the base respawn rate. *required
-# itemId: the numerical id of the item. optional. If not provided, the timer will react to any item in that position.
-# quantity: the quantity of the item. optional. not currently used.
-
-# todo can't omit id, it's used for side panel item name
-# if you want to omit itemId but put a quantity, put the itemId value as "", for example:
-# 3209,3214,0,100,"",1
+x,y,plane,baseRespawnTicks,itemId,quantity
+# x,y,plane: world coordinates.
+# baseRespawnTicks: the number of ticks used as the base respawn rate.
+# itemId: the numerical id of the item.
+# quantity: the quantity of the item.
 
 
 3206,3208,0,100,558,1

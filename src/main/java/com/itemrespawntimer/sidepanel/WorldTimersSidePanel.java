@@ -40,9 +40,9 @@ public class WorldTimersSidePanel extends PluginPanel {
     @Inject
     private ItemManager itemManager;
 
-    private String getItemName(int itemId)
+    private String getItemName(RespawnTimer timer)
     {
-        return itemManager.getItemComposition(itemId).getName();
+        return itemManager.getItemComposition(timer.getSpawn().getItemId()).getName();
     }
 
 
@@ -52,7 +52,7 @@ public class WorldTimersSidePanel extends PluginPanel {
 
         String txt = activeTimers.getActiveTimers().stream()
                 .map(timer -> {
-                    String itemName = getItemName(timer.getSpawn().getItemId());
+                    String itemName = getItemName(timer);
                     String countdown = timer.getTMinusCountdown(nowMillis);
                     int worldId = timer.getWorldId();
                     String currentWorldIndicator = (worldId == currentWorldId)? "*" : "";

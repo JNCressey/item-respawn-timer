@@ -40,41 +40,37 @@ public class StaticSpawnService
             return; //skip comment lines
         }
 
-        List<String> lineData = Text.fromCSV(line);
-        // [0]:x,[1]:y,[2]:z,[3]:baseRespawnTicks,[4]:itemIdOrName,[5]:quantity
-
         WorldPoint wp;
-        try {
+        StaticSpawn.StaticSpawnBuilder s = StaticSpawn.builder();
+
+        try { // try build `s`
+            List<String> lineData = Text.fromCSV(line);
+            // [0]:x,[1]:y,[2]:plane,[3]:baseRespawnTicks,[4]:itemId,[5]:quantity
+
             wp = new WorldPoint(
                     Integer.parseInt(lineData.get(0)),
                     Integer.parseInt(lineData.get(1)),
                     Integer.parseInt(lineData.get(2)));
-        } catch(NumberFormatException e){
-            return; // skip this line if coordinates can't be parsed
+
+            // set worldPoint
+            s.worldPoint(wp);
+
+            // set baseRespawnTicks
+            s.baseRespawnTicks( Integer.parseInt(lineData.get(3)) );
+
+            // set itemId
+            s.itemId(           Integer.parseInt(lineData.get(4)) );
+
+            // set quantity
+            s.quantity(         Integer.parseInt(lineData.get(5)) );
         }
-
-        StaticSpawn.StaticSpawnBuilder s = StaticSpawn.builder();
-
-        // set baseRespawnTicks
-        s.baseRespawnTicks(Integer.parseInt(lineData.get(3)));
-
-        // set itemId if present
-        lineData.stream()
-                .skip(4).findFirst() // nth value if present line has enough values
-                .filter(itemId -> !itemId.isEmpty())
-                .map(this::tryParseIntElseNull)
-                .ifPresent(s::itemId); // set value of the static spawn
-
-
-        // set quantity if present
-        lineData.stream()
-                .skip(5).findFirst() // nth value if present line has enough values
-                .filter(quantity -> !quantity.isEmpty())
-                .map(this::tryParseIntElseNull)
-                .ifPresent(s::quantity); // set value of the static spawn
-
-        // set worldPoint
-        s.worldPoint(wp);
+        catch (
+                IndexOutOfBoundsException // skip this line if line doesn't have enough data cells
+                | NumberFormatException // skip this line if cell data doesn't parse
+                e
+        ) {
+            return;
+        }
 
         spawns
                 .computeIfAbsent(wp,k -> new ArrayList<>())
