@@ -178,13 +178,13 @@ public interface ItemRespawnTimerConfig extends Config
 			keyName = "trackedSpawns",
 			name = "Tracked Item Spawns",
 			section = trackedSpawnsSection,
-			description = "List of data about known item spawns that this plugin will show timers for.",
+			description = "List of overrides to the tracked spawns.",
 			position = 1
 	)
 	default String trackedSpawns()
 	{
 		//todo default value with explaining headers
-		return "";
+		return "x, y, plane, baseRespawnTicks, itemId, quantity\nx, y, plane, \"null\"\n";
 	}
 	//endregion trackedSpawnsSection
 }

@@ -152,7 +152,6 @@ public class ActiveTimers {
      * @param event the item despawned
      */
     public void onItemDespawned(ItemDespawned event){//todo can i make this subscribed
-        Map<WorldPoint, List<StaticSpawn>> staticSpawnsByTile = staticSpawnService.getTrackedSpawns(); //todo make getter for single
         Tile tile = event.getTile();
         TileItem item = event.getItem();
         if (tile == null || item == null)
@@ -169,30 +168,16 @@ public class ActiveTimers {
             return; // filter out delayed despawn events from returning to a location but not directly witnessing the item being taken
         }
 
-        List<StaticSpawn> spawns = staticSpawnsByTile.get(wp);
+        staticSpawnService.getTrackedSpawn(wp)
+                .filter(spawn -> spawn.getItemId()==item.getId())
+                .ifPresent(spawn ->{
+                    long nowMillis = Instant.now().toEpochMilli();
+                    int worldId = client.getWorld();
+                    int worldPopulation = getCurrentWorldPopulation();
 
-        if (spawns == null || spawns.isEmpty())
-        {
-            return; // skip if no spawn data for this position
-        }
-
-        StaticSpawn spawn = spawns.get(spawns.size()-1);
-        if (spawn==null){
-            return; // skip if most priority spawn is null
-        }
-
-        if (spawn.getItemId()==item.getId())
-        {
-
-            long nowMillis = Instant.now().toEpochMilli();
-            int worldId = client.getWorld();
-            int worldPopulation = getCurrentWorldPopulation();
-
-            RespawnTimer timer = new RespawnTimer(spawn,worldId,worldPopulation,nowMillis);
-
-            add(timer);
-
-        }
+                    RespawnTimer timer = new RespawnTimer(spawn,worldId,worldPopulation,nowMillis);
+                    add(timer);
+                });
     }
 
 

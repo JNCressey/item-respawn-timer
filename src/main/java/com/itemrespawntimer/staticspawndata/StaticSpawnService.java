@@ -8,7 +8,6 @@ import javax.inject.Singleton;
 
 import com.itemrespawntimer.ItemRespawnTimerConfig;
 import com.itemrespawntimer.timermodel.RespawnTimer;
-import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 import net.runelite.client.util.Text;
 
@@ -27,11 +26,27 @@ public class StaticSpawnService
      * [0]: The data from TrackedSpawnsDefault.csv, or null if not in default set.
      * [i>0]: The data from config.trackedSpawns(), or null if that config says not to track
      * The priority will be that the last item of the list will be used.
-     * If the last item is set as null, then the spawn won't be tracked.
+     * If the last item is set as null, then the spawn won't be tracked.//todo null->optional null
      * On reloading the config, can remove all except first of the list.
      */
-    @Getter //todo make getter for single and keep this map private
-    private HashMap<WorldPoint, List<StaticSpawn>> trackedSpawns = new HashMap<>();
+    private final HashMap<WorldPoint, LinkedList<Optional<StaticSpawn>>> trackedSpawns = new HashMap<>();
+
+    /**
+     * Get the static spawn data for a given location, or empty optional if not tracking a spawn at the location.
+     * @param wp The spawn location.
+     * @return The spawn data.
+     */
+    public Optional<StaticSpawn> getTrackedSpawn(WorldPoint wp){
+        LinkedList<Optional<StaticSpawn>> l = trackedSpawns.get(wp);
+        if (l==null){
+            return Optional.empty();
+        } else {
+            return l.getLast();
+        }
+        /*return Optional.ofNullable(trackedSpawns.get(wp)).flatMap(LinkedList::getLast);*/
+    }
+
+
 
     private void debugTrackedSpawns(){//todo remove
         String debug = "Tracked Spawns:\n"
@@ -40,13 +55,10 @@ public class StaticSpawnService
                     WorldPoint wp = e.getKey();
                     return String.format("#%d, %d, %d:\n", wp.getX(),wp.getY(),wp.getPlane())
                             + e.getValue().stream()
-                            .map(s -> {
-                                if (s==null){
-                                    return "    null";
-                                } else {
-                                    return String.format("    %d",s.getItemId());
-                                }
-                            })
+                            .map(s ->
+                                s.map(spawn -> String.format("    %d",spawn.getItemId()))
+                                        .orElse("    null")
+                            )
                             .collect(Collectors.joining("\n"));
                 })
                 .collect(Collectors.joining("\n"));
@@ -56,14 +68,33 @@ public class StaticSpawnService
     public void startUp(){
         String defaultTrackedSpawns = TrackedSpawnsDefaultFileReader.readResource();
         staticSpawnStreamFromCsvText(defaultTrackedSpawns)
-                .forEach(e -> {
+                .forEach(e ->
                     trackedSpawns.put(
                             e.getWorldPoint(),
-                            Arrays.asList(e.getStaticSpawn())
-                    );
-                });
+                            new LinkedList<>(Arrays.asList(e.getStaticSpawn()))
+                    )
+                );
         reloadConfigOverrides();
-        log.debug("static spawn service: startUp");
+    }
+
+    //region reloadConfigOverrides
+    public void reloadConfigOverrides(){
+        clearConfigOverrides();
+        String configTrackedSpawns = config.trackedSpawns();
+        staticSpawnStreamFromCsvText(configTrackedSpawns)
+                .forEach(e ->
+                    trackedSpawns
+                            .computeIfAbsent(
+                                    e.getWorldPoint(),
+                                    k -> {
+                                        LinkedList<Optional<StaticSpawn>> l = new LinkedList<>();
+                                        l.add(Optional.empty());
+                                        return l;
+                                    }
+                            )
+                            .add(e.getStaticSpawn())
+                );
+        log.debug("static spawn service: reloadConfigOverrides");
         debugTrackedSpawns();
     }
 
@@ -71,29 +102,9 @@ public class StaticSpawnService
         trackedSpawns.values().forEach(l -> {
             l.subList(1, l.size()).clear(); // remove all except first
         });
-        log.debug("static spawn service: clearConfigOverrides");
-        debugTrackedSpawns();
     }
+    //endregion
 
-    public void reloadConfigOverrides(){
-        clearConfigOverrides();
-        String configTrackedSpawns = config.trackedSpawns();
-        staticSpawnStreamFromCsvText(configTrackedSpawns)
-                .forEach(e -> {
-                    trackedSpawns
-                            .computeIfAbsent(
-                                    e.getWorldPoint(),
-                                    k -> {
-                                        List<StaticSpawn> l = new ArrayList<>();
-                                        l.add(null);
-                                        return l;
-                                    }
-                            )
-                            .add(e.getStaticSpawn());
-                });
-        log.debug("static spawn service: reloadConfigOverrides");
-        debugTrackedSpawns();
-    }
 
     private Stream<WorldPointAndStaticSpawn> staticSpawnStreamFromCsvText(String spawnDataCsvText){
         return spawnDataCsvText.lines()
@@ -104,7 +115,7 @@ public class StaticSpawnService
     /**
      * Parse a lines of static spawn data into a StaticSpawn to add.
      * If the line doesn't parse as spawn data, the return value is null.
-     * If the line indicates that the worldpoint shouldn't be tracked, the return value has its staticSpawn value as null.//todo
+     * If the line indicates that the location shouldn't be tracked, the return value has its staticSpawn value as empty Optional.
      * @param spawnDataCsvLine
      * @return
      */
@@ -118,13 +129,22 @@ public class StaticSpawnService
         StaticSpawn.StaticSpawnBuilder s = StaticSpawn.builder();
 
         try { // try build `s`
+            /*
+             * `lineData` is the record data:
+             * [0]:x,[1]:y,[2]:plane
+             * for positions to be tracked: [3]:baseRespawnTicks,[4]:itemId,[5]:quantity
+             * for positions not to be tracked: [3]:"null"
+             */
             List<String> lineData = Text.fromCSV(lineWithoutComment);
-            // [0]:x,[1]:y,[2]:plane,[3]:baseRespawnTicks,[4]:itemId,[5]:quantity
 
             wp = new WorldPoint(
                     Integer.parseInt(lineData.get(0)),
                     Integer.parseInt(lineData.get(1)),
                     Integer.parseInt(lineData.get(2)));
+
+            if (lineData.get(3).equals("null")){
+                return new WorldPointAndStaticSpawn(wp,null); // entry indicates to not track this location
+            }
 
             // set worldPoint
             s.worldPoint(wp);
@@ -150,77 +170,6 @@ public class StaticSpawnService
     }
 
 
-
-    public Map<WorldPoint, List<StaticSpawn>> loadStaticSpawns()
-    {
-        HashMap<WorldPoint, List<StaticSpawn>> spawns = new HashMap<>();
-
-        config.trackedSpawns().lines()
-                .forEach(line -> loadTrackedSpawnsLine(line,spawns));
-
-        return spawns;
-    }
-
-    /**
-     * Parse the data from a line of trackedSpawns and add the appropriate data to map
-     * @param line a line of the trackedSpawns configuration
-     * @param spawns the map of spawn data
-     */
-    private void loadTrackedSpawnsLine(String line, HashMap<WorldPoint, List<StaticSpawn>> spawns){
-        String lineWithoutComment = line.split("#",2)[0];
-        if (lineWithoutComment.isEmpty()){
-            return; //skip empty lines
-        }
-
-        WorldPoint wp;
-        StaticSpawn.StaticSpawnBuilder s = StaticSpawn.builder();
-
-        try { // try build `s`
-            List<String> lineData = Text.fromCSV(lineWithoutComment);
-            // [0]:x,[1]:y,[2]:plane,[3]:baseRespawnTicks,[4]:itemId,[5]:quantity
-
-            wp = new WorldPoint(
-                    Integer.parseInt(lineData.get(0)),
-                    Integer.parseInt(lineData.get(1)),
-                    Integer.parseInt(lineData.get(2)));
-
-            // set worldPoint
-            s.worldPoint(wp);
-
-            // set baseRespawnTicks
-            s.baseRespawnTicks( Integer.parseInt(lineData.get(3)) );
-
-            // set itemId
-            s.itemId(           Integer.parseInt(lineData.get(4)) );
-
-            // set quantity
-            s.quantity(         Integer.parseInt(lineData.get(5)) );
-        }
-        catch (
-                IndexOutOfBoundsException // skip this line if line doesn't have enough data cells
-                | NumberFormatException // skip this line if cell data doesn't parse
-                e
-        ) {
-            return;
-        }
-
-        spawns
-                .computeIfAbsent(wp,k -> new ArrayList<>())
-                .add(s.build());
-    }
-
-    /**
-     *
-     * @param s the string to parse
-     * @return the parsed integer if possible, else returns null
-     */
-    private Integer tryParseIntElseNull(String s){
-        try{
-            return Integer.valueOf(s);
-        } catch (NumberFormatException e){
-            return null;
-        }
-    }
 
 
     //region isSpawnLocationWithinViewDistance
