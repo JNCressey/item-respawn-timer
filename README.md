@@ -4,6 +4,9 @@ Show timers for respawning items
 Predictions can be slightly off. Because the respawn time depends on how many players are currently in the world, and the world populations are only periodically sent to the client.
 
 ## dev to-dos
+- for activetimers previous tick position, record 2 variables. check if either of them are out of range, to ensure it doesn't miss from either leaving the range for a single tick or the order of ongametick and onitemdespawn 
+  - one set by player position in this ongametick
+  - and the previous value of that
 - for timer add, use an iterator to find insert index to avoid using linkedlist.get(index)
 - for static spawn overrides, add to array for that location
   - clear overrides can fireach location remove all past first index: list.subList(1, list.size()).clear()
