@@ -36,15 +36,16 @@ public class StaticSpawnService
      * @param spawns the map of spawn data
      */
     private void loadTrackedSpawnsLine(String line, HashMap<WorldPoint, List<StaticSpawn>> spawns){
-        if (line.isEmpty() || line.charAt(0) == '#'){
-            return; //skip comment lines
+        String lineWithoutComment = line.split("#",2)[0];
+        if (lineWithoutComment.isEmpty()){
+            return; //skip empty lines
         }
 
         WorldPoint wp;
         StaticSpawn.StaticSpawnBuilder s = StaticSpawn.builder();
 
         try { // try build `s`
-            List<String> lineData = Text.fromCSV(line);
+            List<String> lineData = Text.fromCSV(lineWithoutComment);
             // [0]:x,[1]:y,[2]:plane,[3]:baseRespawnTicks,[4]:itemId,[5]:quantity
 
             wp = new WorldPoint(
