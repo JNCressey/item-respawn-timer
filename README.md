@@ -14,7 +14,6 @@ Predictions can be slightly off. Because the respawn time depends on how many pl
 - unconditional timer removal based on event of the item being there
   - clear the timer when an item spawn event
   - clear the timer if load the area (world login or movement into area) and the item is already there 
-- don't start timer from going up some stairs or running away, only when item is taken
 - work for all respawning items, not just Lumbridge castle mind rune
   - fill the csv file
   - handle item names

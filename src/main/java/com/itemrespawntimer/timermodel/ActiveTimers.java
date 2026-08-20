@@ -9,7 +9,6 @@ import net.runelite.api.Tile;
 import net.runelite.api.TileItem;
 import net.runelite.api.coords.WorldPoint;
 import net.runelite.api.events.ItemDespawned;
-import net.runelite.api.events.ItemSpawned;
 import net.runelite.client.game.WorldService;
 import net.runelite.http.api.worlds.WorldResult;
 
@@ -87,22 +86,22 @@ public class ActiveTimers {
     public void onGameTick(){//todo can i make this subscribe?
         addTick();
         removeTick();
+        previousTickPlayerLocation = client.getLocalPlayer().getWorldLocation();
     }
 
     //region addTick
-    /*
-    todo: still gets an eroneous event if you left when the item is there, and then return when the item is not there
-    world hopping doesn't cause these bad events
-    bad event when left when there was an item and returned when there wasn't
-    different combinations of stairs, running, and teleports sometimes have the bad events
-
-     */
-
     /**
      *
-     * the items that have been taken this tick. This buffer is needed because sometimes a tick will fire onItemDespawn then onItemSpawn for the same item
+     * the items that have been taken this tick.
+     * This buffer is needed because sometimes a tick will fire onItemDespawn when entering an area when item is already gone without directly observing it being taken.
+     * todo: now with the previousTickPlayerLocation strategy, can the buffer be skipped?
      */
     private final Map<WorldPoint, StaticSpawn> newStaticSpawnsToProcess = new HashMap<>();
+
+    /**
+     * the player location in the previous tick, so we can detect whether an onItemDespawn is actually from re-entering the area without directly observing it being taken.
+     */
+    private WorldPoint previousTickPlayerLocation;
 
 
     //todo move staticSpawnsByTile to activeTimers having a property for the StaticSpawnService
@@ -126,20 +125,9 @@ public class ActiveTimers {
         {
             if (spawn.getItemId()==item.getId())
             {
-                log.debug("queueNewTimer: {}", item.getId());
                 newStaticSpawnsToProcess.put(wp,spawn);
                 break;
             }
-        }
-    }
-
-
-    public void cancelNewTimer(ItemSpawned event){
-        log.debug("cancelNewTimer");
-        Tile tile = event.getTile();
-        if (tile!=null){
-            WorldPoint wp = tile.getWorldLocation();
-            newStaticSpawnsToProcess.remove(wp);
         }
     }
 
@@ -155,8 +143,10 @@ public class ActiveTimers {
             StaticSpawn spawn = entry.getValue();
             WorldPoint wp = entry.getKey();
             RespawnTimer timer = new RespawnTimer(spawn,worldId,wp,worldPopulation,nowMillis);
+            if(!timer.isSpawnLocationWithinViewDistance(previousTickPlayerLocation)){
+                continue; // filter out delayed despawn events from returning to a location but not directly witnessing the item being taken
+            }
             activeTimers.add(timer);
-            log.debug("add timer {}",spawn.getItemId());
         }
 
         newStaticSpawnsToProcess.clear();
