@@ -36,13 +36,8 @@ public class StaticSpawnService
      * @return The spawn data.
      */
     public Optional<StaticSpawn> getTrackedSpawn(WorldPoint wp){
-        /*LinkedList<Optional<StaticSpawn>> l = trackedSpawns.get(wp);
-        if (l==null){
-            return Optional.empty();
-        } else {
-            return l.getLast();
-        }*///todo remove
-        return Optional.ofNullable(trackedSpawns.get(wp)).flatMap(LinkedList::getLast);
+        return Optional.ofNullable(trackedSpawns.get(wp))
+                .flatMap(LinkedList::getLast);
     }
 
 
