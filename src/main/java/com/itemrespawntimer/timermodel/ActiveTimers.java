@@ -120,11 +120,14 @@ public class ActiveTimers {
      * @param event the item spawned
      */
     public void onItemSpawned(ItemSpawned event){ //todo can i make this subscribed
-        log.debug("#onItemSpawned");
         Tile tile = event.getTile();
         TileItem item = event.getItem();
         if (tile == null || item == null) {
             return;
+        }
+
+        if (item.getOwnership() != TileItem.OWNERSHIP_NONE){
+            return; // only react to items that were naturally spawned
         }
 
         WorldPoint spawnedWorldPoint = tile.getWorldLocation();
@@ -154,6 +157,10 @@ public class ActiveTimers {
         if (tile == null || item == null)
         {
             return;
+        }
+
+        if (item.getOwnership() != TileItem.OWNERSHIP_NONE){
+            return; // only react to items that were naturally spawned
         }
 
         WorldPoint wp = tile.getWorldLocation();
