@@ -46,16 +46,20 @@ public class ActiveTimers {
 
 
     //region add(RespawnTimer newTimer)
+    /**
+     * Add a respawn timer to the list.
+     * @param newTimer The timer to add.
+     */
     public void add(RespawnTimer newTimer){
         removeIfSameWorldAndLocationAs(newTimer);
-        // Comparator won't find a match because we already removed if there is the same location.
-        // If not found, binarySearch returns (-(insertion point) - 1)
-        int insertionIndex = -Collections.binarySearch(activeTimers,newTimer,ordering) -1;
-        activeTimers.add(insertionIndex, newTimer);
-
+        activeTimers.add(insertionIndex(newTimer), newTimer);
     }
 
 
+    /**
+     * Remove any timers at the same location in the same world, to ensure there's only ever one per location.
+     * @param newTimer The timer about to be added to the list.
+     */
     private void removeIfSameWorldAndLocationAs(RespawnTimer newTimer)
     {
         activeTimers.removeIf(t-> (
@@ -65,12 +69,33 @@ public class ActiveTimers {
     }
 
 
+    /**
+     * Ordering for the timers list to be maintained in.
+     */
     private final Comparator<RespawnTimer> ordering =  Comparator
             .comparingLong(RespawnTimer::getRespawnAt)
             .thenComparingInt(RespawnTimer::getWorldId)
             .thenComparingInt(t->t.getWorldPoint().getPlane())
             .thenComparingInt(t->t.getWorldPoint().getY())
             .thenComparingInt(t->t.getWorldPoint().getX());
+
+
+    /**
+     * Find the index to insert at to maintain the order of the timers list.
+     * @param newTimer The timer about to be added to the list.
+     * @return The insertion index.
+     */
+    private int insertionIndex(RespawnTimer newTimer){
+        int insertionIndex = 0;
+        for (RespawnTimer t : activeTimers){
+            // want first index where newTimer is sorted before existing element
+            if (ordering.compare(newTimer, t) < 0) {
+                break;
+            }
+            ++insertionIndex;
+        }
+        return insertionIndex;
+    }
     //endregion
 
 
@@ -153,7 +178,8 @@ public class ActiveTimers {
                 int worldPopulation = getCurrentWorldPopulation();
 
                 RespawnTimer timer = new RespawnTimer(spawn,worldId,wp,worldPopulation,nowMillis);
-                activeTimers.add(timer);
+
+                add(timer);
 
                 break;
             }
