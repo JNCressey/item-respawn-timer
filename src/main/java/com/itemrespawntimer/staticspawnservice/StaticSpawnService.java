@@ -1,4 +1,4 @@
-package com.itemrespawntimer.staticspawndata;
+package com.itemrespawntimer.staticspawnservice;
 
 import java.util.*;
 import javax.inject.Inject;

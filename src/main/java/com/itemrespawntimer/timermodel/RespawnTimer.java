@@ -1,6 +1,6 @@
 package com.itemrespawntimer.timermodel;
 
-import com.itemrespawntimer.staticspawndata.StaticSpawn;
+import com.itemrespawntimer.staticspawnservice.StaticSpawn;
 import lombok.Getter;
 import net.runelite.api.coords.WorldPoint;
 

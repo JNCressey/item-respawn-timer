@@ -1,4 +1,4 @@
-package com.itemrespawntimer.staticspawndata;
+package com.itemrespawntimer.staticspawnservice;
 
 import lombok.Value;
 import net.runelite.api.coords.WorldPoint;

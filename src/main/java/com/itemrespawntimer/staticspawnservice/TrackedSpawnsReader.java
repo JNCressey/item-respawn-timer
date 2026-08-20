@@ -1,4 +1,4 @@
-package com.itemrespawntimer.staticspawndata;
+package com.itemrespawntimer.staticspawnservice;
 
 import com.itemrespawntimer.ItemRespawnTimerConfig;
 import net.runelite.api.coords.WorldPoint;

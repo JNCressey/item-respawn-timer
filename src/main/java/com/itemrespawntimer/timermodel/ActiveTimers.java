@@ -1,7 +1,7 @@
 package com.itemrespawntimer.timermodel;
 
 import com.itemrespawntimer.ItemRespawnTimerConfig;
-import com.itemrespawntimer.staticspawndata.StaticSpawnService;
+import com.itemrespawntimer.staticspawnservice.StaticSpawnService;
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 import net.runelite.api.Client;

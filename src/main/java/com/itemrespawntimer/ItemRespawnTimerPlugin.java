@@ -5,13 +5,11 @@ import com.google.inject.Provides;
 import javax.inject.Inject;
 
 import com.itemrespawntimer.sidepanel.WorldTimersSidePanel;
-import com.itemrespawntimer.staticspawndata.StaticSpawn;
-import com.itemrespawntimer.staticspawndata.StaticSpawnService;
+import com.itemrespawntimer.staticspawnservice.StaticSpawnService;
 import com.itemrespawntimer.timermodel.ActiveTimers;
 import com.itemrespawntimer.worldhopper.WorldHopper;
 import lombok.extern.slf4j.Slf4j;
 import net.runelite.api.*;
-import net.runelite.api.coords.WorldPoint;
 import net.runelite.api.events.GameStateChanged;
 import net.runelite.api.events.GameTick;
 import net.runelite.api.events.ItemSpawned;
@@ -21,7 +19,6 @@ import net.runelite.client.events.ConfigChanged;
 import net.runelite.client.plugins.Plugin;
 import net.runelite.client.plugins.PluginDescriptor;
 
-import java.util.*;
 import java.awt.image.BufferedImage;
 
 import net.runelite.client.ui.ClientToolbar;
