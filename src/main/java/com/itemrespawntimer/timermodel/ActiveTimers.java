@@ -85,19 +85,48 @@ public class ActiveTimers {
     //endregion
 
     public void onGameTick(){//todo can i make this subscribe?
-        addTick();
         removeTick();
         recordThisTickPlayerLocation();
     }
 
-    //region addTick
-    /**
-     *
-     * the items that have been taken this tick.
-     * This buffer is needed because sometimes a tick will fire onItemDespawn when entering an area when item is already gone without directly observing it being taken.
-     * todo: now with the previousTickPlayerLocation strategy, can the buffer be skipped?
-     */
-    private final Map<WorldPoint, StaticSpawn> newStaticSpawnsToProcess = new HashMap<>();
+    //region public void onItemDespawned(ItemDespawned event)
+    //todo move staticSpawnsByTile to activeTimers having a property for the StaticSpawnService
+    public void onItemDespawned(ItemDespawned event, Map<WorldPoint, List<StaticSpawn>> staticSpawnsByTile){
+        Tile tile = event.getTile();
+        TileItem item = event.getItem();
+        if (tile == null || item == null)
+        {
+            return;
+        }
+
+        WorldPoint wp = tile.getWorldLocation();
+        if(spawnLocationMayHaveEnteredViewDistanceThisTick(wp)){
+            return; // filter out delayed despawn events from returning to a location but not directly witnessing the item being taken
+        }
+
+        List<StaticSpawn> spawns = staticSpawnsByTile.get(wp);
+
+        if (spawns == null || spawns.isEmpty())
+        {
+            return;
+        }
+
+        for (StaticSpawn spawn : spawns) //todo change staticspawnservice to only provide one static spawn existing per world point
+        {
+            if (spawn.getItemId()==item.getId())
+            {
+
+                long nowMillis = Instant.now().toEpochMilli();
+                int worldId = client.getWorld();
+                int worldPopulation = getCurrentWorldPopulation();
+
+                RespawnTimer timer = new RespawnTimer(spawn,worldId,wp,worldPopulation,nowMillis);
+                activeTimers.add(timer);
+
+                break;
+            }
+        }
+    }
 
 
     //region spawnLocationMayHaveEnteredViewDistanceThisTick(WorldPoint spawnPoint)
@@ -133,55 +162,6 @@ public class ActiveTimers {
         );
     }
     //endregion
-
-
-    //todo move staticSpawnsByTile to activeTimers having a property for the StaticSpawnService
-    public void queueNewTimer(ItemDespawned event, Map<WorldPoint, List<StaticSpawn>> staticSpawnsByTile){
-        Tile tile = event.getTile();
-        TileItem item = event.getItem();
-        if (tile == null || item == null)
-        {
-            return;
-        }
-
-        WorldPoint wp = tile.getWorldLocation();
-        List<StaticSpawn> spawns = staticSpawnsByTile.get(wp);
-
-        if (spawns == null || spawns.isEmpty())
-        {
-            return;
-        }
-
-        for (StaticSpawn spawn : spawns)
-        {
-            if (spawn.getItemId()==item.getId())
-            {
-                newStaticSpawnsToProcess.put(wp,spawn);
-                break;
-            }
-        }
-    }
-
-
-    private void addTick(){
-        if (newStaticSpawnsToProcess.isEmpty()){ return; }
-
-        long nowMillis = Instant.now().toEpochMilli();
-        int worldId = client.getWorld();
-        int worldPopulation = getCurrentWorldPopulation();
-
-        for( Map.Entry<WorldPoint, StaticSpawn> entry : newStaticSpawnsToProcess.entrySet()){//todo make spawn contain the worldpoint so this can loop over values instead of entryset
-            StaticSpawn spawn = entry.getValue();
-            WorldPoint wp = entry.getKey();
-            if(spawnLocationMayHaveEnteredViewDistanceThisTick(wp)){ //todo use overload that takes a staticspawn
-                continue; // filter out delayed despawn events from returning to a location but not directly witnessing the item being taken
-            }
-            RespawnTimer timer = new RespawnTimer(spawn,worldId,wp,worldPopulation,nowMillis);
-            activeTimers.add(timer);
-        }
-
-        newStaticSpawnsToProcess.clear();
-    }
 
 
     private int getCurrentWorldPopulation(){
@@ -231,12 +211,7 @@ public class ActiveTimers {
             int currentWorldId,
             WorldPoint playerPoint
     ){
-
-        /*
-        todo
-          - removal method should take the current time, the current world, and the current location, and current config options for automatic removal then pass to each timer.
-            - timer should know from the config and the passed variables whether it meets a condition for removal
-         */
+        //todo should also remove unconditionally if item exists at the location
         return selectedRemoveTimerEvents.stream()
                 .anyMatch(selectedRemoveTimerEvent -> {
                     switch(selectedRemoveTimerEvent){

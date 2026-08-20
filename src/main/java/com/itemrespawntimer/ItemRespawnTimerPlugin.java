@@ -151,17 +151,14 @@ public class ItemRespawnTimerPlugin extends Plugin
 	private void loadStaticSpawns(){
 		staticSpawnsByTile = staticSpawnService.loadStaticSpawns();
 	}
-
-
 	//endregion
 
 
 	@Subscribe
 	public void onItemDespawned(ItemDespawned event)
 	{
-		activeTimers.queueNewTimer(event, staticSpawnsByTile);
+		activeTimers.onItemDespawned(event, staticSpawnsByTile);
 	}
-	//endregion
 
 
 	@Subscribe
