@@ -22,12 +22,23 @@ public interface ItemRespawnTimerConfig extends Config
 		return true;
 	}
 
+	@ConfigItem(
+			keyName = "showMessage",
+			name = "Show world hop message in chat",
+			description = "Shows what world is being hopped to in the chat.",
+			position = 1
+	)
+	default boolean showWorldHopMessage()
+	{
+		return true;
+	}
+
 
 	//region hotkeysSection
 	@ConfigSection(
 			name = "Hotkeys",
 			description = "Configure Hotkeys.",
-			position = 1,
+			position = 2,
 			closedByDefault = true
 	)
 	String hotkeysSection = "hotkeysSection";
@@ -98,7 +109,7 @@ public interface ItemRespawnTimerConfig extends Config
 	@ConfigSection(
 			name = "Automatically Remove Timers",
 			description = "Automatically remove the expired timers",
-			position = 2,
+			position = 3,
 			closedByDefault = true
 	)
 	String removeTimersSection = "removeTimersSection";
@@ -159,7 +170,7 @@ public interface ItemRespawnTimerConfig extends Config
 	@ConfigSection(
 			name = "Debug Options",
 			description = "Debug options",
-			position = 3,
+			position = 4,
 			closedByDefault = true
 	)
 	String debugSection = "debugSection";

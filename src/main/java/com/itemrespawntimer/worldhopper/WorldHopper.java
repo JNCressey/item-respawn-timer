@@ -344,7 +344,7 @@ public class WorldHopper {
     private void hop(@Nonnull net.runelite.api.World world){
         assert client.isClientThread();
 
-        if (true)//(config.showWorldHopMessage())//todo make config
+        if (config.showWorldHopMessage())
         {
             String chatMessage = new ChatMessageBuilder()
                     .append(ChatColorType.NORMAL)
