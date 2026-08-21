@@ -290,7 +290,11 @@ public class DebugSpawnDiscoveryService {
         if (trackedItemIsDifferent) {
             addOverride(observation, observationMessageBuilder);
         } else {
-            observationMessageBuilder.append("\nbaseRespawnTicks, itemId, and quantity data are correct");//todo make game message
+            observationMessageBuilder.append("\n");
+            if (observation.isComplete()){
+                observationMessageBuilder.append("baseRespawnTicks, ");
+            }
+            observationMessageBuilder.append("itemId, and quantity data are correct");
         }
 
         return !trackedItemIsDifferent;
