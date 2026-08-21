@@ -244,7 +244,7 @@ public interface ItemRespawnTimerConfig extends Config
 	}
 
 	@ConfigItem(
-			keyName = "trackedSpawns",
+			keyName = "trackedSpawnsOverrides",
 			name = "Tracked Item Spawns Override Data",
 			section = debugSection,
 			description = "List of overrides to the tracked spawns. x, y, plane, [{\"null\" | baseRespawnTicks, {-1 | itemId}, quantity}]",
@@ -269,5 +269,13 @@ public interface ItemRespawnTimerConfig extends Config
 			+ "\n#3208, 3214, 0, 100, 1923, 1"
 		);
 	}
+
+
+	@ConfigItem(
+			keyName = "trackedSpawnsOverrides",
+			name = "",
+			description = ""
+	)
+	void setTrackedSpawnsOverrides(String key);
 	//endregion debugSection
 }

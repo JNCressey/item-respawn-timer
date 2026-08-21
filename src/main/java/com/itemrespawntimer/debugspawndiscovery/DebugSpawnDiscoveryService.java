@@ -365,9 +365,16 @@ public class DebugSpawnDiscoveryService {
                 "%s, %s, %s, exclude",
                 wp.getX(),wp.getY(),wp.getPlane());
 
-        observationMessageBuilder.append(String.format("\nadded new override: %s",newOverride));//todo make game message
-        log.debug("add new override: {}", newOverride);
-        //todo add new override to config
+        observationMessageBuilder.append(String.format("\nAdd new override: %s",newOverride));
+        log.debug("Add new override: {}", newOverride);
+
+        if (config.discoveryModeAutoAddOverrides()){
+            // append new override to config
+            config.setTrackedSpawnsOverrides(
+                    config.trackedSpawnsOverrides()
+                    +"\n" + newOverride
+            );
+        }
     }
 
 

@@ -144,7 +144,7 @@ public class ItemRespawnTimerPlugin extends Plugin
 		System.out.println("Config changed: " + configKey);
 
 		// Example: trigger specific logic when a certain key changes
-		if (configKey.equals("trackedSpawns"))
+		if (configKey.equals("trackedSpawnsOverrides"))
 		{
 			staticSpawnService.reloadConfigOverrides();
 		}
