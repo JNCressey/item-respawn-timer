@@ -40,6 +40,7 @@ public class StaticSpawn
      */
     int quantity;
 
+    @SuppressWarnings("unused")
     public static class StaticSpawnBuilder {
         /**
          * Sets baseRespawnTicks by parsing as {@link Integer#parseInt}.

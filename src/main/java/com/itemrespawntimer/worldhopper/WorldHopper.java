@@ -91,9 +91,14 @@ public class WorldHopper {
     };
     //endregion
 
+    @SuppressWarnings("SpellCheckingInspection")
+    private static final String HOPPER_COMMAND_STRING = "irthop";
+    private static final String HOPPER_COMMAND_TOP_STRING = HOPPER_COMMAND_STRING + "top";
+    private static final String HOPPER_COMMAND_NEXT_STRING = HOPPER_COMMAND_STRING + "next";
+
     //todo can i make this subscribed?
     public void onCommandExecuted(CommandExecuted commandExecuted) {
-        if ("irthop".equalsIgnoreCase(commandExecuted.getCommand()))
+        if (HOPPER_COMMAND_STRING.equalsIgnoreCase(commandExecuted.getCommand()))
         {
             String[] arguments = commandExecuted.getArguments();
 
@@ -119,16 +124,11 @@ public class WorldHopper {
             {
                 String message = new ChatMessageBuilder()
                         .append("ItemRespawnTimer command usage:")
-                        .append("\n")
-                        .append("::irthop [index]")
-                        .append("\n")
-                        .append("::irthop top")
-                        .append("\n")
-                        .append("::irthop next")
-                        .append("\n")
-                        .append("::irthoptop")
-                        .append("\n")
-                        .append("::irthopnext")
+                        .append(String.format("\n::%s [index]", HOPPER_COMMAND_STRING      ))
+                        .append(String.format("\n::%s top",     HOPPER_COMMAND_STRING      ))
+                        .append(String.format("\n::%s next",    HOPPER_COMMAND_STRING      ))
+                        .append(String.format("\n::%s",         HOPPER_COMMAND_TOP_STRING  ))
+                        .append(String.format("\n::%s",         HOPPER_COMMAND_NEXT_STRING ))
                         .build();
                 chatMessageManager.queue(QueuedMessage.builder()
                         .type(ChatMessageType.CONSOLE)
@@ -140,11 +140,11 @@ public class WorldHopper {
 
         }
 
-        else if("irthoptop".equals(commandExecuted.getCommand())){
+        else if(HOPPER_COMMAND_TOP_STRING.equals(commandExecuted.getCommand())){
             hopTop();
         }
 
-        else if("irthopnext".equals(commandExecuted.getCommand())){
+        else if(HOPPER_COMMAND_NEXT_STRING.equals(commandExecuted.getCommand())){
             hopNext();
         }
     }

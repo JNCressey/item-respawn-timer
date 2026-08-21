@@ -77,6 +77,7 @@ public class ItemRespawnTimerPlugin extends Plugin
 
 
 	//region set up
+    @SuppressWarnings("RedundantThrows")
     @Override
 	protected void startUp() throws Exception
 	{
@@ -108,7 +109,8 @@ public class ItemRespawnTimerPlugin extends Plugin
 	}
 
 
-	@Override
+	@SuppressWarnings("RedundantThrows")
+    @Override
 	protected void shutDown() throws Exception
 	{
 		log.debug("Item Respawn Timer plugin  stopped!");
@@ -120,7 +122,8 @@ public class ItemRespawnTimerPlugin extends Plugin
 	}
 
 
-	@Provides
+	@SuppressWarnings("unused")
+    @Provides
 	ItemRespawnTimerConfig provideConfig(ConfigManager configManager)
 	{
 		return configManager.getConfig(ItemRespawnTimerConfig.class);
@@ -128,7 +131,8 @@ public class ItemRespawnTimerPlugin extends Plugin
 	//endregion
 
 
-	@Subscribe
+	@SuppressWarnings("unused")
+    @Subscribe
 	public void onConfigChanged(ConfigChanged event)
 	{
 		String configKey = event.getKey();
@@ -143,27 +147,31 @@ public class ItemRespawnTimerPlugin extends Plugin
 	}
 
 
-	@Subscribe
+	@SuppressWarnings("unused")
+    @Subscribe
 	public void onItemSpawned(ItemSpawned event)
 	{
 		activeTimers.onItemSpawned(event);
 	}
 
-	@Subscribe
+	@SuppressWarnings("unused")
+    @Subscribe
 	public void onItemDespawned(ItemDespawned event)
 	{
 		activeTimers.onItemDespawned(event);
 	}
 
 
-	@Subscribe
+	@SuppressWarnings("unused")
+    @Subscribe
 	public void onGameTick(GameTick event) {
 		activeTimers.onGameTick();
 		panel.setCurrentWorldId(client.getWorld());//todo move to the onGameStateChanged event
 		panel.updateSidePanel();
 	}
 
-	@Subscribe
+	@SuppressWarnings("unused")
+    @Subscribe
 	public void onGameStateChanged(GameStateChanged event)
 	{
 		if (event.getGameState() == GameState.LOGGED_IN)
@@ -174,7 +182,8 @@ public class ItemRespawnTimerPlugin extends Plugin
 	}
 
 
-	@Subscribe
+	@SuppressWarnings("unused")
+    @Subscribe
 	public void onCommandExecuted(CommandExecuted commandExecuted) {
 		worldHopper.onCommandExecuted(commandExecuted);
 	}
