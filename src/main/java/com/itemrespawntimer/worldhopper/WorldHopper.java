@@ -114,6 +114,7 @@ public class WorldHopper {
 
     /**
      * Hop to the world that is next in the timers list (skipping visited timers and current world).
+     * Or, if all timers have been visisted, hop as by {@link #hopTop}.
      * @see #hop(int)
      */
     private void hopNext(){
