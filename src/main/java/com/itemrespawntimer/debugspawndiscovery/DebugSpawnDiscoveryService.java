@@ -4,12 +4,18 @@ import com.itemrespawntimer.ItemRespawnTimerConfig;
 import com.itemrespawntimer.staticspawnservice.StaticSpawn;
 import com.itemrespawntimer.staticspawnservice.StaticSpawnService;
 import lombok.extern.slf4j.Slf4j;
+import net.runelite.api.ChatMessageType;
 import net.runelite.api.Client;
 import net.runelite.api.Tile;
 import net.runelite.api.TileItem;
 import net.runelite.api.coords.WorldPoint;
 import net.runelite.api.events.ItemDespawned;
 import net.runelite.api.events.ItemSpawned;
+import net.runelite.client.chat.ChatColorType;
+import net.runelite.client.chat.ChatMessageBuilder;
+import net.runelite.client.chat.ChatMessageManager;
+import net.runelite.client.chat.QueuedMessage;
+import net.runelite.client.game.ItemManager;
 import net.runelite.client.game.WorldService;
 import net.runelite.http.api.worlds.WorldResult;
 
@@ -35,6 +41,12 @@ public class DebugSpawnDiscoveryService {
 
     @Inject
     private ItemRespawnTimerConfig config;
+
+    @Inject
+    private ChatMessageManager chatMessageManager;
+
+    @Inject
+    private ItemManager itemManager;
 
     /**
      * The spawn observations currently being tracked
@@ -79,13 +91,14 @@ public class DebugSpawnDiscoveryService {
         observation.setRespawnTimeMillis(nowMillis);
 
         Optional<StaticSpawn> optionalTrackedSpawn = staticSpawnService.getTrackedSpawn(wp, true);
-        StringBuilder observationMessageBuilder = new StringBuilder( "observed item spawned");//todo make game message
+        ChatMessageBuilder observationMessageBuilder = new ChatMessageBuilder()
+                .append(ChatColorType.NORMAL)
+                .append("ItemRespawnTimer discovery Mode: observed item spawned");
+        if (!observation.isComplete()) {
+            observationMessageBuilder.append(", but didn't observe when it was taken");
+        }
 
-        observationMessageBuilder.append(
-                observation.isComplete()
-                    ? ": complete data"
-                    : ": no data for when it taken"
-        );//todo make game message
+        addObservationToMessageBuilder(observation,observationMessageBuilder);
 
         optionalTrackedSpawn
                 .ifPresentOrElse(
@@ -102,7 +115,13 @@ public class DebugSpawnDiscoveryService {
                             }
                         }
                 );
-        log.debug(observationMessageBuilder.toString());
+
+        chatMessageManager
+                .queue(QueuedMessage.builder()
+                        .type(ChatMessageType.CONSOLE)
+                        .runeLiteFormattedMessage(observationMessageBuilder.build())
+                        .build());
+
         observations.remove(wp,observation);
     }
 
@@ -150,7 +169,12 @@ public class DebugSpawnDiscoveryService {
 
         Optional<StaticSpawn> optionalTrackedSpawn = staticSpawnService.getTrackedSpawn(wp, true);
 
-        StringBuilder observationMessageBuilder = new StringBuilder( "observed item taken");//todo make game message
+        ChatMessageBuilder observationMessageBuilder = new ChatMessageBuilder()
+                .append(ChatColorType.NORMAL)
+                .append("ItemRespawnTimer discovery Mode: observed item taken");
+
+        addObservationToMessageBuilder(observation,observationMessageBuilder);
+
         optionalTrackedSpawn
                 .ifPresentOrElse(
                         trackedSpawn -> addOverrideIfObservationDifferentFromData(
@@ -160,9 +184,77 @@ public class DebugSpawnDiscoveryService {
                         ),
                         () -> observationMessageBuilder.append("\nnew spawn discovered, no data for this point, but don't have full data yet")
                 );
-        log.debug(observationMessageBuilder.toString());
+
+        chatMessageManager
+                .queue(QueuedMessage.builder()
+                        .type(ChatMessageType.CONSOLE)
+                        .runeLiteFormattedMessage(observationMessageBuilder.build())
+                        .build());
     }
 
+
+    /**
+     *
+     * @param observation The observed new spawn data.
+     * @param observationMessageBuilder The output currently for log, but todo make it output to game message
+     */
+    private void addObservationToMessageBuilder(
+            StaticSpawnObservation observation,
+            ChatMessageBuilder observationMessageBuilder
+    ){
+
+        //location
+        {
+            WorldPoint wp = observation.getSpawn().getWorldPoint();
+            observationMessageBuilder
+                    .append("\nLocation: ")
+                    .append(ChatColorType.HIGHLIGHT)
+                    .append(String.valueOf(wp.getX()))
+                    .append(ChatColorType.NORMAL)
+                    .append(", ")
+                    .append(ChatColorType.HIGHLIGHT)
+                    .append(String.valueOf(wp.getY()))
+                    .append(ChatColorType.NORMAL)
+                    .append(", ")
+                    .append(ChatColorType.HIGHLIGHT)
+                    .append(String.valueOf(wp.getPlane()))
+                    .append(ChatColorType.NORMAL);
+        }
+
+        // respawn ticks
+        if (observation.isComplete()){
+            observationMessageBuilder
+                    .append(", baseRespawnTicks: ")
+                    .append(ChatColorType.HIGHLIGHT)
+                    .append(String.valueOf(observation.getBaseRespawnTicksPrediction()))
+                    .append(ChatColorType.NORMAL);
+        }
+
+        //item
+        {
+            int itemId = observation.getSpawn().getItemId();
+            String itemName = itemManager.getItemComposition(itemId).getName();
+            observationMessageBuilder
+                    .append(", Item: ")
+                    .append(ChatColorType.HIGHLIGHT)
+                    .append(itemName)
+                    .append(ChatColorType.NORMAL)
+                    .append(" (")
+                    .append(ChatColorType.HIGHLIGHT)
+                    .append(String.valueOf(itemId))
+                    .append(ChatColorType.NORMAL)
+                    .append(")");
+        }
+
+        //quantity
+        {
+            observationMessageBuilder
+                    .append(", Quantity: ")
+                    .append(ChatColorType.HIGHLIGHT)
+                    .append(String.valueOf(observation.getSpawn().getQuantity()))
+                    .append(ChatColorType.NORMAL);
+        }
+    }
 
 
     /**
@@ -174,7 +266,7 @@ public class DebugSpawnDiscoveryService {
     private void addOverrideIfObservationDifferentFromData(
             StaticSpawnObservation observation,
             StaticSpawn trackedSpawn,
-            StringBuilder observationMessageBuilder
+            ChatMessageBuilder observationMessageBuilder
     ){
         boolean trackedItemIsDifferent = checkObservationDifferentFromData(
                 observation,
@@ -185,7 +277,7 @@ public class DebugSpawnDiscoveryService {
         if (trackedItemIsDifferent) {
             addOverride(observation, observationMessageBuilder);
         } else {
-            observationMessageBuilder.append("\nitem id and quantity data are correct");//todo make game message
+            observationMessageBuilder.append("\nbaseRespawnTicks, itemId, and quantity data are correct");//todo make game message
         }
     }
 
@@ -200,7 +292,7 @@ public class DebugSpawnDiscoveryService {
     private boolean checkObservationDifferentFromData(
             StaticSpawnObservation observation,
             StaticSpawn trackedSpawn,
-            StringBuilder observationMessageBuilder
+            ChatMessageBuilder observationMessageBuilder
     ){
         StaticSpawn observedSpawn = observation.getSpawn();
         boolean trackedItemIsDifferent = false;
@@ -238,7 +330,7 @@ public class DebugSpawnDiscoveryService {
      */
     private void addOverride(
             StaticSpawnObservation observation,
-            StringBuilder observationMessageBuilder
+            ChatMessageBuilder observationMessageBuilder
     ){
         if (!config.discoveryModeAutoAddOverrides()){ return; }
 
