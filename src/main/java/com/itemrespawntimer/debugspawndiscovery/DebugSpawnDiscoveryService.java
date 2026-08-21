@@ -19,6 +19,7 @@ import net.runelite.client.game.ItemManager;
 import net.runelite.client.game.WorldService;
 import net.runelite.http.api.worlds.WorldResult;
 
+import javax.annotation.Nonnull;
 import javax.inject.Inject;
 import javax.inject.Singleton;
 import java.time.Instant;
@@ -28,8 +29,10 @@ import java.util.*;
 @Singleton
 public class DebugSpawnDiscoveryService {
 
+    //region head
     @Inject
     private Client client;
+
 
     @Inject
     private StaticSpawnService staticSpawnService;
@@ -42,11 +45,15 @@ public class DebugSpawnDiscoveryService {
     @Inject
     private ItemRespawnTimerConfig config;
 
+
     @Inject
     private ChatMessageManager chatMessageManager;
 
+
     @Inject
     private ItemManager itemManager;
+    //endregion
+
 
     /**
      * The spawn observations currently being tracked
@@ -320,12 +327,9 @@ public class DebugSpawnDiscoveryService {
         {
             int observedBaseRespawnTicks = observation.getBaseRespawnTicksPrediction();
             int trackedBaseRespawnTicks = trackedSpawn.getBaseRespawnTicks();
-            if (
-                    observation.isComplete()
-                            && (
-                            Math.abs(observedBaseRespawnTicks - trackedBaseRespawnTicks)
-                                    > config.discoveryBaseRespawnTicksThreshold()
-                    )
+            if ( observation.isComplete()
+                 && ( Math.abs(observedBaseRespawnTicks - trackedBaseRespawnTicks)
+                      > config.discoveryBaseRespawnTicksThreshold())
             ) {
                 trackedItemIsDifferent = true;
                 observationMessageBuilder
@@ -383,7 +387,7 @@ public class DebugSpawnDiscoveryService {
     }
 
 
-
+    //region addOverride
     /**
      * Add an override according to this observed data.
      * If observation complete the override will be for it to be tracked.
@@ -397,30 +401,51 @@ public class DebugSpawnDiscoveryService {
     ){
         if (!config.discoveryModeAutoAddOverrides()){ return; }
 
-        WorldPoint wp = observation.getSpawn().getWorldPoint();
-        String newOverride = observation.isComplete()
-                ? String.format( // add override with new data
-                "%s, %s, %s, %s, %s, %s",
-                wp.getX(),wp.getY(),wp.getPlane(),
-                observation.getBaseRespawnTicksPrediction(),
-                observation.getSpawn().getItemId(),
-                observation.getSpawn().getQuantity())
-                : String.format( // add override to exclude bad data for this location
-                "%s, %s, %s, exclude",
-                wp.getX(),wp.getY(),wp.getPlane());
+        String newOverride = getNewOverride(observation);
 
         observationMessageBuilder.append(String.format("\nAdd new override: %s",newOverride));
         log.debug("Add new override: {}", newOverride);
 
         if (config.discoveryModeAutoAddOverrides()){
             // append new override to config
-            config.setTrackedSpawnsOverrides(
-                    config.trackedSpawnsOverrides()
-                    +"\n" + newOverride
-            );
+            appendLineToConfigTrackedSpawnsOverrides(newOverride);
         }
     }
 
+
+    /**
+     * Add a line of text to the config 'trackedSpawnsOverrides'.
+     * @param line A line of text to add.
+     */
+    private void appendLineToConfigTrackedSpawnsOverrides(String line){
+        config.setTrackedSpawnsOverrides(
+                config.trackedSpawnsOverrides()
+                        +"\n" + line
+        );
+
+    }
+
+
+    /**
+     * Make an override entry from an observation.
+     * @param observation The observed new spawn data.
+     * @return The new override as a CSV line.
+     */
+    @Nonnull
+    private static String getNewOverride(StaticSpawnObservation observation) {
+        WorldPoint wp = observation.getSpawn().getWorldPoint();
+        return observation.isComplete()
+                ? String.format( // add override with new data
+                    "%s, %s, %s, %s, %s, %s",
+                    wp.getX(),wp.getY(),wp.getPlane(),
+                    observation.getBaseRespawnTicksPrediction(),
+                    observation.getSpawn().getItemId(),
+                    observation.getSpawn().getQuantity())
+                : String.format( // add override to exclude bad data for this location
+                    "%s, %s, %s, exclude",
+                    wp.getX(),wp.getY(),wp.getPlane());
+    }
+    //endregion
 
 
     /**
@@ -438,6 +463,7 @@ public class DebugSpawnDiscoveryService {
                 });
         recordThisTickPlayerLocation();
     }
+
 
     /**
      * Clear observations if hopped to a new world
