@@ -216,7 +216,7 @@ public interface ItemRespawnTimerConfig extends Config
 	default boolean discoveryModeNotifyCorrect()
 	{
 		return false;
-	}//todo implement
+	}
 
 
 	@ConfigItem(

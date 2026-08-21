@@ -100,29 +100,34 @@ public class DebugSpawnDiscoveryService {
 
         addObservationToMessageBuilder(observation,observationMessageBuilder);
 
-        optionalTrackedSpawn
-                .ifPresentOrElse(
+        boolean observationSameAsData = optionalTrackedSpawn
+                .map(
                         trackedSpawn -> addOverrideIfObservationDifferentFromData(
                                 observation,
                                 trackedSpawn,
                                 observationMessageBuilder
-                        ),
+                        )
+                )
+                .orElseGet(
                         () -> {
                             if (observation.isComplete()) {
                                 addOverride(observation, observationMessageBuilder);
                             } else {
                                 observationMessageBuilder.append("\nnew spawn discovered, no data for this point, but don't have full data yet");
                             }
+                            return  false;
                         }
                 );
-
-        chatMessageManager
-                .queue(QueuedMessage.builder()
-                        .type(ChatMessageType.CONSOLE)
-                        .runeLiteFormattedMessage(observationMessageBuilder.build())
-                        .build());
+        if( !observationSameAsData || config.discoveryModeNotifyCorrect() ) {
+            chatMessageManager
+                    .queue(QueuedMessage.builder()
+                            .type(ChatMessageType.CONSOLE)
+                            .runeLiteFormattedMessage(observationMessageBuilder.build())
+                            .build());
+        }
 
         observations.remove(wp,observation);
+
     }
 
 
@@ -175,21 +180,28 @@ public class DebugSpawnDiscoveryService {
 
         addObservationToMessageBuilder(observation,observationMessageBuilder);
 
-        optionalTrackedSpawn
-                .ifPresentOrElse(
+        boolean observationSameAsData = optionalTrackedSpawn
+                .map(
                         trackedSpawn -> addOverrideIfObservationDifferentFromData(
                                 observation,
                                 trackedSpawn,
                                 observationMessageBuilder
-                        ),
-                        () -> observationMessageBuilder.append("\nnew spawn discovered, no data for this point, but don't have full data yet")
+                        )
+                )
+                .orElseGet(
+                        () -> {
+                            observationMessageBuilder.append("\nnew spawn discovered, no data for this point, but don't have full data yet");
+                            return false;
+                        }
                 );
 
-        chatMessageManager
-                .queue(QueuedMessage.builder()
-                        .type(ChatMessageType.CONSOLE)
-                        .runeLiteFormattedMessage(observationMessageBuilder.build())
-                        .build());
+        if( !observationSameAsData || config.discoveryModeNotifyCorrect() ) {
+            chatMessageManager
+                    .queue(QueuedMessage.builder()
+                            .type(ChatMessageType.CONSOLE)
+                            .runeLiteFormattedMessage(observationMessageBuilder.build())
+                            .build());
+        }
     }
 
 
@@ -262,8 +274,9 @@ public class DebugSpawnDiscoveryService {
      * @param observation The observed new spawn data.
      * @param trackedSpawn The spawn data currently tracked.
      * @param observationMessageBuilder The output currently for log, but todo make it output to game message
+     * @return If the observation matches the data.
      */
-    private void addOverrideIfObservationDifferentFromData(
+    private boolean addOverrideIfObservationDifferentFromData(
             StaticSpawnObservation observation,
             StaticSpawn trackedSpawn,
             ChatMessageBuilder observationMessageBuilder
@@ -279,6 +292,8 @@ public class DebugSpawnDiscoveryService {
         } else {
             observationMessageBuilder.append("\nbaseRespawnTicks, itemId, and quantity data are correct");//todo make game message
         }
+
+        return !trackedItemIsDifferent;
     }
 
 
