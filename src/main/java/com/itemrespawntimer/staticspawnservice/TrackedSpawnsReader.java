@@ -80,7 +80,11 @@ public class TrackedSpawnsReader {
                     Integer.parseInt(lineData.get(1)),
                     Integer.parseInt(lineData.get(2)));
 
-            if (lineData.get(3).equals("null")){ // entry indicates to not track this location
+            if (
+                    lineData.size()==3
+                    || lineData.get(3).equals("exclude")
+            ){
+                // entry indicates to not track this location
                 return new TrackedSpawnsParsedRecord(wp,null);
             }
 

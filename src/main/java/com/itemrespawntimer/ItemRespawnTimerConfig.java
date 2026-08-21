@@ -195,15 +195,18 @@ public interface ItemRespawnTimerConfig extends Config
 			keyName = "trackedSpawns",
 			name = "Tracked Item Spawns Override Data",
 			section = debugSection,
-			description = "List of overrides to the tracked spawns. x, y, plane, {\"null\" | baseRespawnTicks, {-1 | itemId}, quantity}",
+			description = "List of overrides to the tracked spawns. x, y, plane, [{\"null\" | baseRespawnTicks, {-1 | itemId}, quantity}]",
 			position = 1
 	)
 	default String trackedSpawnsOverrides()
 	{
 		return(
 			"#lumbridge bowl remove tracking"
-			+ "\nx, y, plane, null"
-			+ "\n#3208, 3214, 0, null"
+			+ "\nx, y, plane, exclude"
+			+ "\n#3208, 3214, 0, exclude"
+		    + "\n\n#lumbridge bowl remove tracking shorthand"
+			+ "\nx, y, plane"
+			+ "\n#3208, 3214, 0"
 
 			+ "\n\n#lumbrige bowl add tracking without itemId check"
 			+ "\nx, y, plane, baseRespawnTicks, -1, quantity"
