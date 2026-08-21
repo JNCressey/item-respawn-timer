@@ -1,15 +1,16 @@
+x, y, plane, baseRespawnTicks, itemId, quantity
 # x,y,plane: world coordinates.
 # baseRespawnTicks: the number of ticks used as the base respawn rate.
 # itemId: the numerical id of the item.
 # quantity: the quantity of the item.
-   x,    y, plane, baseRespawnTicks, itemId, quantity
-3206, 3208,     0,              100,    558,        1
-3208, 3214,     0,              100,   1923,        1
-3209, 3214,     0,              100,   1931,        1
-3196, 9822,     0,              500,   1641,        1
-1965, 9082,     1,             1500,   2357,        1
-1968, 9083,     1,             1500,   2357,        1
-1969, 9083,     1,             1500,   2357,        1
+
+3206, 3208, 0, 100, 558, 1
+3208, 3214, 0, 100, 1923, 1
+3209, 3214, 0, 100, 1931, 1
+3196, 9822, 0, 500, 1641, 1
+1965, 9082, 1, 1500, 2357, 1
+1968, 9083, 1, 1500, 2357, 1
+1969, 9083, 1, 1500, 2357, 1
 
 # todo populate this data.
 # - Wiki is useful for respawn times.
