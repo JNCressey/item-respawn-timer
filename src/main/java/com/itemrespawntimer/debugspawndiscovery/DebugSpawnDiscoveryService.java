@@ -217,7 +217,7 @@ public class DebugSpawnDiscoveryService {
 
         if(
                 observation.isComplete()
-                && Math.abs(trackedSpawn.getBaseRespawnTicks() - observedSpawn.getBaseRespawnTicks()) > config.discoveryBaseRespawnTicksThreshold()
+                && Math.abs(trackedSpawn.getBaseRespawnTicks() - observation.getBaseRespawnTicksPrediction()) > config.discoveryBaseRespawnTicksThreshold()
         ){
             trackedItemIsDifferent = true;
             observationMessageBuilder.append("\nobserved baseRespawnTicks is different to data");//todo make game message

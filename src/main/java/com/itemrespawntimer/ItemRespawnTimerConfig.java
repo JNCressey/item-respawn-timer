@@ -193,11 +193,12 @@ public interface ItemRespawnTimerConfig extends Config
 	//todo have a checkbox for whether to apply the overrides or not
 
 
+	@Range(min=0)
 	@ConfigItem(
 			keyName = "discoveryBaseRespawnTicksThreshold",
-			name = "baseRespawnTicks Difference Threshold",
+			name = "Difference Threshold (baseRespawnTicks)",
 			section = debugSection,
-			description = "Discovery mode will consider a difference of more than this from the prediction to be wrong data.",
+			description = "Discovery mode will consider a difference of more than this from the prediction of baseRespawnTicks to be wrong data.",
 			position = 1
 	)
 	default int discoveryBaseRespawnTicksThreshold()
