@@ -23,6 +23,7 @@ import javax.annotation.Nullable;
 import javax.inject.Inject;
 import javax.inject.Singleton;
 import java.util.*;
+import java.util.stream.Collectors;
 
 
 @Slf4j
@@ -191,6 +192,10 @@ public class WorldHopper {
      */
     public void joinedWorld(){//todo can i make this subscribed?
         timersToSkip.removeIf(RespawnTimer::isDeleted); // clean up deleted timers
+        { // following hops will skip the timers already in this world when joined
+            int currentWorldId = client.getWorld();
+            addTimersToSkip(currentWorldId);
+        }
         { // save state for reverting to
             timersToSkipBase.clear();
             timersToSkipBase.addAll(timersToSkip);
@@ -241,10 +246,11 @@ public class WorldHopper {
 
 
     /**
-     * Hop to timer at given index, and {@link #timersToSkip} to be cleared and set with the worlds of the timers above the target timer.
-     * @param index The index of the target timer.
+     * Hop to timer at given position of the list, and {@link #timersToSkip} to be cleared and set with the worlds of the timers above the target timer.
+     * @param indexOneIndexed The index of the target timer (1-indexed).
      */
-    private void hopToPositionInTimerList(int index){
+    private void hopToPositionInTimerList(int indexOneIndexed){
+        int index = indexOneIndexed-1;
         if (
                 index<0
                 ||index >= activeTimers.getActiveTimers().size()
@@ -252,16 +258,12 @@ public class WorldHopper {
 
         { // timersToSkip to be cleared and set with the worlds of the timers above the target index
             timersToSkip.clear();
-            /*addTimersToSkip(
+            addTimersToSkip(
                     activeTimers.getActiveTimers()
                             .subList(0, index).stream()
                             .map(RespawnTimer::getWorldId)
                             .collect(Collectors.toCollection(HashSet::new))
-            );*/
-            for (int i=0; i<index; ++i){
-                int worldIdToSkip = activeTimers.getActiveTimers().get(i).getWorldId();
-                addTimersToSkip(worldIdToSkip);
-            } //todo change to version without random access
+            );
         }
 
         int targetWorldId = activeTimers.getActiveTimers().get(index).getWorldId();
@@ -300,8 +302,6 @@ public class WorldHopper {
      * @param world the world to hop to
      */
     private void hop(@Nonnull net.runelite.api.World world){
-        addTimersToSkip(world.getId()); // following hops will skip the target of this hop
-
         assert client.isClientThread();
         if (client.getGameState() == GameState.LOGIN_SCREEN) {
             client.changeWorld(world);
