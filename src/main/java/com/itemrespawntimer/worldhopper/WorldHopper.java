@@ -77,7 +77,9 @@ public class WorldHopper {
      */
     private final Set<RespawnTimer> timersToSkip = new HashSet<>();
 
+    private final Set<Integer> worldsToAddToSkipAfterHop = new HashSet<>();
 
+    
     private void addTimersToSkip(int hoppedToWorldId){
         timersToSkip.removeIf(RespawnTimer::isDeleted);
         activeTimers.getActiveTimers().stream()
@@ -85,10 +87,19 @@ public class WorldHopper {
                 .forEach(timersToSkip::add);
     }
 
+    private void addTimersToSkip(){
+        timersToSkip.removeIf(RespawnTimer::isDeleted);
+        activeTimers.getActiveTimers().stream()
+                .filter(timer -> worldsToAddToSkipAfterHop.has(timer.getWorldId()))
+                .forEach(timersToSkip::add);
+        worldsToAddToSkipAfterHop.clear();
+    }
+
 
     public void joinedWorld(){
         int currentWorldId = client.getWorld();
-        addTimersToSkip(currentWorldId);
+        worldsToAddToSkipAfterHop.add(currentWorldId);
+        addTimersToSkip();
     }
     //endregion
 
@@ -125,6 +136,24 @@ public class WorldHopper {
                 );
     }
 
+    private void hopToPositionInTimerList(int index){
+        timers = activeTimers.getActiveTimers();
+        if (timers.size() < index + 1){ return; }
+        
+        int currentWorldId = client.getWorld();
+        int targetWorldId = timers.get(index).getWorldId();
+        if (targetWorldId == currentWorldId){ return: }
+
+        worldsToAddToSkipAfterHop.add(currentWorldId);
+        timers.subList(0,index).stream()
+            .forEach(worldsToAddToSkipAfterHop::add);
+        
+        hop(targetWorld);
+            
+    }
+
+    
+
 
     /**
      * Find the next world that isn't the current world or in {@link #timersToSkip}.
@@ -157,6 +186,9 @@ public class WorldHopper {
      * @param world the world to hop to
      */
     private void hop(@Nonnull net.runelite.api.World world){
+        int currentWorldId = client.getWorld();
+        worldsToAddToSkipAfterHop.add(currentWorldId);
+        
         assert client.isClientThread();
         if (client.getGameState() == GameState.LOGIN_SCREEN) {
             client.changeWorld(world);
