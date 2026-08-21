@@ -16,9 +16,8 @@ import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import javax.inject.Inject;
 import javax.inject.Singleton;
-import java.util.HashSet;
-import java.util.Optional;
-import java.util.Set;
+import java.util.*;
+import java.util.stream.Collectors;
 
 @Singleton
 public class WorldHopper {
@@ -77,29 +76,45 @@ public class WorldHopper {
      */
     private final Set<RespawnTimer> timersToSkip = new HashSet<>();
 
-    private final Set<Integer> worldsToAddToSkipAfterHop = new HashSet<>();
 
-    
-    private void addTimersToSkip(int hoppedToWorldId){
-        timersToSkip.removeIf(RespawnTimer::isDeleted);
-        activeTimers.getActiveTimers().stream()
-                .filter(timer -> timer.getWorldId()==hoppedToWorldId)
-                .forEach(timersToSkip::add);
+    /**
+     * The state of {@link #timersToSkip} when player joined the current world, for reverting to if the hop is canceled.
+     */
+    private final Set<RespawnTimer> timersToSkipBase = new HashSet<>();
+
+
+    //region addTimersToSkip
+    /**
+     * Add all timers that match the given world id to {@link #timersToSkip}.
+     * @param worldToSkip the worldId of the world to skip.
+     */
+    private void addTimersToSkip(int worldToSkip){
+        addTimersToSkip(Collections.singletonList(worldToSkip));
     }
 
-    private void addTimersToSkip(){
+
+    /**
+     * Add all timers that match any of the given world ids to {@link #timersToSkip}.
+     * @param worldsToSkip The worldId of each of the worlds to skip.
+     */
+    private void addTimersToSkip(Collection<Integer> worldsToSkip){
         timersToSkip.removeIf(RespawnTimer::isDeleted);
         activeTimers.getActiveTimers().stream()
-                .filter(timer -> worldsToAddToSkipAfterHop.has(timer.getWorldId()))
+                .filter(timer -> worldsToSkip.contains(timer.getWorldId()))
                 .forEach(timersToSkip::add);
-        worldsToAddToSkipAfterHop.clear();
+
     }
+    //endregion
 
-
-    public void joinedWorld(){
-        int currentWorldId = client.getWorld();
-        worldsToAddToSkipAfterHop.add(currentWorldId);
-        addTimersToSkip();
+    /**
+     * Clean up deleted timers from {@link #timersToSkip}, and save a copy to {@link #timersToSkipBase}.
+     */
+    public void joinedWorld(){//todo can i make this subscribed?
+        timersToSkip.removeIf(RespawnTimer::isDeleted); // clean up deleted timers
+        { // save state for reverting to
+            timersToSkipBase.clear();
+            timersToSkipBase.addAll(timersToSkip);
+        }
     }
     //endregion
 
@@ -109,16 +124,18 @@ public class WorldHopper {
      * @see #hop(int)
      */
     private void hopTop(){
-        timersToSkip.clear();
-        
-        if (activeTimers.getActiveTimers().isEmpty()) { return; }
+        if (activeTimers.getActiveTimers().isEmpty()) { return; } // do nothing if there are no active timers
+
+        { // hop top clears the timersToSkip
+            timersToSkip.clear();
+        }
 
         int currentWorldId = client.getWorld();
         int firstTimerWorldId = activeTimers.getActiveTimers().getFirst().getWorldId();
         if (firstTimerWorldId!=currentWorldId){
             hop(firstTimerWorldId);
-        } else {
-            worldsToAddToSkipAfterHop.add(firstTimerWorldId);
+        } else { // skip the first world if that is the current world
+            addTimersToSkip(firstTimerWorldId);
             findNextWorld().ifPresent(this::hop);
         }
     }
@@ -126,10 +143,15 @@ public class WorldHopper {
 
     /**
      * Hop to the world that is next in the timers list (skipping visited timers and current world).
-     * Or, if all timers have been visisted, hop as by {@link #hopTop}.
+     * Or, if all timers have been visited, hop as by {@link #hopTop}.
      * @see #hop(int)
      */
     private void hopNext(){
+        { // revert any changes made by canceled hops
+            timersToSkip.clear();
+            timersToSkip.addAll(timersToSkipBase);
+        }
+
         findNextWorld()
                 .ifPresentOrElse(
                         this::hop,
@@ -137,21 +159,25 @@ public class WorldHopper {
                 );
     }
 
+
+    /**
+     * Hop to timer at given index, and {@link #timersToSkip} to be cleared and set with the worlds of the timers above the target timer.
+     * @param index The index of the target timer.
+     */
     private void hopToPositionInTimerList(int index){
-        timers = activeTimers.getActiveTimers();
-        if (timers.size() < index + 1){ return; }
-        
-        int currentWorldId = client.getWorld();
-        int targetWorldId = timers.get(index).getWorldId();
-        if (targetWorldId == currentWorldId){ return; }
+        { // timersToSkip to be cleared and set with the worlds of the timers above the target index
+            timersToSkip.clear();
+            addTimersToSkip(
+                    activeTimers.getActiveTimers()
+                            .subList(0, index).stream()
+                            .map(RespawnTimer::getWorldId)
+                            .collect(Collectors.toCollection(HashSet::new))
+            );
+        }
 
-        timers.subList(0,index).stream()
-            .forEach(worldsToAddToSkipAfterHop::add);
-        
-        hop(targetWorld);
+        int targetWorldId = activeTimers.getActiveTimers().get(index).getWorldId();
+        hop(targetWorldId);
     }
-
-    
 
 
     /**
@@ -185,6 +211,8 @@ public class WorldHopper {
      * @param world the world to hop to
      */
     private void hop(@Nonnull net.runelite.api.World world){
+        addTimersToSkip(world.getId()); // following hops will skip the target of this hop
+
         assert client.isClientThread();
         if (client.getGameState() == GameState.LOGIN_SCREEN) {
             client.changeWorld(world);
