@@ -10,6 +10,7 @@ import net.runelite.api.GameState;
 import net.runelite.api.World;
 import net.runelite.api.events.CommandExecuted;
 import net.runelite.client.callback.ClientThread;
+import net.runelite.client.chat.ChatColorType;
 import net.runelite.client.chat.ChatMessageBuilder;
 import net.runelite.client.chat.ChatMessageManager;
 import net.runelite.client.chat.QueuedMessage;
@@ -303,6 +304,25 @@ public class WorldHopper {
      */
     private void hop(@Nonnull net.runelite.api.World world){
         assert client.isClientThread();
+
+        if (true)//(config.showWorldHopMessage())//todo make config
+        {
+            String chatMessage = new ChatMessageBuilder()
+                    .append(ChatColorType.NORMAL)
+                    .append("Quick-hopping to World ")
+                    .append(ChatColorType.HIGHLIGHT)
+                    .append(Integer.toString(world.getId()))
+                    .append(ChatColorType.NORMAL)
+                    .append("..")
+                    .build();
+
+            chatMessageManager
+                    .queue(QueuedMessage.builder()
+                            .type(ChatMessageType.CONSOLE)
+                            .runeLiteFormattedMessage(chatMessage)
+                            .build());
+        }
+
         if (client.getGameState() == GameState.LOGIN_SCREEN) {
             client.changeWorld(world);
         } else {
