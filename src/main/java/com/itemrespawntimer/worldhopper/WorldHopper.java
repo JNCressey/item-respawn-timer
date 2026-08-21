@@ -3,10 +3,16 @@ package com.itemrespawntimer.worldhopper;
 import com.itemrespawntimer.ItemRespawnTimerConfig;
 import com.itemrespawntimer.timermodel.ActiveTimers;
 import com.itemrespawntimer.timermodel.RespawnTimer;
+import lombok.extern.slf4j.Slf4j;
+import net.runelite.api.ChatMessageType;
 import net.runelite.api.Client;
 import net.runelite.api.GameState;
 import net.runelite.api.World;
+import net.runelite.api.events.CommandExecuted;
 import net.runelite.client.callback.ClientThread;
+import net.runelite.client.chat.ChatMessageBuilder;
+import net.runelite.client.chat.ChatMessageManager;
+import net.runelite.client.chat.QueuedMessage;
 import net.runelite.client.game.WorldService;
 import net.runelite.client.input.KeyManager;
 import net.runelite.client.util.HotkeyListener;
@@ -17,8 +23,9 @@ import javax.annotation.Nullable;
 import javax.inject.Inject;
 import javax.inject.Singleton;
 import java.util.*;
-import java.util.stream.Collectors;
 
+
+@Slf4j
 @Singleton
 public class WorldHopper {
     //region head
@@ -39,13 +46,28 @@ public class WorldHopper {
 
     @Inject
     private ClientThread clientThread;
+
+    @Inject
+    private ChatMessageManager chatMessageManager;
     //endregion
 
 
     //region hotkeys
-    public void registerKeyListeners() {
+
+    /**
+     * register hotkeys
+     */
+    public void startUp() {
         keyManager.registerKeyListener(quickHopTopListener);
         keyManager.registerKeyListener(quickHopNextListener);
+    }
+
+    /**
+     * unregister hotkeys
+     */
+    public void shutDown(){
+        keyManager.unregisterKeyListener(quickHopTopListener);
+        keyManager.unregisterKeyListener(quickHopNextListener);
     }
 
 
@@ -68,6 +90,64 @@ public class WorldHopper {
         }
     };
     //endregion
+
+    //todo can i make this subscribed?
+    public void onCommandExecuted(CommandExecuted commandExecuted) {
+        if ("irthop".equalsIgnoreCase(commandExecuted.getCommand()))
+        {
+            String[] arguments = commandExecuted.getArguments();
+
+            if (
+                    arguments.length==0 // if no argument, hop next
+                            ||"next".equals(arguments[0]) //if argument is "next", top next
+            ){
+                hopNext();
+                return;
+            }
+
+            if ("top".equals(arguments[0])){ // if argument is "top", hop top
+                hopTop();
+                return;
+            }
+
+            int index;
+            try
+            {
+                index = Integer.parseInt(arguments[0]);
+            }
+            catch (NumberFormatException e) // warn of bad argument
+            {
+                String message = new ChatMessageBuilder()
+                        .append("ItemRespawnTimer command usage:")
+                        .append("\n")
+                        .append("::irthop [index]")
+                        .append("\n")
+                        .append("::irthop top")
+                        .append("\n")
+                        .append("::irthop next")
+                        .append("\n")
+                        .append("::irthoptop")
+                        .append("\n")
+                        .append("::irthopnext")
+                        .build();
+                chatMessageManager.queue(QueuedMessage.builder()
+                        .type(ChatMessageType.CONSOLE)
+                        .runeLiteFormattedMessage(message)
+                        .build());
+                return;
+            }
+            hopToPositionInTimerList(index); // hop to index position
+
+        }
+
+        else if("irthoptop".equals(commandExecuted.getCommand())){
+            hopTop();
+        }
+
+        else if("irthopnext".equals(commandExecuted.getCommand())){
+            hopNext();
+        }
+    }
 
 
     //region timersToSkip
@@ -165,14 +245,23 @@ public class WorldHopper {
      * @param index The index of the target timer.
      */
     private void hopToPositionInTimerList(int index){
+        if (
+                index<0
+                ||index >= activeTimers.getActiveTimers().size()
+        ) { return; } // if index out of bounds do nothing
+
         { // timersToSkip to be cleared and set with the worlds of the timers above the target index
             timersToSkip.clear();
-            addTimersToSkip(
+            /*addTimersToSkip(
                     activeTimers.getActiveTimers()
                             .subList(0, index).stream()
                             .map(RespawnTimer::getWorldId)
                             .collect(Collectors.toCollection(HashSet::new))
-            );
+            );*/
+            for (int i=0; i<index; ++i){
+                int worldIdToSkip = activeTimers.getActiveTimers().get(i).getWorldId();
+                addTimersToSkip(worldIdToSkip);
+            } //todo change to version without random access
         }
 
         int targetWorldId = activeTimers.getActiveTimers().get(index).getWorldId();

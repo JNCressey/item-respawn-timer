@@ -13,6 +13,7 @@ import net.runelite.api.*;
 import net.runelite.api.events.GameStateChanged;
 import net.runelite.api.events.GameTick;
 import net.runelite.api.events.ItemSpawned;
+import net.runelite.api.events.CommandExecuted;
 import net.runelite.client.config.ConfigManager;
 import net.runelite.client.eventbus.Subscribe;
 import net.runelite.client.events.ConfigChanged;
@@ -76,7 +77,7 @@ public class ItemRespawnTimerPlugin extends Plugin
 
 
 	//region set up
-	@Override
+    @Override
 	protected void startUp() throws Exception
 	{
 		log.debug("Item Respawn Timer plugin started!");
@@ -90,7 +91,7 @@ public class ItemRespawnTimerPlugin extends Plugin
 		keyManager.registerKeyListener(removeExpiredAllListener);
 		keyManager.registerKeyListener(clearTimersListener);
 
-		worldHopper.registerKeyListeners();
+		worldHopper.startUp();
 	}
 
 	private void startupSidePanel(){
@@ -115,6 +116,7 @@ public class ItemRespawnTimerPlugin extends Plugin
 		activeTimers.clear();//todo do i need to clear this?
 		//todo do i need a shutdown for staticSpawnService?
 		clientToolbar.removeNavigation(navButton);
+		worldHopper.shutDown();
 	}
 
 
@@ -169,6 +171,12 @@ public class ItemRespawnTimerPlugin extends Plugin
 			// This runs when the player has joined a world
 			worldHopper.joinedWorld();
 		}
+	}
+
+
+	@Subscribe
+	public void onCommandExecuted(CommandExecuted commandExecuted) {
+		worldHopper.onCommandExecuted(commandExecuted);
 	}
 
 
