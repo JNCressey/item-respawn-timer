@@ -110,6 +110,7 @@ public class WorldHopper {
      */
     private void hopTop(){
         timersToSkip.clear();
+        
         if (activeTimers.getActiveTimers().isEmpty()) { return; }
 
         int currentWorldId = client.getWorld();
@@ -117,7 +118,7 @@ public class WorldHopper {
         if (firstTimerWorldId!=currentWorldId){
             hop(firstTimerWorldId);
         } else {
-            addTimersToSkip(firstTimerWorldId);
+            worldsToAddToSkipAfterHop.add(firstTimerWorldId);
             findNextWorld().ifPresent(this::hop);
         }
     }
@@ -142,14 +143,12 @@ public class WorldHopper {
         
         int currentWorldId = client.getWorld();
         int targetWorldId = timers.get(index).getWorldId();
-        if (targetWorldId == currentWorldId){ return: }
+        if (targetWorldId == currentWorldId){ return; }
 
-        worldsToAddToSkipAfterHop.add(currentWorldId);
         timers.subList(0,index).stream()
             .forEach(worldsToAddToSkipAfterHop::add);
         
         hop(targetWorld);
-            
     }
 
     
@@ -186,9 +185,6 @@ public class WorldHopper {
      * @param world the world to hop to
      */
     private void hop(@Nonnull net.runelite.api.World world){
-        int currentWorldId = client.getWorld();
-        worldsToAddToSkipAfterHop.add(currentWorldId);
-        
         assert client.isClientThread();
         if (client.getGameState() == GameState.LOGIN_SCREEN) {
             client.changeWorld(world);
