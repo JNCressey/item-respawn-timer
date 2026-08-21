@@ -106,7 +106,7 @@ public class WorldHopper {
 
             if (
                     arguments.length==0 // if no argument, hop next
-                            ||"next".equals(arguments[0]) //if argument is "next", top next
+                    || "next".equals(arguments[0]) //if argument is "next", top next
             ){
                 hopNext();
                 return;
@@ -117,10 +117,10 @@ public class WorldHopper {
                 return;
             }
 
-            int index;
+            int indexOneIndexed;
             try
             {
-                index = Integer.parseInt(arguments[0]);
+                indexOneIndexed = Integer.parseInt(arguments[0]);
             }
             catch (NumberFormatException e) // warn of bad argument
             {
@@ -138,7 +138,52 @@ public class WorldHopper {
                         .build());
                 return;
             }
-            hopToPositionInTimerList(index); // hop to index position
+
+
+            if (indexOneIndexed<1) // warn of bad argument, not positive
+            {
+                String chatMessage = new ChatMessageBuilder()
+                        .append(ChatColorType.NORMAL)
+                        .append("Item Respawn Timer: index error. You provided index ")
+                        .append(ChatColorType.HIGHLIGHT)
+                        .append(Integer.toString(indexOneIndexed))
+                        .append(ChatColorType.NORMAL)
+                        .append(". Index must be positive (the list is 1-indexed).")
+                        .build();
+
+                chatMessageManager
+                        .queue(QueuedMessage.builder()
+                                .type(ChatMessageType.CONSOLE)
+                                .runeLiteFormattedMessage(chatMessage)
+                                .build());
+            }
+            else if (indexOneIndexed>activeTimers.getActiveTimers().size()) // warn of bad argument, too big
+            {
+                String chatMessage = new ChatMessageBuilder()
+                        .append(ChatColorType.NORMAL)
+                        .append("Item Respawn Timer: index error. You provided index ")
+                        .append(ChatColorType.HIGHLIGHT)
+                        .append(Integer.toString(indexOneIndexed))
+                        .append(ChatColorType.NORMAL)
+                        .append(". There are only ")
+                        .append(ChatColorType.HIGHLIGHT)
+                        .append(Integer.toString(activeTimers.getActiveTimers().size()))
+                        .append(ChatColorType.NORMAL)
+                        .append(" timers currently being tracked.")
+                        .build();
+
+                chatMessageManager
+                        .queue(QueuedMessage.builder()
+                                .type(ChatMessageType.CONSOLE)
+                                .runeLiteFormattedMessage(chatMessage)
+                                .build());
+            }
+            else // hop to timer at index position
+            {
+                int index = indexOneIndexed-1;
+
+                hopToPositionInTimerList(index);
+            }
 
         }
 
@@ -248,15 +293,9 @@ public class WorldHopper {
 
     /**
      * Hop to timer at given position of the list, and {@link #timersToSkip} to be cleared and set with the worlds of the timers above the target timer.
-     * @param indexOneIndexed The index of the target timer (1-indexed).
+     * @param index The index of the target timer (0-indexed).
      */
-    private void hopToPositionInTimerList(int indexOneIndexed){
-        int index = indexOneIndexed-1;
-        if (
-                index<0
-                ||index >= activeTimers.getActiveTimers().size()
-        ) { return; } // if index out of bounds do nothing
-
+    private void hopToPositionInTimerList(int index){
         { // timersToSkip to be cleared and set with the worlds of the timers above the target index
             timersToSkip.clear();
             addTimersToSkip(
