@@ -103,6 +103,7 @@ public class DebugSpawnDiscoveryService {
                         }
                 );
         log.debug(observationMessageBuilder.toString());
+        observations.remove(wp,observation);
     }
 
 
