@@ -334,7 +334,7 @@ public class WorldHopper {
     /**
      *
      * @param worldId The world to get.
-     * @return The world, or null if no such world.
+     * @return The world, or null if no such world. //todo make optional instead of nullable
      */
     @Nullable
     private net.runelite.api.World getWorldFromId(int worldId){
