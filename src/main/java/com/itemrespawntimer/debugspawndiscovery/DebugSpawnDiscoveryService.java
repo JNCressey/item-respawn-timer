@@ -93,10 +93,11 @@ public class DebugSpawnDiscoveryService {
         Optional<StaticSpawn> optionalTrackedSpawn = staticSpawnService.getTrackedSpawn(wp, true);
         ChatMessageBuilder observationMessageBuilder = new ChatMessageBuilder()
                 .append(ChatColorType.NORMAL)
-                .append("ItemRespawnTimer discovery Mode: observed item spawned");
+                .append("ItemRespawnTimer Discovery Mode: observed item spawned");
         if (!observation.isComplete()) {
             observationMessageBuilder.append(", but didn't observe when it was taken");
         }
+        observationMessageBuilder.append(".");
 
         addObservationToMessageBuilder(observation,observationMessageBuilder);
 
@@ -110,10 +111,9 @@ public class DebugSpawnDiscoveryService {
                 )
                 .orElseGet(
                         () -> {
+                            observationMessageBuilder.append("\nNew spawn discovered, no data for this point.");
                             if (observation.isComplete()) {
                                 addOverride(observation, observationMessageBuilder);
-                            } else {
-                                observationMessageBuilder.append("\nnew spawn discovered, no data for this point, but don't have full data yet");
                             }
                             return  false;
                         }
@@ -176,7 +176,7 @@ public class DebugSpawnDiscoveryService {
 
         ChatMessageBuilder observationMessageBuilder = new ChatMessageBuilder()
                 .append(ChatColorType.NORMAL)
-                .append("ItemRespawnTimer discovery Mode: observed item taken");
+                .append("ItemRespawnTimer Discovery Mode: observed item taken.");
 
         addObservationToMessageBuilder(observation,observationMessageBuilder);
 
@@ -190,7 +190,7 @@ public class DebugSpawnDiscoveryService {
                 )
                 .orElseGet(
                         () -> {
-                            observationMessageBuilder.append("\nnew spawn discovered, no data for this point, but don't have full data yet");
+                            observationMessageBuilder.append("\nNew spawn discovered, no data for this point, but don't have full observation yet");
                             return false;
                         }
                 );
@@ -208,7 +208,7 @@ public class DebugSpawnDiscoveryService {
     /**
      *
      * @param observation The observed new spawn data.
-     * @param observationMessageBuilder The output currently for log, but todo make it output to game message
+     * @param observationMessageBuilder A message about this observation to show to the player.
      */
     private void addObservationToMessageBuilder(
             StaticSpawnObservation observation,
@@ -273,7 +273,7 @@ public class DebugSpawnDiscoveryService {
      * If observation item is different from tracked spawn, then add new override.
      * @param observation The observed new spawn data.
      * @param trackedSpawn The spawn data currently tracked.
-     * @param observationMessageBuilder The output currently for log, but todo make it output to game message
+     * @param observationMessageBuilder A message about this observation to show to the player.
      * @return If the observation matches the data.
      */
     private boolean addOverrideIfObservationDifferentFromData(
@@ -305,7 +305,7 @@ public class DebugSpawnDiscoveryService {
      * Check if observation item is different from tracked spawn.
      * @param observation The observed new spawn data.
      * @param trackedSpawn The spawn data currently tracked.
-     * @param observationMessageBuilder The output currently for log, but todo make it output to game message
+     * @param observationMessageBuilder A message about this observation to show to the player.
      * @return Result of the check.
      */
     private boolean checkObservationDifferentFromData(
@@ -316,24 +316,68 @@ public class DebugSpawnDiscoveryService {
         StaticSpawn observedSpawn = observation.getSpawn();
         boolean trackedItemIsDifferent = false;
 
-        if (trackedSpawn.getItemId()!=observedSpawn.getItemId()){
-            trackedItemIsDifferent = true;
-            observationMessageBuilder.append("\nobserved item id is different to data");//todo make game message
+        // notify if different baseRespawnTicks
+        {
+            int observedBaseRespawnTicks = observation.getBaseRespawnTicksPrediction();
+            int trackedBaseRespawnTicks = trackedSpawn.getBaseRespawnTicks();
+            if (
+                    observation.isComplete()
+                            && (
+                            Math.abs(observedBaseRespawnTicks - trackedBaseRespawnTicks)
+                                    > config.discoveryBaseRespawnTicksThreshold()
+                    )
+            ) {
+                trackedItemIsDifferent = true;
+                observationMessageBuilder
+                        .append("\nObserved baseRespawnTicks ")
+                        .append(ChatColorType.HIGHLIGHT)
+                        .append(String.valueOf(observedBaseRespawnTicks))
+                        .append(ChatColorType.NORMAL)
+                        .append(" is different to data ")
+                        .append(ChatColorType.HIGHLIGHT)
+                        .append(String.valueOf(trackedBaseRespawnTicks))
+                        .append(ChatColorType.NORMAL)
+                        .append(".");
+            }
         }
 
-        if(trackedSpawn.getQuantity()!=observedSpawn.getQuantity()){
-            trackedItemIsDifferent = true;
-            observationMessageBuilder.append("\nobserved quantity is different to data");//todo make game message
+        // notify if different item id
+        {
+            int observedItemId = observedSpawn.getItemId();
+            int trackedItemId = trackedSpawn.getItemId();
+            if (observedItemId != trackedItemId) {
+                trackedItemIsDifferent = true;
+                observationMessageBuilder
+                        .append("\nObserved item id ")
+                        .append(ChatColorType.HIGHLIGHT)
+                        .append(String.valueOf(observedItemId))
+                        .append(ChatColorType.NORMAL)
+                        .append(" is different to data ")
+                        .append(ChatColorType.HIGHLIGHT)
+                        .append(String.valueOf(trackedItemId))
+                        .append(ChatColorType.NORMAL)
+                        .append(".");
+            }
         }
 
-        if(
-                observation.isComplete()
-                && Math.abs(trackedSpawn.getBaseRespawnTicks() - observation.getBaseRespawnTicksPrediction()) > config.discoveryBaseRespawnTicksThreshold()
-        ){
-            trackedItemIsDifferent = true;
-            observationMessageBuilder.append("\nobserved baseRespawnTicks is different to data");//todo make game message
+        // notify if different quantity
+        {
+            int observedQuantity = observedSpawn.getQuantity();
+            int trackedQuantity = trackedSpawn.getQuantity();
+            if (observedQuantity != trackedQuantity) {
+                trackedItemIsDifferent = true;
+                observationMessageBuilder
+                        .append("\nObserved quantity ")
+                        .append(ChatColorType.HIGHLIGHT)
+                        .append(String.valueOf(observedQuantity))
+                        .append(ChatColorType.NORMAL)
+                        .append(" is different to data ")
+                        .append(ChatColorType.HIGHLIGHT)
+                        .append(String.valueOf(trackedQuantity))
+                        .append(ChatColorType.NORMAL)
+                        .append(".");
+            }
         }
-
 
         return trackedItemIsDifferent;
     }
@@ -345,7 +389,7 @@ public class DebugSpawnDiscoveryService {
      * If observation complete the override will be for it to be tracked.
      * If observation is incomplete the override will be to block the tracking at that point.
      * @param observation The observed new spawn data.
-     * @param observationMessageBuilder The output currently for log, but todo make it output to game message
+     * @param observationMessageBuilder A message about this observation to show to the player.
      */
     private void addOverride(
             StaticSpawnObservation observation,
