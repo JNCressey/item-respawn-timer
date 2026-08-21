@@ -176,27 +176,65 @@ public interface ItemRespawnTimerConfig extends Config
 	String debugSection = "debugSection";
 
 	@ConfigItem(
-			keyName = "debugModeEnabled",
-			name = "Enable Debug Mode",
+			keyName = "discoveryModeEnabled",
+			name = "Enable Static Spawn Discovery",
 			section = debugSection,
-			description = "Will observe item spawns. Will notify if observe a spawn that isn't being tracked. Will attempt to guess baseRespawnTicks and notify if different from expected.",
+			description = "When enabled, will attempt to discover static spawn data from what is observed. Will notify with a game message in the chat if discovery is different from known data.",
 			position = 0
 	)
-	default boolean debugModeEnabled()
+	default boolean discoveryModeEnabled()
 	{
-		return true;
+		return false;
 	}//todo implement
 	//todo add a debug mode that logs in chat predictions for what baseRespawnTicks is for items spawns it observes
 	//todo add debug mode that automatically updates overrides with observed baseRespawnTicks
 	//todo add debug to shift+rightClick on the ground to add or remove tracking
 	//todo have a checkbox for whether to apply the overrides or not
 
+
+	@ConfigItem(
+			keyName = "discoveryModeNotifyCorrect",
+			name = "Also notify correct",
+			section = debugSection,
+			description = "Discovery mode will also notify for static spawn discoveries that match the known data.",
+			position = 1
+	)
+	default boolean discoveryModeNotifyCorrect()
+	{
+		return false;
+	}//todo implement
+
+
+	@ConfigItem(
+			keyName = "discoveryModeAutoAddOverrides",
+			name = "Automatically add to overrides",
+			section = debugSection,
+			description = "Discovery mode will automatically add discovered static spawn data to the overrides.",
+			position = 2
+	)
+	default boolean discoveryModeAutoAddOverrides()
+	{
+		return false;
+	}//todo implement
+
+	@ConfigItem(
+			keyName = "overridesEnabled",
+			name = "Enable Overrides",
+			section = debugSection,
+			description = "The tracked spawns data from the below config field will override the default data.",
+			position = 3
+	)
+	default boolean overridesEnabled()
+	{
+		return false;
+	}
+
 	@ConfigItem(
 			keyName = "trackedSpawns",
 			name = "Tracked Item Spawns Override Data",
 			section = debugSection,
 			description = "List of overrides to the tracked spawns. x, y, plane, [{\"null\" | baseRespawnTicks, {-1 | itemId}, quantity}]",
-			position = 1
+			position = 4
 	)
 	default String trackedSpawnsOverrides()
 	{

@@ -22,8 +22,8 @@ public class StaticSpawnService
      * The static spawn data that is to be tracked.
      * [0]: The data from TrackedSpawnsDefault.csv, or empty optional if not in default set.
      * [i>0]: The data from config.trackedSpawnsOverrides(), or empty optional if that config says not to track
-     * The priority will be that the last item of the list will be used.
-     * If the last item is empty, then the spawn won't be tracked.
+     * The priority will be that the last item of the list will be used if overrides are enabled, or [0] will be used if overrides are disabled.
+     * If the used item is empty, then the spawn won't be tracked.
      * On reloading the config, can remove all except first of the list.
      */
     private final HashMap<WorldPoint, LinkedList<Optional<StaticSpawn>>> trackedSpawns = new HashMap<>();
@@ -36,7 +36,11 @@ public class StaticSpawnService
      */
     public Optional<StaticSpawn> getTrackedSpawn(WorldPoint wp){
         return Optional.ofNullable(trackedSpawns.get(wp))
-                .flatMap(LinkedList::getLast);
+                .flatMap(spawns ->
+                        config.overridesEnabled()
+                                ? spawns.getLast()
+                                : spawns.getFirst()
+                );
     }
 
 
