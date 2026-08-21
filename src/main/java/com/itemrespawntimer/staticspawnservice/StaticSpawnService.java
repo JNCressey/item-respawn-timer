@@ -29,15 +29,26 @@ public class StaticSpawnService
     private final HashMap<WorldPoint, LinkedList<Optional<StaticSpawn>>> trackedSpawns = new HashMap<>();
 
 
+
     /**
-     * Get the static spawn data for a given location, or empty optional if not tracking a spawn at the location.
+     * Get the static spawn data that is tracked for a given location, or empty optional if not tracking a spawn at the location.
      * @param wp The spawn location.
      * @return The spawn data.
      */
-    public Optional<StaticSpawn> getTrackedSpawn(WorldPoint wp){
+    public Optional<StaticSpawn> getTrackedSpawn(WorldPoint wp) {
+        return getTrackedSpawn( wp, false);
+    }
+
+    /**
+     * Get the static spawn data that is tracked for a given location, or empty optional if not tracking a spawn at the location.
+     * @param wp The spawn location.
+     * @param forceOverrideMode Whether to force getting the override even if config has overrides disabled.
+     * @return The spawn data.
+     */
+    public Optional<StaticSpawn> getTrackedSpawn(WorldPoint wp, boolean forceOverrideMode){
         return Optional.ofNullable(trackedSpawns.get(wp))
                 .flatMap(spawns ->
-                        config.overridesEnabled()
+                        config.overridesEnabled() || forceOverrideMode
                                 ? spawns.getLast()
                                 : spawns.getFirst()
                 );

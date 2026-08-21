@@ -50,4 +50,15 @@ public class StaticSpawnObservation {
 
     }
 
+    /**
+     * Check whether there is both a pickup observation and a respawn observation
+     * @return The result of the check.
+     */
+    boolean isComplete(){
+        return (
+                pickupTimeMillis>0
+                && respawnTimeMillis>0
+                );
+    }
+
 }

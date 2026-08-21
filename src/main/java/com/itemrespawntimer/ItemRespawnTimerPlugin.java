@@ -4,6 +4,7 @@ import com.google.inject.Provides;
 
 import javax.inject.Inject;
 
+import com.itemrespawntimer.debugspawndiscovery.DebugSpawnDiscoveryService;
 import com.itemrespawntimer.panel.ItemRespawnTimerPanel;
 import com.itemrespawntimer.staticspawnservice.StaticSpawnService;
 import com.itemrespawntimer.timermodel.ActiveTimers;
@@ -69,6 +70,9 @@ public class ItemRespawnTimerPlugin extends Plugin
 
 	@Inject
 	private WorldHopper worldHopper;
+
+	@Inject
+	private DebugSpawnDiscoveryService debugSpawnDiscoveryService;
 	//endregion
 
 
@@ -152,6 +156,7 @@ public class ItemRespawnTimerPlugin extends Plugin
 	public void onItemSpawned(ItemSpawned event)
 	{
 		activeTimers.onItemSpawned(event);
+		debugSpawnDiscoveryService.onItemSpawned(event);
 	}
 
 	@SuppressWarnings("unused")
@@ -159,6 +164,7 @@ public class ItemRespawnTimerPlugin extends Plugin
 	public void onItemDespawned(ItemDespawned event)
 	{
 		activeTimers.onItemDespawned(event);
+		debugSpawnDiscoveryService.onItemDespawned(event);
 	}
 
 
@@ -166,6 +172,7 @@ public class ItemRespawnTimerPlugin extends Plugin
     @Subscribe
 	public void onGameTick(GameTick event) {
 		activeTimers.onGameTick();
+		debugSpawnDiscoveryService.onGameTick();
 		panel.setCurrentWorldId(client.getWorld());//todo move to the onGameStateChanged event
 		panel.updateSidePanel();
 	}
@@ -178,6 +185,7 @@ public class ItemRespawnTimerPlugin extends Plugin
 		{
 			// This runs when the player has joined a world
 			worldHopper.joinedWorld();
+			debugSpawnDiscoveryService.joinedWorld();
 		}
 	}
 

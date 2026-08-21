@@ -92,9 +92,9 @@ public class TrackedSpawnsReader {
                     wp,
                     StaticSpawn.builder()
                             .worldPoint( wp )
-                            .baseRespawnTicks( lineData.get(3) )
-                            .itemId(           lineData.get(4) )
-                            .quantity(         lineData.get(5) )
+                            .parseBaseRespawnTicks( lineData.get(3) )
+                            .parseItemId(           lineData.get(4) )
+                            .parseQuantity(         lineData.get(5) )
                             .build()
             );
         }

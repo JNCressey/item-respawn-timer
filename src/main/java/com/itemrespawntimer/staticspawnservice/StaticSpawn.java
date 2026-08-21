@@ -40,7 +40,6 @@ public class StaticSpawn
      */
     int quantity;
 
-    @SuppressWarnings("unused")
     public static class StaticSpawnBuilder {
         /**
          * Sets baseRespawnTicks by parsing as {@link Integer#parseInt}.
@@ -48,7 +47,7 @@ public class StaticSpawn
          * @return The builder for chaining.
          * @throws NumberFormatException If value doesn't parse.
          */
-        StaticSpawnBuilder baseRespawnTicks(String s){
+        StaticSpawnBuilder parseBaseRespawnTicks(String s){
             this.baseRespawnTicks = Integer.parseInt(s);
             return this;
         }
@@ -58,7 +57,7 @@ public class StaticSpawn
          * @param s The string value to parse.
          * @return The builder for chaining.
          */
-        StaticSpawnBuilder itemId(String s){
+        StaticSpawnBuilder parseItemId(String s){
             try {
                 this.itemId = Integer.parseInt(s);
             } catch ( NumberFormatException e ){
@@ -73,7 +72,7 @@ public class StaticSpawn
          * @return The builder for chaining.
          * @throws NumberFormatException If value doesn't parse.
          */
-        StaticSpawnBuilder quantity(String s){
+        StaticSpawnBuilder parseQuantity(String s){
             this.quantity = Integer.parseInt(s);
             return this;
         }
