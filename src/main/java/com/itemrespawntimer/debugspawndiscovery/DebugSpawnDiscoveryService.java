@@ -3,6 +3,7 @@ package com.itemrespawntimer.debugspawndiscovery;
 import com.itemrespawntimer.ItemRespawnTimerConfig;
 import com.itemrespawntimer.staticspawnservice.StaticSpawn;
 import com.itemrespawntimer.staticspawnservice.StaticSpawnService;
+import com.itemrespawntimer.timermodel.DespawnEventVerificationService;
 import lombok.extern.slf4j.Slf4j;
 import net.runelite.api.ChatMessageType;
 import net.runelite.api.Client;
@@ -52,6 +53,9 @@ public class DebugSpawnDiscoveryService {
 
     @Inject
     private ItemManager itemManager;
+
+    @Inject
+    private DespawnEventVerificationService despawnEventVerificationService;
     //endregion
 
 
@@ -156,10 +160,11 @@ public class DebugSpawnDiscoveryService {
             return; // only react to items that were naturally spawned
         }
 
-        WorldPoint wp = tile.getWorldLocation();
-        if(spawnLocationMayHaveEnteredViewDistanceThisTick(wp)){
-            return; // filter out delayed despawn events from returning to a location but not directly witnessing the item being taken
+        if (despawnEventVerificationService.despawnEventMaybeFromReenteringAnArea(event)){
+            return;// filter out delayed despawn events from returning to a location but not directly witnessing the item being taken
         }
+
+        WorldPoint wp = tile.getWorldLocation();
 
         StaticSpawnObservation observation = new StaticSpawnObservation();
         observation.setSpawn(
@@ -461,7 +466,6 @@ public class DebugSpawnDiscoveryService {
                     WorldPoint playerPoint = client.getLocalPlayer().getWorldLocation();
                     return !StaticSpawnService.isSpawnLocationWithinViewDistance(spawn,playerPoint);
                 });
-        recordThisTickPlayerLocation();
     }
 
 
@@ -473,42 +477,6 @@ public class DebugSpawnDiscoveryService {
 
         observations.clear();
     }
-
-
-    //todo this region is repeated from ActiveTimers, move to shared
-    //region spawnLocationMayHaveEnteredViewDistanceThisTick(WorldPoint spawnPoint)
-    /**
-     * The player location in [0] this tick and [1] the previous tick, so we can detect whether an onItemDespawn is actually from re-entering the area without directly observing it being taken.
-     * Recording both to ensure we have the previous tick location:
-     *  - if updating fires early in the tick [0] would have this tick location.
-     *  - if updating fires late in the tick [1] would have location of 2 ticks ago.
-     */
-    private final WorldPoint[] previousTickPlayerLocation = new WorldPoint[2];
-
-
-    /**
-     * Update values of {@link #previousTickPlayerLocation}.
-     */
-    private void recordThisTickPlayerLocation()
-    {
-
-        previousTickPlayerLocation[1] = previousTickPlayerLocation[0];
-        previousTickPlayerLocation[0] = client.getLocalPlayer().getWorldLocation();
-    }
-
-
-    /**
-     * Check if the spawn location was outside the view distance in this tick or the previous tick.
-     * @param spawnPoint The spawn location to check.
-     * @return Result of the check
-     */
-    private boolean spawnLocationMayHaveEnteredViewDistanceThisTick(WorldPoint spawnPoint){
-        return(
-                !StaticSpawnService.isSpawnLocationWithinViewDistance(spawnPoint,previousTickPlayerLocation[0])
-                        || !StaticSpawnService.isSpawnLocationWithinViewDistance(spawnPoint,previousTickPlayerLocation[1])
-        );
-    }
-    //endregion
 
 
     //todo this region is repeated from ActiveTimers, move to shared

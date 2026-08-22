@@ -35,6 +35,9 @@ public class ActiveTimers {
 
     @Inject
     private StaticSpawnService staticSpawnService;
+
+    @Inject
+    private DespawnEventVerificationService despawnEventVerificationService;
     //endregion
 
 
@@ -114,7 +117,6 @@ public class ActiveTimers {
 
     public void onGameTick(){//todo can i make this subscribe?
         removeTick();
-        recordThisTickPlayerLocation();
     }
 
     /**
@@ -162,10 +164,11 @@ public class ActiveTimers {
             return; // only react to items that were naturally spawned
         }
 
-        WorldPoint wp = tile.getWorldLocation();
-        if(spawnLocationMayHaveEnteredViewDistanceThisTick(wp)){
-            return; // filter out delayed despawn events from returning to a location but not directly witnessing the item being taken
+        if (despawnEventVerificationService.despawnEventMaybeFromReenteringAnArea(event)){
+            return;// filter out delayed despawn events from returning to a location but not directly witnessing the item being taken
         }
+
+        WorldPoint wp = tile.getWorldLocation();
 
         staticSpawnService.getTrackedSpawn(wp)
                 .filter(spawn -> spawn.matchItemId(item.getId()))
@@ -178,41 +181,6 @@ public class ActiveTimers {
                     add(timer);
                 });
     }
-
-
-    //region spawnLocationMayHaveEnteredViewDistanceThisTick(WorldPoint spawnPoint)
-    /**
-     * The player location in [0] this tick and [1] the previous tick, so we can detect whether an onItemDespawn is actually from re-entering the area without directly observing it being taken.
-     * Recording both to ensure we have the previous tick location:
-     *  - if updating fires early in the tick [0] would have this tick location.
-     *  - if updating fires late in the tick [1] would have location of 2 ticks ago.
-     */
-    private final WorldPoint[] previousTickPlayerLocation = new WorldPoint[2];
-
-
-    /**
-     * Update values of {@link #previousTickPlayerLocation}.
-     */
-    private void recordThisTickPlayerLocation()
-    {
-
-        previousTickPlayerLocation[1] = previousTickPlayerLocation[0];
-        previousTickPlayerLocation[0] = client.getLocalPlayer().getWorldLocation();
-    }
-
-
-    /**
-     * Check if the spawn location was outside the view distance in this tick or the previous tick.
-     * @param spawnPoint The spawn location to check.
-     * @return Result of the check
-     */
-    private boolean spawnLocationMayHaveEnteredViewDistanceThisTick(WorldPoint spawnPoint){
-        return(
-               !StaticSpawnService.isSpawnLocationWithinViewDistance(spawnPoint,previousTickPlayerLocation[0])
-            || !StaticSpawnService.isSpawnLocationWithinViewDistance(spawnPoint,previousTickPlayerLocation[1])
-        );
-    }
-    //endregion
 
 
     private int getCurrentWorldPopulation(){

@@ -8,6 +8,7 @@ import com.itemrespawntimer.debugspawndiscovery.DebugSpawnDiscoveryService;
 import com.itemrespawntimer.panel.ItemRespawnTimerPanel;
 import com.itemrespawntimer.staticspawnservice.StaticSpawnService;
 import com.itemrespawntimer.timermodel.ActiveTimers;
+import com.itemrespawntimer.timermodel.DespawnEventVerificationService;
 import com.itemrespawntimer.worldhopper.WorldHopper;
 import lombok.extern.slf4j.Slf4j;
 import net.runelite.api.*;
@@ -73,6 +74,9 @@ public class ItemRespawnTimerPlugin extends Plugin
 
 	@Inject
 	private DebugSpawnDiscoveryService debugSpawnDiscoveryService;
+
+	@Inject
+	private DespawnEventVerificationService despawnEventVerificationService;
 	//endregion
 
 
@@ -171,6 +175,7 @@ public class ItemRespawnTimerPlugin extends Plugin
 	@SuppressWarnings("unused")
     @Subscribe
 	public void onGameTick(GameTick event) {
+		despawnEventVerificationService.onGameTick();
 		activeTimers.onGameTick();
 		debugSpawnDiscoveryService.onGameTick();
 		panel.setCurrentWorldId(client.getWorld());//todo move to the onGameStateChanged event
