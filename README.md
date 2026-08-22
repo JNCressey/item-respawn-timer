@@ -5,6 +5,7 @@ Predictions can be slightly off. Because the respawn time depends on how many pl
 
 ## dev to-dos
 - add "you left the area before respawn observed" message for discovery mode.
+- add debug mode that checks tells you you when you load area that should have static spawn but item isn't there. and tells you when leaving an area and you never saw it spawn.
 - work for all respawning items, not just Lumbridge castle mind rune
   - fill the csv file
 - side panel to track timers that you're waiting for a respawn
