@@ -1,6 +1,7 @@
 package com.itemrespawntimer.timermodel;
 
 import com.itemrespawntimer.ItemRespawnTimerConfig;
+import com.itemrespawntimer.ItemRespawnTimerPlugin;
 import com.itemrespawntimer.staticspawnservice.StaticSpawnService;
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
@@ -10,8 +11,6 @@ import net.runelite.api.TileItem;
 import net.runelite.api.coords.WorldPoint;
 import net.runelite.api.events.ItemDespawned;
 import net.runelite.api.events.ItemSpawned;
-import net.runelite.client.game.WorldService;
-import net.runelite.http.api.worlds.WorldResult;
 
 import javax.inject.Inject;
 import javax.inject.Singleton;
@@ -31,7 +30,8 @@ public class ActiveTimers {
 
 
     @Inject
-    private WorldService worldService;
+    private ItemRespawnTimerPlugin plugin;
+
 
     @Inject
     private StaticSpawnService staticSpawnService;
@@ -175,29 +175,12 @@ public class ActiveTimers {
                 .ifPresent(spawn -> {
                     long nowMillis = Instant.now().toEpochMilli();
                     int worldId = client.getWorld();
-                    int worldPopulation = getCurrentWorldPopulation();
+                    int worldPopulation = plugin.getCurrentWorldPopulation();
 
                     RespawnTimer timer = new RespawnTimer(spawn,worldId,worldPopulation,nowMillis);
                     add(timer);
                 });
     }
-
-
-    private int getCurrentWorldPopulation(){
-        int currentWorldId = client.getWorld();
-        WorldResult worlds = worldService.getWorlds();
-
-        if (worlds != null)
-        {
-            net.runelite.http.api.worlds.World world = worlds.findWorld(currentWorldId);
-            if (world != null)
-            {
-                return world.getPlayers();
-            }
-        }
-        return 0;
-    }
-    //endregion
 
 
     //region removeTick

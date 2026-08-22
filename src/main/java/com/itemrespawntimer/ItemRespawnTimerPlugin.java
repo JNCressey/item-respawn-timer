@@ -19,6 +19,7 @@ import net.runelite.api.events.CommandExecuted;
 import net.runelite.client.config.ConfigManager;
 import net.runelite.client.eventbus.Subscribe;
 import net.runelite.client.events.ConfigChanged;
+import net.runelite.client.game.WorldService;
 import net.runelite.client.plugins.Plugin;
 import net.runelite.client.plugins.PluginDescriptor;
 
@@ -32,6 +33,7 @@ import net.runelite.client.util.HotkeyListener;
 import net.runelite.client.callback.ClientThread;
 import net.runelite.client.input.KeyManager;
 import net.runelite.client.util.ImageUtil;
+import net.runelite.http.api.worlds.WorldResult;
 
 
 @Slf4j
@@ -72,11 +74,17 @@ public class ItemRespawnTimerPlugin extends Plugin
 	@Inject
 	private WorldHopper worldHopper;
 
+
 	@Inject
 	private DebugSpawnDiscoveryService debugSpawnDiscoveryService;
 
+
 	@Inject
 	private DespawnEventVerificationService despawnEventVerificationService;
+
+
+	@Inject
+	private WorldService worldService;
 	//endregion
 
 
@@ -233,5 +241,21 @@ public class ItemRespawnTimerPlugin extends Plugin
 			clientThread.invoke(() -> activeTimers.clear());
 		}
 	};
+
+
+	public int getCurrentWorldPopulation(){
+		int currentWorldId = client.getWorld();
+		WorldResult worlds = worldService.getWorlds();
+
+		if (worlds != null)
+		{
+			net.runelite.http.api.worlds.World world = worlds.findWorld(currentWorldId);
+			if (world != null)
+			{
+				return world.getPlayers();
+			}
+		}
+		return 0;
+	}
 
 }

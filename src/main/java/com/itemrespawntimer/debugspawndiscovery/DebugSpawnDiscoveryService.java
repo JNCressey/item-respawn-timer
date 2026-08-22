@@ -1,6 +1,7 @@
 package com.itemrespawntimer.debugspawndiscovery;
 
 import com.itemrespawntimer.ItemRespawnTimerConfig;
+import com.itemrespawntimer.ItemRespawnTimerPlugin;
 import com.itemrespawntimer.staticspawnservice.StaticSpawn;
 import com.itemrespawntimer.staticspawnservice.StaticSpawnService;
 import com.itemrespawntimer.timermodel.DespawnEventVerificationService;
@@ -17,8 +18,6 @@ import net.runelite.client.chat.ChatMessageBuilder;
 import net.runelite.client.chat.ChatMessageManager;
 import net.runelite.client.chat.QueuedMessage;
 import net.runelite.client.game.ItemManager;
-import net.runelite.client.game.WorldService;
-import net.runelite.http.api.worlds.WorldResult;
 
 import javax.annotation.Nonnull;
 import javax.inject.Inject;
@@ -36,15 +35,15 @@ public class DebugSpawnDiscoveryService {
 
 
     @Inject
-    private StaticSpawnService staticSpawnService;
-
-
-    @Inject
-    private WorldService worldService;
+    private ItemRespawnTimerPlugin plugin;
 
 
     @Inject
     private ItemRespawnTimerConfig config;
+
+
+    @Inject
+    private StaticSpawnService staticSpawnService;
 
 
     @Inject
@@ -179,7 +178,7 @@ public class DebugSpawnDiscoveryService {
         long nowMillis = Instant.now().toEpochMilli();
         observation.setPickupTimeMillis(nowMillis);
 
-        int worldPopulation = getCurrentWorldPopulation();
+        int worldPopulation = plugin.getCurrentWorldPopulation();
         observation.setWorldPopulationAtPickup(worldPopulation);
 
         observations.put(wp,observation);
@@ -478,20 +477,4 @@ public class DebugSpawnDiscoveryService {
         observations.clear();
     }
 
-
-    //todo this region is repeated from ActiveTimers, move to shared
-    private int getCurrentWorldPopulation(){
-        int currentWorldId = client.getWorld();
-        WorldResult worlds = worldService.getWorlds();
-
-        if (worlds != null)
-        {
-            net.runelite.http.api.worlds.World world = worlds.findWorld(currentWorldId);
-            if (world != null)
-            {
-                return world.getPlayers();
-            }
-        }
-        return 0;
-    }
 }
