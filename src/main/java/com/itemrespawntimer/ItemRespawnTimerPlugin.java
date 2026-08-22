@@ -4,7 +4,7 @@ import com.google.inject.Provides;
 
 import javax.inject.Inject;
 
-import com.itemrespawntimer.debugspawndiscovery.DebugSpawnDiscoveryService;
+import com.itemrespawntimer.debug.spawndiscovery.DebugSpawnDiscoveryService;
 import com.itemrespawntimer.panel.ItemRespawnTimerPanel;
 import com.itemrespawntimer.staticspawnservice.StaticSpawnService;
 import com.itemrespawntimer.timermodel.ActiveTimers;

@@ -1,4 +1,4 @@
-package com.itemrespawntimer.debugspawndiscovery;
+package com.itemrespawntimer.debug.spawndiscovery;
 
 import com.itemrespawntimer.staticspawnservice.StaticSpawn;
 import lombok.Data;

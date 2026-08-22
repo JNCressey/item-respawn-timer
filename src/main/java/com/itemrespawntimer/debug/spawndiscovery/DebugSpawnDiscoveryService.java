@@ -1,4 +1,4 @@
-package com.itemrespawntimer.debugspawndiscovery;
+package com.itemrespawntimer.debug.spawndiscovery;
 
 import com.itemrespawntimer.ItemRespawnTimerConfig;
 import com.itemrespawntimer.ItemRespawnTimerPlugin;
