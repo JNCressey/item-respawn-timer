@@ -5,6 +5,7 @@ import com.google.inject.Provides;
 import javax.inject.Inject;
 
 import com.itemrespawntimer.debug.spawndiscovery.DebugSpawnDiscoveryService;
+import com.itemrespawntimer.debug.spawndataverification.DebugSpawnDataVerificationService;
 import com.itemrespawntimer.panel.ItemRespawnTimerPanel;
 import com.itemrespawntimer.staticspawnservice.StaticSpawnService;
 import com.itemrespawntimer.timermodel.ActiveTimers;
@@ -85,6 +86,9 @@ public class ItemRespawnTimerPlugin extends Plugin
 
 	@Inject
 	private WorldService worldService;
+
+	@Inject
+	private DebugSpawnDataVerificationService debugSpawnDataVerificationService;
 	//endregion
 
 
@@ -109,6 +113,7 @@ public class ItemRespawnTimerPlugin extends Plugin
 		keyManager.registerKeyListener(clearTimersListener);
 
 		worldHopper.startUp();
+		debugSpawnDataVerificationService.startUp();
 	}
 
 	private void startupSidePanel(){
@@ -135,6 +140,7 @@ public class ItemRespawnTimerPlugin extends Plugin
 		//todo do i need a shutdown for staticSpawnService?
 		clientToolbar.removeNavigation(navButton);
 		worldHopper.shutDown();
+		debugSpawnDataVerificationService.shutDown();
 	}
 
 
@@ -169,6 +175,7 @@ public class ItemRespawnTimerPlugin extends Plugin
 	{
 		activeTimers.onItemSpawned(event);
 		debugSpawnDiscoveryService.onItemSpawned(event);
+		debugSpawnDataVerificationService.onItemSpawned(event);
 	}
 
 	@SuppressWarnings("unused")
@@ -177,6 +184,7 @@ public class ItemRespawnTimerPlugin extends Plugin
 	{
 		activeTimers.onItemDespawned(event);
 		debugSpawnDiscoveryService.onItemDespawned(event);
+		debugSpawnDataVerificationService.onItemDespawned(event);
 	}
 
 
@@ -188,6 +196,7 @@ public class ItemRespawnTimerPlugin extends Plugin
 		debugSpawnDiscoveryService.onGameTick();
 		panel.setCurrentWorldId(client.getWorld());//todo move to the onGameStateChanged event
 		panel.updateSidePanel();
+		debugSpawnDataVerificationService.onGameTick();
 	}
 
 	@SuppressWarnings("unused")

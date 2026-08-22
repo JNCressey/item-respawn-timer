@@ -37,6 +37,7 @@ Hotkeys for manually removing timers:
 
 
 ## dev to-dos
+- should startup code in injected classes be put into injected constructor like the config has?
 - add "you left the area before respawn observed" message for discovery mode.
 - add debug mode that checks tells you you when you load area that should have static spawn but item isn't there. and tells you when leaving an area and you never saw it spawn.
   - use a Map<Worldpoint, ConfirmationEntry> with confirmation enties having a staticspawn and a ConfirmationStatus enum of [loadedAreaAndWaitingToSeeSpawn, previouslyLoadedAreaButNowUnloadedStillNeedToSeeSpawn,Confirmed].

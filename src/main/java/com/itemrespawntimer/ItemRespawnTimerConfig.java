@@ -166,9 +166,9 @@ public interface ItemRespawnTimerConfig extends Config
 	// minimum value
 	// list of items to hide
 
-	//region debugSection
+	//region debugDiscoveryModeSection
 	@ConfigSection(
-			name = "Debug Options",
+			name = "Debug Discovery Mode Options",
 			description = "Debug options",
 			position = 4,
 			closedByDefault = true
@@ -193,7 +193,7 @@ public interface ItemRespawnTimerConfig extends Config
 	//todo have a checkbox for whether to apply the overrides or not
 
 
-	@Range(min=0)
+	@Range(min=0)//todo is it non-negative by default if i remove range?
 	@ConfigItem(
 			keyName = "discoveryBaseRespawnTicksThreshold",
 			name = "Difference Threshold (baseRespawnTicks)",
@@ -277,5 +277,64 @@ public interface ItemRespawnTimerConfig extends Config
 			description = ""
 	)
 	void setTrackedSpawnsOverrides(String key);
-	//endregion debugSection
+	//endregion debugDiscoveryModeSection
+
+
+	//region debugVerificationModeSection
+	@ConfigSection(
+			name = "Debug Verification Mode Options",
+			description = "Debug options",
+			position = 5,
+			closedByDefault = true
+	)
+	String debugVerificationModeSection = "debugVerificationModeSection";
+
+
+	@ConfigItem(
+			keyName = "verificationModeEnabled",
+			name = "Enable Spawn Data Verification",
+			section = debugVerificationModeSection,
+			description = "When enabled, will attempt to verify the existence of static spawns from what is observed. (Except measuring of baseRespawnTicks)",
+			position = 0
+	)
+	default boolean verificationModeEnabled()
+	{
+		return false;
+	} //todo implement
+
+
+	@ConfigItem(
+			keyName = "verificationModeNotifyOnlyWarnings",
+			name = "Only notify warnings",
+			section = debugVerificationModeSection,
+			description = "Verification mode will only notify when spawn data has wrong item or you left an area without seeing the item.",
+			position = 1
+	)
+	default boolean verificationModeNotifyOnlyWarnings() //todo implement
+	{
+		return false;
+	}
+
+
+	@ConfigItem(
+			keyName = "spawnDataVerificationObservations",
+			name = "Spawn Data Verification Observations",
+			section = debugVerificationModeSection,
+			description = "List of verification observations",
+			position = 2
+	)
+	default String spawnDataVerificationObservations()
+	{
+		return "";
+	}
+
+
+	@ConfigItem(
+			keyName = "spawnDataVerificationObservations",
+			name = "",
+			description = ""
+	)
+	void setSpawnDataVerificationObservations(String key);
+	//region debugVerificationModeSection
+
 }
