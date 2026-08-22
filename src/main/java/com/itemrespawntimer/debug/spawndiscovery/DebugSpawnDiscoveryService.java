@@ -61,7 +61,7 @@ public class DebugSpawnDiscoveryService {
     /**
      * The spawn observations currently being tracked
      */
-    private final Map<WorldPoint,StaticSpawnObservation> observations = new HashMap<>();
+    private final Map<WorldPoint, SpawnDiscoveryObservation> observations = new HashMap<>();
 
 
     /**
@@ -84,9 +84,9 @@ public class DebugSpawnDiscoveryService {
 
         WorldPoint wp = tile.getWorldLocation();
 
-        StaticSpawnObservation observation = Optional.ofNullable(observations.get(wp))
+        SpawnDiscoveryObservation observation = Optional.ofNullable(observations.get(wp))
                 .orElseGet(() -> {
-                    StaticSpawnObservation newObservation = new StaticSpawnObservation();
+                    SpawnDiscoveryObservation newObservation = new SpawnDiscoveryObservation();
                     newObservation.setSpawn(
                             StaticSpawn.builder()
                                     .worldPoint(wp)
@@ -165,7 +165,7 @@ public class DebugSpawnDiscoveryService {
 
         WorldPoint wp = tile.getWorldLocation();
 
-        StaticSpawnObservation observation = new StaticSpawnObservation();
+        SpawnDiscoveryObservation observation = new SpawnDiscoveryObservation();
         observation.setSpawn(
                 StaticSpawn.builder()
                         .worldPoint(wp)
@@ -222,7 +222,7 @@ public class DebugSpawnDiscoveryService {
      * @param observationMessageBuilder A message about this observation to show to the player.
      */
     private void addObservationToMessageBuilder(
-            StaticSpawnObservation observation,
+            SpawnDiscoveryObservation observation,
             ChatMessageBuilder observationMessageBuilder
     ){
 
@@ -288,7 +288,7 @@ public class DebugSpawnDiscoveryService {
      * @return If the observation matches the data.
      */
     private boolean addOverrideIfObservationDifferentFromData(
-            StaticSpawnObservation observation,
+            SpawnDiscoveryObservation observation,
             StaticSpawn trackedSpawn,
             ChatMessageBuilder observationMessageBuilder
     ){
@@ -320,7 +320,7 @@ public class DebugSpawnDiscoveryService {
      * @return Result of the check.
      */
     private boolean checkObservationDifferentFromData(
-            StaticSpawnObservation observation,
+            SpawnDiscoveryObservation observation,
             StaticSpawn trackedSpawn,
             ChatMessageBuilder observationMessageBuilder
     ){
@@ -400,7 +400,7 @@ public class DebugSpawnDiscoveryService {
      * @param observationMessageBuilder A message about this observation to show to the player.
      */
     private void addOverride(
-            StaticSpawnObservation observation,
+            SpawnDiscoveryObservation observation,
             ChatMessageBuilder observationMessageBuilder
     ){
         if (!config.discoveryModeAutoAddOverrides()){ return; }
@@ -436,7 +436,7 @@ public class DebugSpawnDiscoveryService {
      * @return The new override as a CSV line.
      */
     @Nonnull
-    private static String getNewOverride(StaticSpawnObservation observation) {
+    private static String getNewOverride(SpawnDiscoveryObservation observation) {
         WorldPoint wp = observation.getSpawn().getWorldPoint();
         return observation.isComplete()
                 ? String.format( // add override with new data

@@ -4,7 +4,7 @@ import com.itemrespawntimer.staticspawnservice.StaticSpawn;
 import lombok.Data;
 
 @Data
-public class StaticSpawnObservation {
+public class SpawnDiscoveryObservation {
     /**
      * Partial spawn data, but baseRespawnTicks is unknown so left as 0
      */
