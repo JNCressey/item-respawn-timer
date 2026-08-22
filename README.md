@@ -4,6 +4,7 @@ Show timers for respawning items
 Predictions can be slightly off. Because the respawn time depends on how many players are currently in the world, and the world populations are only periodically sent to the client.
 
 ## dev to-dos
+- add "you left the area before respawn observed" message for discovery mode.
 - work for all respawning items, not just Lumbridge castle mind rune
   - fill the csv file
 - side panel to track timers that you're waiting for a respawn
