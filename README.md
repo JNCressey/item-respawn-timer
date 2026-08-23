@@ -1,5 +1,8 @@
 # Item Respawn Timer
-Show timers for respawning items
+Show timers for respawning items.
+
+Show overlay countdown dials like there is for mining and woodcutting plugins.
+Show a side panel of timers like the time tracking plugin.
 
 Predictions can be slightly off. Because the respawn time depends on how many players are currently in the world, and the world populations are only periodically sent to the client.
 
