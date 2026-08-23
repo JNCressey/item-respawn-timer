@@ -30,7 +30,10 @@ Hotkeys for manually removing timers:
     - Sisterhood Sanctuary
 - discovery mode, is there any other reason why an item spawn event has owner=none
 - should startup code in injected classes be put into injected constructor like the config has?
-- add "you left the area before respawn observed" message for discovery mode. And a config option to also add this with baseRespawnTicks of 9999 to indicate unknown.
+- add "you left the area before respawn observed" message for discovery mode.
+- And a config option for an audit mode
+  - when leaving an area before respawn observed add an override with baseRespawnTicks of 9999 to indicate unknown.
+  - this option should also disable the function that infers from the default [item id, baseRespawnTicks] data, so you know the 9999s are unconfirmed
 - work for all respawning items, not just Lumbridge castle mind rune
   - fill the csv file
 - side panel to track timers that you're waiting for a respawn
