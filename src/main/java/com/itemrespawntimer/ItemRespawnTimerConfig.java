@@ -148,7 +148,7 @@ public interface ItemRespawnTimerConfig extends Config
 			keyName = "defaultRateAddOverrides",
 			name = "Automatically add overrides using default respawn rates",
 			section = debugSection,
-			description = "When enabled, will automatically add static spawn data with the default association of itemId->baseRespawnTicks.",
+			description = "When enabled, will automatically add static spawn data with the default association of itemId->baseRespawnTicks. (Ashes are excluded because ashes from fires would also be detected.)",
 			position = 0
 	)
 	default boolean defaultRateAddOverrides()
@@ -162,7 +162,7 @@ public interface ItemRespawnTimerConfig extends Config
 			keyName = "discoveryModeEnabled",
 			name = "Enable Static Spawn Discovery",
 			section = debugSection,
-			description = "When enabled, will attempt to discover static spawn data from what is observed. Will notify with a game message in the chat if discovery is different from known data.",
+			description = "When enabled, will attempt to discover static spawn data from what is observed. Will notify with a game message in the chat if discovery is different from known data. (Ashes are excluded because ashes from fires would also be detected.)",
 			position = 1
 	)
 	default boolean discoveryModeEnabled()

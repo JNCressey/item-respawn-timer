@@ -82,6 +82,7 @@ public class StaticSpawnService
     Map<Integer, Integer> defaultBaseRespawnTicks = new HashMap<>();
 
     public void addOverrideWithDefaultRespawnTicksIfAbsent(WorldPoint wp, TileItem item){//todo trigger this
+        if (item.getId()==592) { return; } // skip ashes because ashes from fires are also detected as having OWNERSHIP_NONE
         if (!config.defaultRateAddOverrides()) { return; } // skip if configured not to add defaults
         //todo skip if audit mode
 

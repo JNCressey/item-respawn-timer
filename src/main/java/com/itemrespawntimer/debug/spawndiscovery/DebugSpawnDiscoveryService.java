@@ -79,9 +79,9 @@ public class DebugSpawnDiscoveryService {
             return;
         }
 
-        if (item.getOwnership() != TileItem.OWNERSHIP_NONE){
-            return; // only react to items that were naturally spawned
-        }
+        if (item.getOwnership() != TileItem.OWNERSHIP_NONE){ return; } // only react to items that were naturally spawned
+
+        if (item.getId()==592) { return; } // skip ashes because ashes from fires are also detected as having OWNERSHIP_NONE
 
         WorldPoint wp = tile.getWorldLocation();
 
