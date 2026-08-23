@@ -188,6 +188,7 @@ public interface ItemRespawnTimerConfig extends Config
 		return 5;
 	}
 
+
 	@ConfigItem(
 			keyName = "discoveryModeNotifyCorrect",
 			name = "Also notify correct",
@@ -202,35 +203,50 @@ public interface ItemRespawnTimerConfig extends Config
 
 
 	@ConfigItem(
+			keyName = "discoveryModeTakeNoteOfMissingSpawnData",
+			name = "Take Note Of Missing Respawn Data",
+			section = debugSection,
+			description = "Discovery mode will also add commented-out incomplete overrides. When it hasn't had time to measure the respawn time this is useful for making sure you have a reminder that you need to measure that spawn.",
+			position = 4
+	)
+	default boolean discoveryModeTakeNoteOfMissingSpawnData()
+	{
+		return true;
+	}
+
+
+	@ConfigItem(
 			keyName = "discoveryModeAutoAddOverrides",
 			name = "Automatically add to overrides",
 			section = debugSection,
 			description = "Discovery mode will automatically add discovered static spawn data to the overrides.",
-			position = 4
+			position = 5
 	)
 	default boolean discoveryModeAutoAddOverrides()
 	{
 		return false;
 	}
 
+
 	@ConfigItem(
 			keyName = "overridesEnabled",
 			name = "Enable Overrides",
 			section = debugSection,
 			description = "The tracked spawns data from the below config field will override the default data.",
-			position = 5
+			position = 6
 	)
 	default boolean overridesEnabled()
 	{
 		return true;
 	}
 
+
 	@ConfigItem(
 			keyName = "trackedSpawnsOverrides",
 			name = "Tracked Item Spawns Override Data",
 			section = debugSection,
 			description = "List of overrides to the tracked spawns. x, y, plane, [{\"null\" | baseRespawnTicks, {-1 | itemId}, quantity}]",
-			position = 6
+			position = 7
 	)
 	default String trackedSpawnsOverrides()
 	{

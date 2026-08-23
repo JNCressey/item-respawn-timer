@@ -64,7 +64,6 @@ public class DebugSpawnDiscoveryService {
     private final Map<WorldPoint, SpawnDiscoveryObservation> observations = new HashMap<>();
 
 
-    //todo add an option to automatically add a comment to the overrides list when observed worldpoint has no tracked spawn. useful for finding new spawns if you might miss if you didn't manage to observe a respawn interval.
     /**
      *
      * @param event The item that spawned
@@ -111,6 +110,10 @@ public class DebugSpawnDiscoveryService {
         observationMessageBuilder.append(".");
 
         addObservationToMessageBuilder(observation,observationMessageBuilder);
+
+        if (optionalTrackedSpawn.isEmpty() && config.discoveryModeTakeNoteOfMissingSpawnData()) {
+            addWarningMissingSpawnData(observation, observationMessageBuilder);
+        }
 
         boolean observationSameAsData = optionalTrackedSpawn
                 .map(
@@ -279,6 +282,35 @@ public class DebugSpawnDiscoveryService {
                     .append(ChatColorType.NORMAL);
         }
     }
+
+
+    /**
+     *
+     * @param observation The observed new spawn data.
+     * @param observationMessageBuilder A message about this observation to show to the player.
+     */
+    private void addWarningMissingSpawnData(
+            SpawnDiscoveryObservation observation,
+            ChatMessageBuilder observationMessageBuilder
+    ){
+        observationMessageBuilder
+                .append("\n")
+                .append(ChatColorType.HIGHLIGHT)
+                .append("No spawn data for this location.")
+                .append(ChatColorType.NORMAL);
+
+        WorldPoint wp = observation.getSpawn().getWorldPoint();
+
+        config.setTrackedSpawnsOverrides(
+                config.trackedSpawnsOverrides()
+                + String.format(
+                        "\n # no respawn entry for: %s, %s, %s, ?, %s, %s",
+                        wp.getX(),wp.getY(),wp.getPlane(),
+                        observation.getSpawn().getItemId(),
+                        observation.getSpawn().getQuantity())
+        );
+    }
+
 
 
     /**
