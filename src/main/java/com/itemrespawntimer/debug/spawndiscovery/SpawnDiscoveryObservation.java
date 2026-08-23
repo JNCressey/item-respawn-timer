@@ -39,14 +39,14 @@ public class SpawnDiscoveryObservation {
 
     /**
      * Predict the value of baseRespawnTicks.
-     * @return The predicted value;
+     * @return The predicted value.
      */
     int getBaseRespawnTicksPrediction(){
         //formula for respawn duration is: floor(baseDuration * (4000-population)/4000)
         // the inverse is baseDuration = duration*4000/(4000-population)
         double baseRespawnMillis = getTotalRespawnTimeMillis() * 4000.0
-                / (4000.0-worldPopulationAtPickup);
-        return (int) Math.round(baseRespawnMillis/600);
+                / (4000.0 - worldPopulationAtPickup);
+        return (int) Math.round(baseRespawnMillis / 600);
 
     }
 
