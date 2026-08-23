@@ -4,6 +4,10 @@ x,y,plane,baseRespawnTicks,itemId,quantity
 # itemId: the numerical id of the item.
 # quantity: the quantity of the item.
 
+# ensure ashes data is included because discovery for ashes if disabled
+1497,3173,0,100,592,1 # ashes at Bandits' camp north-east of Ralos' Rise
+3752,9780,0,100,592,1 # ashes at Sisterhood Sanctuary
+
 3206,3208,0,100,558,1
 3208,3214,0,100,1923,1
 3209,3214,0,100,1931,1

@@ -84,7 +84,7 @@ public class StaticSpawnService
     public void addOverrideWithDefaultRespawnTicksIfAbsent(WorldPoint wp, TileItem item){//todo trigger this
         if (item.getId()==592) { return; } // skip ashes because ashes from fires are also detected as having OWNERSHIP_NONE
         if (!config.defaultRateAddOverrides()) { return; } // skip if configured not to add defaults
-        //todo skip if audit mode
+        //todo have a config to add with 9999 if we don't have a default (useful for making sure we go back to check if we saw a ground item but didn't wait)
 
         if (getTrackedSpawn(wp, true).isPresent()){ return; } // skip if already have data
 
