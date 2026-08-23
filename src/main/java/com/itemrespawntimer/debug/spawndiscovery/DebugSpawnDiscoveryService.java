@@ -64,6 +64,7 @@ public class DebugSpawnDiscoveryService {
     private final Map<WorldPoint, SpawnDiscoveryObservation> observations = new HashMap<>();
 
 
+    //todo add an option to automatically add a comment to the overrides list when observed worldpoint has no tracked spawn. useful for finding new spawns if you might miss if you didn't manage to observe a respawn interval.
     /**
      *
      * @param event The item that spawned
@@ -403,8 +404,6 @@ public class DebugSpawnDiscoveryService {
             SpawnDiscoveryObservation observation,
             ChatMessageBuilder observationMessageBuilder
     ){
-        if (!config.discoveryModeAutoAddOverrides()){ return; }
-
         String newOverride = getNewOverride(observation);
 
         observationMessageBuilder.append(String.format("\nAdd new override: %s",newOverride));
