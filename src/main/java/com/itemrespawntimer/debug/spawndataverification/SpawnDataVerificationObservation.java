@@ -12,7 +12,7 @@ public class SpawnDataVerificationObservation {
 
     SpawnDataVerificationStatus status = SpawnDataVerificationStatus.NOT_YET_LOADED_AREA;
 
-    public String toCSVLine(){
+    public String toCsvLine(){
         return String.join(", ",
                 Integer.toString(worldpoint.getX()),
                 Integer.toString(worldpoint.getY()),
@@ -25,5 +25,4 @@ public class SpawnDataVerificationObservation {
         );
     }
 
-    //todo static build from CSV line
 }

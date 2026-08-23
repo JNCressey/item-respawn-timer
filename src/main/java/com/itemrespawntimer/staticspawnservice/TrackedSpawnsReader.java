@@ -4,6 +4,7 @@ import com.itemrespawntimer.ItemRespawnTimerConfig;
 import net.runelite.api.coords.WorldPoint;
 import net.runelite.client.util.Text;
 
+import javax.annotation.Nullable;
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.charset.StandardCharsets;
@@ -61,6 +62,7 @@ public class TrackedSpawnsReader {
      * @param spawnDataCsvLine The single line of CSV data to parse.
      * @return The parsed data.
      */
+    @Nullable
     private static TrackedSpawnsParsedRecord parseTrackedSpawnFromCsvLine(String spawnDataCsvLine){
         String lineWithoutComment = spawnDataCsvLine.split("#",2)[0];
 

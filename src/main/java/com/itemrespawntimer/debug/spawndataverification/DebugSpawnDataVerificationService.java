@@ -34,6 +34,9 @@ public class DebugSpawnDataVerificationService {
 
     @Inject
     private DespawnEventVerificationService despawnEventVerificationService;
+
+    @Inject
+    private SpawnDataVerificationReader spawnDataVerificationReader;
     //endregion
 
     //region observations
@@ -53,24 +56,40 @@ public class DebugSpawnDataVerificationService {
     private void addObservationToConfig(SpawnDataVerificationObservation observation){
         config.setSpawnDataVerificationObservations(
                 config.spawnDataVerificationObservations()
-                        + "\n" + observation.toCSVLine()
+                        + "\n" + observation.toCsvLine()
         );
     }
     //endregion
 
 
+    /**
+     * Load observations data from config {@link ItemRespawnTimerConfig#spawnDataVerificationObservations}.
+     * Then re-set the value of the config with what was parsed.
+     * The PREVIOUSLY_LOADED_AREA will be de-duped and will not survive if there's a later CONFIRMED or WRONG_ITEM.
+     * (Surviving PREVIOUSLY_LOADED_AREA then imply
+     *      either the spawn doesn't exist
+     *      or you need to go try waiting for the item again)
+     */
     public void startUp(){//todo can i make subscribed?
-        //todo load observations from config
-        /*todo:
-            while loading is happening record unparsed lines to string builder for new config value
-            (this preserves comments)*/
-        /*todo
-           observations.foreach(add to string builder for config)
-           (this de-dupes and makes PREVIOUSLY_LOADED_AREA not survive if confirmed or wrong item.
-           surviving PREVIOUSLY_LOADED_AREA then imply  either spawn doesn't exist
-           or you need to go try waiting for the item again)*/
-        //todo set config with the built string
+        StringBuilder comments = new StringBuilder(); // unparsed lines and comments to preserve
+
+        // load observations from config
+        spawnDataVerificationReader.parseObservationsFromCsvText(
+                    config.spawnDataVerificationObservations(),
+                    comments)
+                .forEach(observation ->
+                        observations.put(observation.getWorldpoint(), observation));
+
+        StringBuilder newConfigValue = new StringBuilder(comments); // start with all the comments at the top
+
+        // add all resulting observations
+        for (SpawnDataVerificationObservation observation : observations.values()) {
+            newConfigValue.append(observation.toCsvLine());
+        }
+
+        config.setSpawnDataVerificationObservations(newConfigValue.toString());
     }
+
 
     //region concludingObservation
     /**
