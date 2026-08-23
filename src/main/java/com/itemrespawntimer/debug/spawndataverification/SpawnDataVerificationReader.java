@@ -68,7 +68,7 @@ public class SpawnDataVerificationReader {
                     Integer.parseInt(lineData.get(1)),
                     Integer.parseInt(lineData.get(2)));
 
-            observation.worldpoint = wp;
+            observation.setWorldpoint(wp);
 
             { // set spawn
                 int itemId = Integer.parseInt(lineData.get(3));
@@ -84,7 +84,7 @@ public class SpawnDataVerificationReader {
 
 
                 if (matchesSpawnData){
-                    observation.spawn = optionalSpawn.get();
+                    observation.setSpawn(optionalSpawn.get());
                 } else {
                     // reject this observation
                     addComment(comments, verificationObservationCsvLine); // add rejected line to string builder
@@ -92,7 +92,7 @@ public class SpawnDataVerificationReader {
                 }
             }
 
-            observation.status = SpawnDataVerificationStatus.valueOf(lineData.get(5).trim());
+            observation.setStatus(SpawnDataVerificationStatus.valueOf(lineData.get(5).trim()));
 
             if (splitCommentLineParts.length > 1) {
                 addComment(comments, splitCommentLineParts[1]);  // add comment to string builder
