@@ -19,16 +19,18 @@ Hotkeys for manually removing timers:
 
 
 ## dev to-dos
+- Add a list of [item id, default baseRespawnTicks]
+  - and an option (set to on my default) to automatically add override with this default baseRespawnTicks value
+  - this is useful for if they add a new spawn, and it uses the default rate.
+    - then won't need to update the tracked spawns data unless it's apparent they've added one that uses a custom rate or a new spawn that didn't have a spawn before.
+- discovery mode shouldn't think ashes from fires are a new spawn discovery
+  - can i tell the difference between a respawn and a fire
+  - there are two ashes respawns which I should make sure is in my data
+    - Bandits' camp north-east of Ralos' Rise
+    - Sisterhood Sanctuary
+- discovery mode, is there any other reason why an item spawn event has owner=none
 - should startup code in injected classes be put into injected constructor like the config has?
-- add "you left the area before respawn observed" message for discovery mode.
-- add debug mode that checks tells you you when you load area that should have static spawn but item isn't there. and tells you when leaving an area and you never saw it spawn.
-  - use a Map<Worldpoint, ConfirmationEntry> with confirmation enties having a staticspawn and a ConfirmationStatus enum of [loadedAreaAndWaitingToSeeSpawn, previouslyLoadedAreaButNowUnloadedStillNeedToSeeSpawn,Confirmed].
-  - spawns will start as not being in the map
-  - add to map when area loaded
-  - change status when leaving or reloading or observed spawn. once confirmed, the status should stay confirmed and not change back to one of the unconfirmed statuses.
-  - can imply the status of an item not in the map as being unconfirmed (maybe make a gatter that does orsElseGet() with such a status, but never need to set that status as a value in the map
-  - when overrides config is changed, new staticspawns are generated, so the confirmation map should react
-    - for each ConfirmationEntry, if the static spawn is the same data as the new tracked spawn, set the entry's spawn field with the new tracked spawn object. if it's different then the entry is removed (and new entry is added if area is loaded).
+- add "you left the area before respawn observed" message for discovery mode. And a config option to also add this with baseRespawnTicks of 9999 to indicate unknown.
 - work for all respawning items, not just Lumbridge castle mind rune
   - fill the csv file
 - side panel to track timers that you're waiting for a respawn
