@@ -108,7 +108,7 @@ public class StaticSpawnService
                                 .append(ChatColorType.NORMAL)
                                 .append("ItemRespawnTimer Discovery Mode: added override with default baseRespawnTicks, without waiting to time the respawn.")
                                 .append(" ")
-                                .append("(Could be a greedy assumption, eg ashes from fires or cutscene items.)");
+                                .append("(If this item isn't from an item respawn, turn off the config option \"Automatically add overrides using default respawn rates\".)");
 
                         //location
                         {
