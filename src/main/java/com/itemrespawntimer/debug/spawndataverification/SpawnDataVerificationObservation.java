@@ -6,8 +6,14 @@ import net.runelite.api.coords.WorldPoint;
 
 @Data
 public class SpawnDataVerificationObservation {
+
     WorldPoint worldpoint;
 
+
+    /**
+     * Either spawn data from StaticSpawnService
+     * or partial spawn data where baseRespawnTicks is unknown so left as 0
+     */
     StaticSpawn spawn;
 
     SpawnDataVerificationStatus status = SpawnDataVerificationStatus.NOT_YET_LOADED_AREA;

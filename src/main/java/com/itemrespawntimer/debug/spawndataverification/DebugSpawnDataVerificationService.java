@@ -1,6 +1,7 @@
 package com.itemrespawntimer.debug.spawndataverification;
 
 import com.itemrespawntimer.ItemRespawnTimerConfig;
+import com.itemrespawntimer.staticspawnservice.StaticSpawn;
 import com.itemrespawntimer.staticspawnservice.StaticSpawnService;
 import com.itemrespawntimer.timermodel.DespawnEventVerificationService;
 import lombok.extern.slf4j.Slf4j;
@@ -42,12 +43,19 @@ public class DebugSpawnDataVerificationService {
     //region observations
     private final Map<WorldPoint, SpawnDataVerificationObservation> observations = new HashMap<>();
 
-    private SpawnDataVerificationObservation observationComputeIfAbsent(WorldPoint spawnPoint){
+    private SpawnDataVerificationObservation observationComputeIfAbsent(WorldPoint spawnPoint, TileItem item){
         return observations.computeIfAbsent(
                 spawnPoint,
                 k -> {
                     SpawnDataVerificationObservation observation = new SpawnDataVerificationObservation();
-                    staticSpawnService.getTrackedSpawn(spawnPoint).ifPresent(observation::setSpawn);
+                    staticSpawnService.getTrackedSpawn(spawnPoint).ifPresentOrElse(
+                            observation::setSpawn,
+                            () -> observation.setSpawn(StaticSpawn.builder()
+                                    .worldPoint(spawnPoint)
+                                    .itemId(item.getId())
+                                    .quantity(item.getQuantity())
+                                    .build())
+                    );
                     observation.setWorldpoint(spawnPoint);
                     return observation;
                 });
@@ -59,6 +67,14 @@ public class DebugSpawnDataVerificationService {
                         + "\n" + observation.toCsvLine()
         );
     }
+    //todo why am i getting duplicates written to config
+    /*todo
+        why did i get wrong item and correct for same location?
+        3222, 3238, 0, 1440, 1, CONFIRMED
+        3222, 3238, 0, 1440, 1, WRONG_ITEM
+     */
+    //todo why am i not getting any unloaded area observation for data i purposefully put in wrong?
+
     //endregion
 
 
@@ -71,7 +87,8 @@ public class DebugSpawnDataVerificationService {
      *      or you need to go try waiting for the item again)
      */
     public void startUp(){//todo can i make subscribed?
-        StringBuilder comments = new StringBuilder(); // unparsed lines and comments to preserve
+        //todo
+        /*StringBuilder comments = new StringBuilder(); // unparsed lines and comments to preserve
 
         // load observations from config
         spawnDataVerificationReader.parseObservationsFromCsvText(
@@ -87,7 +104,7 @@ public class DebugSpawnDataVerificationService {
             newConfigValue.append(observation.toCsvLine());
         }
 
-        config.setSpawnDataVerificationObservations(newConfigValue.toString());
+        config.setSpawnDataVerificationObservations(newConfigValue.toString());*/
     }
 
 
@@ -137,7 +154,7 @@ public class DebugSpawnDataVerificationService {
 
         WorldPoint spawnPoint = tile.getWorldLocation();
 
-        SpawnDataVerificationObservation observation = observationComputeIfAbsent(spawnPoint);
+        SpawnDataVerificationObservation observation = observationComputeIfAbsent(spawnPoint, item);
 
         if (item.getId() == observation.getSpawn().getItemId()
             && item.getQuantity() == observation.getSpawn().getQuantity()
@@ -206,6 +223,7 @@ public class DebugSpawnDataVerificationService {
     private void leftLoadedAreaAll(){
         observations.values()
                 .forEach(observation -> leftLoadedArea(observation,false));
+        observations.clear();
     }
 
     private void leftLoadedArea(SpawnDataVerificationObservation observation, boolean ableToSendGameMessage){

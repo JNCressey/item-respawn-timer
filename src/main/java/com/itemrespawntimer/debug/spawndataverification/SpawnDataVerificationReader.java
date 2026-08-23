@@ -47,6 +47,7 @@ public class SpawnDataVerificationReader {
      */
     @Nullable
     public  SpawnDataVerificationObservation parseObservationFromCsvLine(String verificationObservationCsvLine, StringBuilder comments){
+        if (verificationObservationCsvLine.trim().isEmpty()){ return null; } //skip empty lines
 
         String[] splitCommentLineParts = verificationObservationCsvLine.split("#", 2);
 
