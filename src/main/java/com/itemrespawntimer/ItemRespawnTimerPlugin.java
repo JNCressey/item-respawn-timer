@@ -9,7 +9,6 @@ import com.itemrespawntimer.panel.ItemRespawnTimerPanel;
 import com.itemrespawntimer.staticspawnservice.StaticSpawnService;
 import com.itemrespawntimer.timermodel.ActiveTimers;
 import com.itemrespawntimer.timermodel.DespawnEventVerificationService;
-import com.itemrespawntimer.worldhopper.WorldHopper;
 import lombok.extern.slf4j.Slf4j;
 import net.runelite.api.*;
 import net.runelite.api.events.GameStateChanged;
@@ -72,10 +71,6 @@ public class ItemRespawnTimerPlugin extends Plugin
 
 
 	@Inject
-	private WorldHopper worldHopper;
-
-
-	@Inject
 	private DebugSpawnDiscoveryService debugSpawnDiscoveryService;
 
 
@@ -107,8 +102,6 @@ public class ItemRespawnTimerPlugin extends Plugin
 		keyManager.registerKeyListener(removeExpiredSingleListener);
 		keyManager.registerKeyListener(removeExpiredAllListener);
 		keyManager.registerKeyListener(clearTimersListener);
-
-		worldHopper.startUp();
 	}
 
 	private void startupSidePanel(){
@@ -134,7 +127,6 @@ public class ItemRespawnTimerPlugin extends Plugin
 		activeTimers.clear();//todo do i need to clear this?
 		//todo do i need a shutdown for staticSpawnService?
 		clientToolbar.removeNavigation(navButton);
-		worldHopper.shutDown();
 	}
 
 
@@ -197,16 +189,8 @@ public class ItemRespawnTimerPlugin extends Plugin
 		if (event.getGameState() == GameState.LOGGED_IN)
 		{
 			// This runs when the player has joined a world
-			worldHopper.joinedWorld();
 			debugSpawnDiscoveryService.joinedWorld();
 		}
-	}
-
-
-	@SuppressWarnings("unused")
-    @Subscribe
-	public void onCommandExecuted(CommandExecuted commandExecuted) {
-		worldHopper.onCommandExecuted(commandExecuted);
 	}
 
 

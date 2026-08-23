@@ -22,81 +22,49 @@ public interface ItemRespawnTimerConfig extends Config
 		return true;
 	}
 
-	@ConfigItem(
-			keyName = "showMessage",
-			name = "Show world hop message in chat",
-			description = "Shows what world is being hopped to in the chat.",
-			position = 1
-	)
-	default boolean showWorldHopMessage()
-	{
-		return true;
-	}
-
 
 	//region hotkeysSection
 	@ConfigSection(
 			name = "Hotkeys",
 			description = "Configure Hotkeys.",
-			position = 2,
+			position = 1,
 			closedByDefault = true
 	)
 	String hotkeysSection = "hotkeysSection";
 
-	@ConfigItem(
-			keyName = "hotkeyQuickHopTop",
-			name = "Quick-Hop Top",
-			section = hotkeysSection,
-			description = "When you press this hotkey, you'll hop to the world at the top of the list in the side panel.",
-			position = 0
-	)
-	default Keybind hotkeyQuickHopTop()
-	{
-		return new Keybind(KeyEvent.VK_UP, InputEvent.CTRL_DOWN_MASK | InputEvent.SHIFT_DOWN_MASK);
-	}
-
-	@ConfigItem(
-			keyName = "hotkeyQuickHopNext",
-			name = "Quick-Hop Next",
-			section = hotkeysSection,
-			description = "When you press this hotkey, you'll hop to the next world of the list in the side panel.",
-			position = 1
-	)
-	default Keybind hotkeyQuickHopNext()
-	{
-		return new Keybind(KeyEvent.VK_DOWN, InputEvent.CTRL_DOWN_MASK | InputEvent.SHIFT_DOWN_MASK);
-	}
 
 	@ConfigItem(
 			keyName = "hotkeyRemoveExpiredSingle",
 			name = "Remove One Expired",
 			section = hotkeysSection,
 			description = "When you press this hotkey, a single expired timer is removed.",
-			position = 2
+			position = 0
 	)
 	default Keybind hotkeyRemoveExpiredSingle()
 	{
-		return Keybind.NOT_SET;
+		return new Keybind(KeyEvent.VK_DOWN, InputEvent.CTRL_DOWN_MASK | InputEvent.SHIFT_DOWN_MASK);
 	}
+
 
 	@ConfigItem(
 			keyName = "hotkeyRemoveExpiredAll",
 			name = "Remove All Expired",
 			section = hotkeysSection,
 			description = "When you press this hotkey, all expired timers are removed.",
-			position = 3
+			position = 1
 	)
 	default Keybind hotkeyRemoveExpiredAll()
 	{
 		return Keybind.NOT_SET;
 	}
 
+
 	@ConfigItem(
 			keyName = "hotkeyClearTimers",
 			name = "Clear All Timers",
 			section = hotkeysSection,
 			description = "When you press this hotkey, all timers are removed.",
-			position = 4
+			position = 2
 	)
 	default Keybind hotkeyClearTimers()
 	{
@@ -109,7 +77,7 @@ public interface ItemRespawnTimerConfig extends Config
 	@ConfigSection(
 			name = "Automatically Remove Timers",
 			description = "Automatically remove the expired timers",
-			position = 3,
+			position = 2,
 			closedByDefault = true
 	)
 	String removeTimersSection = "removeTimersSection";
@@ -170,7 +138,7 @@ public interface ItemRespawnTimerConfig extends Config
 	@ConfigSection(
 			name = "Debug Options",
 			description = "Debug options",
-			position = 4,
+			position = 3,
 			closedByDefault = true
 	)
 	String debugSection = "debugSection";

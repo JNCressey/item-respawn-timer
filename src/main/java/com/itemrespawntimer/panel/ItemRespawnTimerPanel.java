@@ -57,8 +57,8 @@ public class ItemRespawnTimerPanel extends PluginPanel {
                     int worldId = timer.getWorldId();
                     String currentWorldIndicator = (worldId == currentWorldId)? "*" : "";
                     /*
-                        item-name [hide button]
-                        [remove timer button] T-# [hop button] W#
+                        item-name [hide button] [remove timer button]
+                        T-# W#
                      */
                     return String.format("%s [-]\n[x] %s\t[h] W%s%s", itemName, countdown, worldId, currentWorldIndicator);
                 })
