@@ -138,14 +138,25 @@ public class ActiveTimers {
         int spawnedItemId = item.getId();
         int currentWorldId = client.getWorld();
 
+        deleteMatchingTimer(spawnedWorldPoint,spawnedItemId,currentWorldId);
+        staticSpawnService.addOverrideWithDefaultRespawnTicksIfAbsent(spawnedWorldPoint,item);
+    }
+
+    private void deleteMatchingTimer(
+            WorldPoint spawnedWorldPoint,
+            int spawnedItemId,
+            int currentWorldId
+    ){
         activeTimers.stream()
                 .filter(timer -> (
                         timer.getWorldPoint().equals(spawnedWorldPoint)
-                        && timer.getSpawn().getItemId() == spawnedItemId
-                        && timer.getWorldId() == currentWorldId
+                                && timer.getSpawn().getItemId() == spawnedItemId
+                                && timer.getWorldId() == currentWorldId
                 ))
                 .forEach(RespawnTimer::delete);
     }
+
+
 
 
     /**

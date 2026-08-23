@@ -134,7 +134,7 @@ public interface ItemRespawnTimerConfig extends Config
 	// minimum value
 	// list of items to hide
 
-	//region debugDiscoveryModeSection
+	//region debugSection
 	@ConfigSection(
 			name = "Debug Options",
 			description = "Debug options",
@@ -143,13 +143,27 @@ public interface ItemRespawnTimerConfig extends Config
 	)
 	String debugSection = "debugSection";
 
+
+	@ConfigItem(
+			keyName = "defaultRateAddOverrides",
+			name = "Automatically add overrides using default respawn rates",
+			section = debugSection,
+			description = "When enabled, will automatically add static spawn data with the default association of itemId->baseRespawnTicks.",
+			position = 0
+	)
+	default boolean defaultRateAddOverrides()
+	{
+		return true;
+	}
+
+
 	@SuppressWarnings("BooleanMethodIsAlwaysInverted")
     @ConfigItem(
 			keyName = "discoveryModeEnabled",
 			name = "Enable Static Spawn Discovery",
 			section = debugSection,
 			description = "When enabled, will attempt to discover static spawn data from what is observed. Will notify with a game message in the chat if discovery is different from known data.",
-			position = 0
+			position = 1
 	)
 	default boolean discoveryModeEnabled()
 	{
@@ -167,7 +181,7 @@ public interface ItemRespawnTimerConfig extends Config
 			name = "Difference Threshold (baseRespawnTicks)",
 			section = debugSection,
 			description = "Discovery mode will consider a difference of more than this from the prediction of baseRespawnTicks to be wrong data.",
-			position = 1
+			position = 2
 	)
 	default int discoveryBaseRespawnTicksThreshold()
 	{
@@ -179,7 +193,7 @@ public interface ItemRespawnTimerConfig extends Config
 			name = "Also notify correct",
 			section = debugSection,
 			description = "Discovery mode will also notify for static spawn discoveries that match the known data.",
-			position = 2
+			position = 3
 	)
 	default boolean discoveryModeNotifyCorrect()
 	{
@@ -192,7 +206,7 @@ public interface ItemRespawnTimerConfig extends Config
 			name = "Automatically add to overrides",
 			section = debugSection,
 			description = "Discovery mode will automatically add discovered static spawn data to the overrides.",
-			position = 3
+			position = 4
 	)
 	default boolean discoveryModeAutoAddOverrides()
 	{
@@ -204,11 +218,11 @@ public interface ItemRespawnTimerConfig extends Config
 			name = "Enable Overrides",
 			section = debugSection,
 			description = "The tracked spawns data from the below config field will override the default data.",
-			position = 4
+			position = 5
 	)
 	default boolean overridesEnabled()
 	{
-		return false;
+		return true;
 	}
 
 	@ConfigItem(
@@ -216,7 +230,7 @@ public interface ItemRespawnTimerConfig extends Config
 			name = "Tracked Item Spawns Override Data",
 			section = debugSection,
 			description = "List of overrides to the tracked spawns. x, y, plane, [{\"null\" | baseRespawnTicks, {-1 | itemId}, quantity}]",
-			position = 5
+			position = 6
 	)
 	default String trackedSpawnsOverrides()
 	{
@@ -245,6 +259,6 @@ public interface ItemRespawnTimerConfig extends Config
 			description = ""
 	)
 	void setTrackedSpawnsOverrides(String key);
-	//endregion debugDiscoveryModeSection
+	//endregion debugSection
 
 }

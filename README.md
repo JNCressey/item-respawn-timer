@@ -19,10 +19,6 @@ Hotkeys for manually removing timers:
 
 
 ## dev to-dos
-- Add a list of [item id, default baseRespawnTicks]
-  - and an option (set to on my default) to automatically add override with this default baseRespawnTicks value
-  - this is useful for if they add a new spawn, and it uses the default rate.
-    - then won't need to update the tracked spawns data unless it's apparent they've added one that uses a custom rate or a new spawn that didn't have a spawn before.
 - discovery mode shouldn't think ashes from fires are a new spawn discovery
   - can i tell the difference between a respawn and a fire
   - there are two ashes respawns which I should make sure is in my data

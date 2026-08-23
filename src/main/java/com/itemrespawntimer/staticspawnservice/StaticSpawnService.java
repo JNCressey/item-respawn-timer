@@ -8,6 +8,7 @@ import com.itemrespawntimer.ItemRespawnTimerConfig;
 import com.itemrespawntimer.timermodel.RespawnTimer;
 import lombok.extern.slf4j.Slf4j;
 
+import net.runelite.api.TileItem;
 import net.runelite.api.coords.WorldPoint;
 
 @Slf4j
@@ -18,6 +19,8 @@ public class StaticSpawnService
     @Inject
     private ItemRespawnTimerConfig config;
 
+
+    //region trackedSpawns
     /**
      * The static spawn data that is to be tracked.
      * [0]: The data from TrackedSpawnsDefault.csv, or empty optional if not in default set.
@@ -27,7 +30,6 @@ public class StaticSpawnService
      * On reloading the config, can remove all except first of the list.
      */
     private final HashMap<WorldPoint, LinkedList<Optional<StaticSpawn>>> trackedSpawns = new HashMap<>();
-
 
 
     /**
@@ -53,6 +55,40 @@ public class StaticSpawnService
                                 : spawns.getFirst()
                 );
     }
+    //endregion
+
+
+    //region defaultBaseRespawnTicks
+    /**
+     * key: The item id.
+     * value: Default value for baseRespawnTicks, for this item.
+     */
+    Map<Integer, Integer> defaultBaseRespawnTicks = new HashMap<>();
+
+    public void addOverrideWithDefaultRespawnTicksIfAbsent(WorldPoint wp, TileItem item){//todo trigger this
+        if (!config.defaultRateAddOverrides()) { return; } // skip if configured not to add defaults
+        //todo skip if audit mode
+
+        if (getTrackedSpawn(wp, true).isPresent()){ return; } // skip if already have data
+
+        Optional.ofNullable(defaultBaseRespawnTicks.get(item.getId()))
+                .ifPresent(baseRespawnTicks -> {
+                    String newOverride = String.format( // add override with new data
+                            "%s, %s, %s, %s, %s, %s",
+                            wp.getX(),wp.getY(),wp.getPlane(),
+                            baseRespawnTicks,
+                            item.getId(),
+                            item.getQuantity());
+
+                    config.setTrackedSpawnsOverrides(
+                            config.trackedSpawnsOverrides()
+                                    +"\n" + newOverride
+                    );
+
+                    //todo if discovery mode on, print that this override has been added
+                });
+    }
+    //endregion
 
 
     public void startUp(){
@@ -69,6 +105,9 @@ public class StaticSpawnService
                     );
                 });
         reloadConfigOverrides();
+
+        defaultBaseRespawnTicks = (new DefaultBaseRespawnTicksReader())
+                .getDefaultBaseRespawnTicks();
     }
 
 
