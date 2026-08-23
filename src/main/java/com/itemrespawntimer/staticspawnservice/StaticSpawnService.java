@@ -8,16 +8,32 @@ import com.itemrespawntimer.ItemRespawnTimerConfig;
 import com.itemrespawntimer.timermodel.RespawnTimer;
 import lombok.extern.slf4j.Slf4j;
 
+import net.runelite.api.ChatMessageType;
 import net.runelite.api.TileItem;
 import net.runelite.api.coords.WorldPoint;
+import net.runelite.client.chat.ChatColorType;
+import net.runelite.client.chat.ChatMessageBuilder;
+import net.runelite.client.chat.ChatMessageManager;
+import net.runelite.client.chat.QueuedMessage;
+import net.runelite.client.game.ItemManager;
 
 @Slf4j
 @Singleton
 public class StaticSpawnService
 {
 
+    //region head
     @Inject
     private ItemRespawnTimerConfig config;
+
+
+    @Inject
+    private ChatMessageManager chatMessageManager;
+
+
+    @Inject
+    private ItemManager itemManager;
+    //endregion
 
 
     //region trackedSpawns
@@ -85,7 +101,79 @@ public class StaticSpawnService
                                     +"\n" + newOverride
                     );
 
-                    //todo if discovery mode on, print that this override has been added
+                    //chat message
+                    {
+                        ChatMessageBuilder observationMessageBuilder = new ChatMessageBuilder()
+                                .append(ChatColorType.NORMAL)
+                                .append("ItemRespawnTimer Discovery Mode: added override with default baseRespawnTicks, without waiting to time the respawn.")
+                                .append(" ")
+                                .append("(Could be a greedy assumption, eg ashes from fires or cutscene items.)");
+
+                        //location
+                        {
+                            observationMessageBuilder
+                                    .append("\nLocation: ")
+                                    .append(ChatColorType.HIGHLIGHT)
+                                    .append(String.valueOf(wp.getX()))
+                                    .append(ChatColorType.NORMAL)
+                                    .append(", ")
+                                    .append(ChatColorType.HIGHLIGHT)
+                                    .append(String.valueOf(wp.getY()))
+                                    .append(ChatColorType.NORMAL)
+                                    .append(", ")
+                                    .append(ChatColorType.HIGHLIGHT)
+                                    .append(String.valueOf(wp.getPlane()))
+                                    .append(ChatColorType.NORMAL);
+                        }
+
+                        // respawn ticks
+                        {
+                            observationMessageBuilder
+                                    .append(", baseRespawnTicks: ")
+                                    .append(ChatColorType.HIGHLIGHT)
+                                    .append(String.valueOf(baseRespawnTicks))
+                                    .append(ChatColorType.NORMAL);
+                        }
+
+                        //item
+                        {
+                            int itemId = item.getId();
+                            String itemName = itemManager.getItemComposition(itemId).getName();
+                            observationMessageBuilder
+                                    .append(", Item: ")
+                                    .append(ChatColorType.HIGHLIGHT)
+                                    .append(itemName)
+                                    .append(ChatColorType.NORMAL)
+                                    .append(" (")
+                                    .append(ChatColorType.HIGHLIGHT)
+                                    .append(String.valueOf(itemId))
+                                    .append(ChatColorType.NORMAL)
+                                    .append(")");
+                        }
+
+                        //quantity
+                        {
+                            observationMessageBuilder
+                                    .append(", Quantity: ")
+                                    .append(ChatColorType.HIGHLIGHT)
+                                    .append(String.valueOf(item.getQuantity()))
+                                    .append(ChatColorType.NORMAL);
+                        }
+
+                        // override CSV
+                        {
+                            observationMessageBuilder.append(String.format("\nAdd new override: %s", newOverride));
+
+                        }
+
+                        chatMessageManager
+                                .queue(QueuedMessage.builder()
+                                        .type(ChatMessageType.CONSOLE)
+                                        .runeLiteFormattedMessage(observationMessageBuilder.build())
+                                        .build());
+
+                        log.debug("Add new override: {}", newOverride);
+                    }
                 });
     }
     //endregion
