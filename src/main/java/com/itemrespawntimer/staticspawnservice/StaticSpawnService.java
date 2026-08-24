@@ -104,11 +104,17 @@ public class StaticSpawnService
 
                     //chat message
                     {
+                        String excludeOverride = String.format( // the exclude override prepared, user may want this if a wrong data was added
+                                "%s, %s, %s, exclude",
+                                wp.getX(),wp.getY(),wp.getPlane());
+
                         ChatMessageBuilder observationMessageBuilder = new ChatMessageBuilder()
                                 .append(ChatColorType.NORMAL)
                                 .append("ItemRespawnTimer Discovery Mode: added override with default baseRespawnTicks, without waiting to time the respawn.")
                                 .append(" ")
-                                .append("(If this item isn't from an item respawn, turn off the config option \"Automatically add overrides using default respawn rates\".)");
+                                .append("If this item isn't from an item respawn, turn off the config option \"Automatically add overrides using default respawn rates\" or add the following line to the overrides config")
+                                .append("\n")
+                                .append(excludeOverride);
 
                         //location
                         {
