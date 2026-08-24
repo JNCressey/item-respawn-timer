@@ -22,11 +22,7 @@ Hotkeys for manually removing timers:
 
 
 ## dev to-dos
-- discovery mode shouldn't think ashes from fires are a new spawn discovery
-  - can i tell the difference between a respawn and a fire
-  - there are two ashes respawns which I should make sure is in my data
-    - Bandits' camp north-east of Ralos' Rise
-    - Sisterhood Sanctuary
+- make discovery mode skip an item if it has 'exclude' in the main data (so I can exclude specific quest items that spawn on loading the area rather than respawning, like in recruitment drive rooms)
 - discovery mode, is there any other reason why an item spawn event has owner=none
 - should startup code in injected classes be put into injected constructor like the config has?
 - add "you left the area before respawn observed" message for discovery mode.
