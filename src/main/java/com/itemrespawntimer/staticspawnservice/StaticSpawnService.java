@@ -86,7 +86,7 @@ public class StaticSpawnService
         if (!config.defaultRateAddOverrides()) { return; } // skip if configured not to add defaults
         //todo have a config to add with 9999 if we don't have a default (useful for making sure we go back to check if we saw a ground item but didn't wait)
 
-        if (getTrackedSpawn(wp, true).isPresent()){ return; } // skip if already have data
+        if (trackedSpawns.containsKey(wp)){ return; } // skip if already have data (an 'exclude' also blocks it, so does ever having an 'exclude' override during this session, even after removing that override, because adding an override computes if absent an empty for index [0])
 
         Optional.ofNullable(defaultBaseRespawnTicks.get(item.getId()))
                 .ifPresent(baseRespawnTicks -> {
