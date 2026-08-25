@@ -245,7 +245,7 @@ public interface ItemRespawnTimerConfig extends Config
 			keyName = "trackedSpawnsOverrides",
 			name = "Tracked Item Spawns Override Data",
 			section = debugSection,
-			description = "List of overrides to the tracked spawns. x, y, plane, [{\"null\" | baseRespawnTicks, {-1 | itemId}, quantity}]",
+			description = "List of overrides to the tracked spawns. x, y, plane, [{\"exclude\" | baseRespawnTicks, {-1 | itemId}, quantity}]",
 			position = 7
 	)
 	default String trackedSpawnsOverrides()
