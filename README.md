@@ -22,6 +22,9 @@ Hotkeys for manually removing timers:
 
 
 ## dev to-dos
+- Make timers use default baseRespawnTicks if no static spawn data
+  - then get rid of the automatically adding new to static spawn data
+  - then the static spawn data only needs exceptions to baseRepsawnTicks (wilderness fast zammy wine, and quest excluded locations and)
 - also make timers for scenary object spawns (rimmington spade and bronze axe logs respaws so needs a timer (check other spades))
   - check if scenary objects in the spawn data and remove,
     - [[Bird snare (spawn)]]
