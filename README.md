@@ -22,30 +22,18 @@ Hotkeys for manually removing timers:
 
 
 ## dev to-dos
-- Make timers use default baseRespawnTicks if no static spawn data
-  - then get rid of the automatically adding new to static spawn data
-  - then the static spawn data only needs exceptions to baseRepsawnTicks (wilderness fast zammy wine, and quest excluded locations and)
+- New model, only use item->baseRespawnTicks and don't need any coordinate data
+  - the different spawn rate of wildy wine of zamorak is by a different item id
+  - then get rid of all the overrides and debug auto adders
+  - get rid of the customisable clearing.
+    - clear at 2T (the side panel will show progress bar fill up twice, first time green filling over gray, second time red filling over green)
+    - clear when you see the item
 - also make timers for scenary object spawns (rimmington spade and bronze axe logs respaws so needs a timer (check other spades))
-  - check if scenary objects in the spawn data and remove,
-    - [[Bird snare (spawn)]]
-    - [[Crate (Land's End)]]
-    - [[Logs (bronze axe)]]
-    - [[Bucket (Misthalin Mystery)]]
-    - [[Buckets (Tempoross Cove)]]
-    - [[Pile of Buckets]]
-    - [[Weak cells (scenery)]]
-    - [[Old tools]]
-    - [[Tools (gardening)]]
-    - [[Small fishing net (scenery)]]
-    - [[Spade (scenery)]]
-    - [[Tinderbox (scenery)]]
-- brine cave rope is an item spawn with id 11046 and doesn't despawn when you pick it up, make exluded
+  - [[log (bronze axe)]] with axe: 5581, without axe: 5582, gives item: 3151
+  - [[spade (scenery)]] with spade: 9662, without spade: 10626, gives item: 952
 - use the ongametick to record the time of the current tick, then despawn and spawn events should use the time of the tick instead of get current time millis
 - do i need to subtract 1 tick when projecting the due time, (for the despawn event being 1 tick after the item is gone?)
-- discovery mode ticks prediction is slghtly of, (getting 8 ticks instead of 10 ticks for burthorpe stone balls for example)
-- discovery mode, is there any other reason why an item spawn event has owner=none
 - should startup code in injected classes be put into injected constructor like the config has?
-- add "you left the area before respawn observed" message for discovery mode.
 - work for all respawning items, not just Lumbridge castle mind rune
   - fill the csv file
 - side panel to track timers that you're waiting for a respawn
@@ -56,6 +44,7 @@ Hotkeys for manually removing timers:
     - timer countdown as format "T-#" or "T+#"
     - button to delete timer
     - button to hide/unhide - add/remove from config list of hidden
+    - progress bar fills green over gray til respawn, then fills red over green till 2T
   - button to filter or show the manually hidden widgets
 - circle progress display appearance
   - make a consistent size
