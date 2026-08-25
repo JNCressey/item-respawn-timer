@@ -22,7 +22,9 @@ Hotkeys for manually removing timers:
 
 
 ## dev to-dos
-- make discovery mode skip an item if it has 'exclude' in the main data (so I can exclude specific quest items that spawn on loading the area rather than respawning, like in recruitment drive rooms)
+- use the ongametick to record the time of the current tick, then despawn and spawn events should use the time of the tick instead of get current time millis
+- do i need to subtract 1 tick when projecting the due time, (for the despawn event being 1 tick after the item is gone?)
+- discovery mode ticks prediction is slghtly of, (getting 8 ticks instead of 10 ticks for burthorpe stone balls for example)
 - discovery mode, is there any other reason why an item spawn event has owner=none
 - should startup code in injected classes be put into injected constructor like the config has?
 - add "you left the area before respawn observed" message for discovery mode.
