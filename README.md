@@ -22,6 +22,8 @@ Hotkeys for manually removing timers:
 
 
 ## dev to-dos
+- also make timers for scenary object spawns
+  - find out if the items that drop from hunter are ownership_none
 - use the ongametick to record the time of the current tick, then despawn and spawn events should use the time of the tick instead of get current time millis
 - do i need to subtract 1 tick when projecting the due time, (for the despawn event being 1 tick after the item is gone?)
 - discovery mode ticks prediction is slghtly of, (getting 8 ticks instead of 10 ticks for burthorpe stone balls for example)
