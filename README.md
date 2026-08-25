@@ -22,8 +22,20 @@ Hotkeys for manually removing timers:
 
 
 ## dev to-dos
-- also make timers for scenary object spawns (rimmington spade respawns so needs a timer. but net and bird snare dont dissapear so dont need a timer)
-  - check if scenary objects in the spawn data and remove, (add to another file for scenary spawn data if scenary disapears when took lkike rimmington spade)
+- also make timers for scenary object spawns (rimmington spade and bronze axe logs respaws so needs a timer (check other spades))
+  - check if scenary objects in the spawn data and remove,
+    - [[Bird snare (spawn)]]
+    - [[Crate (Land's End)]]
+    - [[Logs (bronze axe)]]
+    - [[Bucket (Misthalin Mystery)]]
+    - [[Buckets (Tempoross Cove)]]
+    - [[Pile of Buckets]]
+    - [[Weak cells (scenery)]]
+    - [[Old tools]]
+    - [[Tools (gardening)]]
+    - [[Small fishing net (scenery)]]
+    - [[Spade (scenery)]]
+    - [[Tinderbox (scenery)]]
 - brine cave rope is an item spawn with id 11046 and doesn't despawn when you pick it up, make exluded
 - use the ongametick to record the time of the current tick, then despawn and spawn events should use the time of the tick instead of get current time millis
 - do i need to subtract 1 tick when projecting the due time, (for the despawn event being 1 tick after the item is gone?)
