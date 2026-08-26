@@ -182,11 +182,10 @@ public class ActiveTimers {
 
         staticSpawnService.getTrackedSpawn(wp, item.getId(), item.getQuantity())
                 .ifPresent(spawn -> {
-                    long nowMillis = Instant.now().toEpochMilli();
                     int worldId = client.getWorld();
                     int worldPopulation = plugin.getCurrentWorldPopulation();
 
-                    RespawnTimer timer = new RespawnTimer(spawn,worldId,worldPopulation,nowMillis);
+                    RespawnTimer timer = new RespawnTimer(spawn,worldId,worldPopulation,plugin.getTickTimeMillis());
                     add(timer);
                 });
     }
