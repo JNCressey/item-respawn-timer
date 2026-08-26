@@ -59,15 +59,17 @@ public class ItemRespawnTimerPanel extends PluginPanel {
                     String itemName = getItemName(timer);
                     String countdown = timer.getTMinusCountdown(nowMillis);
                     int worldId = timer.getWorldId();
-                    String currentWorldIndicator = (worldId == currentWorldId)? "*" : "";
+                    String worldIndicator = (worldId == currentWorldId)
+                            ? "        "
+                            : String.format(" | *W%s",worldId);
                     String doneAtMinutesAndSeconds = Instant.ofEpochMilli(timer.getRespawnAt()).atZone(ZoneId.of("UTC")).format(formatterMinutesAndSeconds);
                     /*
                         ┌pic┐ item-name | W#          ┌toggle show/hide button┐ ┌add hintarrow┐ ┌remove timer button┐
                         └   ┘ Done at <T>             └ (only show in mode)   ┘ └             ┘ └                   ┘
                         [******progress bar                                                                         ]
                      */
-                    return String.format("┌pic┐ %s | W%s%s\t┌h┐┌↓┐┌x┐\n└pic┘ Done at %s\t└h┘└↓┘└x┘\n[*******progress bar %s\t]\n",
-                            itemName, worldId, currentWorldIndicator, doneAtMinutesAndSeconds ,countdown);
+                    return String.format("┌pic┐ %s%s\t┌h┐┌↓┐┌x┐\n└pic┘ Done at %s\t└h┘└↓┘└x┘\n[*******progress bar %s\t]\n",
+                            itemName, worldIndicator, doneAtMinutesAndSeconds ,countdown);
 
                     /*
                         item-name [hide button] [remove timer button]
