@@ -4,20 +4,16 @@ import com.google.inject.Provides;
 
 import javax.inject.Inject;
 
-import com.itemrespawntimer.debug.spawndiscovery.DebugSpawnDiscoveryService;
 import com.itemrespawntimer.panel.ItemRespawnTimerPanel;
 import com.itemrespawntimer.staticspawnservice.StaticSpawnService;
 import com.itemrespawntimer.timermodel.ActiveTimers;
 import com.itemrespawntimer.timermodel.DespawnEventVerificationService;
 import lombok.extern.slf4j.Slf4j;
 import net.runelite.api.*;
-import net.runelite.api.events.GameStateChanged;
 import net.runelite.api.events.GameTick;
 import net.runelite.api.events.ItemSpawned;
-import net.runelite.api.events.CommandExecuted;
 import net.runelite.client.config.ConfigManager;
 import net.runelite.client.eventbus.Subscribe;
-import net.runelite.client.events.ConfigChanged;
 import net.runelite.client.game.WorldService;
 import net.runelite.client.plugins.Plugin;
 import net.runelite.client.plugins.PluginDescriptor;
@@ -68,10 +64,6 @@ public class ItemRespawnTimerPlugin extends Plugin
 
 	@Inject
 	private ActiveTimers activeTimers;
-
-
-	@Inject
-	private DebugSpawnDiscoveryService debugSpawnDiscoveryService;
 
 
 	@Inject
@@ -141,26 +133,9 @@ public class ItemRespawnTimerPlugin extends Plugin
 
 	@SuppressWarnings("unused")
     @Subscribe
-	public void onConfigChanged(ConfigChanged event)
-	{
-		String configKey = event.getKey();
-
-		System.out.println("Config changed: " + configKey);
-
-		// Example: trigger specific logic when a certain key changes
-		if (configKey.equals("trackedSpawnsOverrides"))
-		{
-			staticSpawnService.reloadConfigOverrides();
-		}
-	}
-
-
-	@SuppressWarnings("unused")
-    @Subscribe
 	public void onItemSpawned(ItemSpawned event)
 	{
 		activeTimers.onItemSpawned(event);
-		debugSpawnDiscoveryService.onItemSpawned(event);
 	}
 
 	@SuppressWarnings("unused")
@@ -168,7 +143,6 @@ public class ItemRespawnTimerPlugin extends Plugin
 	public void onItemDespawned(ItemDespawned event)
 	{
 		activeTimers.onItemDespawned(event);
-		debugSpawnDiscoveryService.onItemDespawned(event);
 	}
 
 
@@ -177,20 +151,8 @@ public class ItemRespawnTimerPlugin extends Plugin
 	public void onGameTick(GameTick event) {
 		despawnEventVerificationService.onGameTick();
 		activeTimers.onGameTick();
-		debugSpawnDiscoveryService.onGameTick();
 		panel.setCurrentWorldId(client.getWorld());//todo move to the onGameStateChanged event
 		panel.updateSidePanel();
-	}
-
-	@SuppressWarnings("unused")
-    @Subscribe
-	public void onGameStateChanged(GameStateChanged event)
-	{
-		if (event.getGameState() == GameState.LOGGED_IN)
-		{
-			// This runs when the player has joined a world
-			debugSpawnDiscoveryService.joinedWorld();
-		}
 	}
 
 

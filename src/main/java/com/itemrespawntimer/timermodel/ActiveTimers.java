@@ -139,7 +139,6 @@ public class ActiveTimers {
         int currentWorldId = client.getWorld();
 
         deleteMatchingTimer(spawnedWorldPoint,spawnedItemId,currentWorldId);
-        staticSpawnService.addOverrideWithDefaultRespawnTicksIfAbsent(spawnedWorldPoint,item);
     }
 
     private void deleteMatchingTimer(
