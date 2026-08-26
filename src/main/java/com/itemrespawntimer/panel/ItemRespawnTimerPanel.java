@@ -4,6 +4,8 @@ import javax.swing.*;
 import javax.inject.Inject;
 import java.awt.*;
 import java.time.Instant;
+import java.time.ZoneId;
+import java.time.format.DateTimeFormatter;
 import java.util.stream.Collectors;
 
 import com.itemrespawntimer.timermodel.ActiveTimers;
@@ -46,6 +48,8 @@ public class ItemRespawnTimerPanel extends PluginPanel {
     }
 
 
+    private static final DateTimeFormatter formatterMinutesAndSeconds = DateTimeFormatter.ofPattern("mm:ss");
+
     public void updateSidePanel()
     {
         long nowMillis = Instant.now().toEpochMilli();
@@ -56,12 +60,14 @@ public class ItemRespawnTimerPanel extends PluginPanel {
                     String countdown = timer.getTMinusCountdown(nowMillis);
                     int worldId = timer.getWorldId();
                     String currentWorldIndicator = (worldId == currentWorldId)? "*" : "";
+                    String doneAtMinutesAndSeconds = Instant.ofEpochMilli(timer.getRespawnAt()).atZone(ZoneId.of("UTC")).format(formatterMinutesAndSeconds);
                     /*
                         ┌pic┐ item-name | W#          ┌toggle show/hide button┐ ┌add hintarrow┐ ┌remove timer button┐
                         └   ┘ Done at <T>             └ (only show in mode)   ┘ └             ┘ └                   ┘
                         [******progress bar                                                                         ]
                      */
-                    return String.format("┌pic┐ %s | W%s%s\t┌h┐┌↓┐┌x┐\n└pic┘ Done at <T>\t└h┘└↓┘└x┘\n[*******progress bar %s\t]\n", itemName, worldId, currentWorldIndicator,countdown);
+                    return String.format("┌pic┐ %s | W%s%s\t┌h┐┌↓┐┌x┐\n└pic┘ Done at %s\t└h┘└↓┘└x┘\n[*******progress bar %s\t]\n",
+                            itemName, worldId, currentWorldIndicator, doneAtMinutesAndSeconds ,countdown);
 
                     /*
                         item-name [hide button] [remove timer button]
