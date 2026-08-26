@@ -23,12 +23,11 @@ public class StaticSpawnService
     public Optional<StaticSpawn> getTrackedSpawn(WorldPoint wp, int itemId, int quantity){
         return Optional.ofNullable(mapItemIdToBaseRespawnTicks.get(itemId))
                 .map(baseRespawnTicks ->
-                            StaticSpawn.builder()
-                                    .worldPoint(wp)
-                                    .baseRespawnTicks(baseRespawnTicks)
-                                    .itemId(itemId)
-                                    .quantity(quantity)
-                                    .build()
+                        new StaticSpawn(
+                                wp,
+                                baseRespawnTicks,
+                                itemId,
+                                quantity)
                 );
     }
 
