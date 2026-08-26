@@ -63,13 +63,16 @@ public class ItemRespawnTimerPanel extends PluginPanel {
                             ? "        "
                             : String.format(" | *W%s",worldId);
                     String doneAtMinutesAndSeconds = Instant.ofEpochMilli(timer.getRespawnAt()).atZone(ZoneId.of("UTC")).format(formatterMinutesAndSeconds);
+                    String donePart = (timer.isExpired())
+                            ? "Done         "
+                            : String.format("Done at %s", doneAtMinutesAndSeconds);
                     /*
                         ┌pic┐ item-name | W#          ┌toggle show/hide button┐ ┌add hintarrow┐ ┌remove timer button┐
                         └   ┘ Done at <T>             └ (only show in mode)   ┘ └             ┘ └                   ┘
                         [******progress bar                                                                         ]
                      */
-                    return String.format("┌pic┐ %s%s\t┌h┐┌↓┐┌x┐\n└pic┘ Done at %s\t└h┘└↓┘└x┘\n[*******progress bar %s\t]\n",
-                            itemName, worldIndicator, doneAtMinutesAndSeconds ,countdown);
+                    return String.format("┌pic┐ %s%s\t┌h┐┌↓┐┌x┐\n└pic┘ %s\t└h┘└↓┘└x┘\n[*******progress bar %s\t]\n",
+                            itemName, worldIndicator, donePart, countdown);
 
                     /*
                         item-name [hide button] [remove timer button]
