@@ -20,8 +20,22 @@ public class StaticSpawnService
             new WorldPoint(1834,6187,0) // [[Realm of Memories]]
     );
 
+
     private static final int ashesItemId = 592;
+
+
+    /**
+     * Check whether a spawn is probably ashes from burned out fires.
+     * @param wp The world point to check.
+     * @param itemId The itemId to check
+     * @return Result of the test.
+     */
+    private static boolean isAshesNotFromSelectSpawnPoints(WorldPoint wp, int itemId) {
+        return itemId == ashesItemId // is an ashes item
+                && ashesSpawnPoints.stream().filter(sp -> sp.equals(wp)).findAny().isEmpty(); // is not at an ashes spawn point
+    }
     //endregion
+
 
     /**
      * Get a static spawn information using the baseRespawnTicks data. or empty optional if no baseRespawnTicks for this item id.
@@ -31,12 +45,9 @@ public class StaticSpawnService
      * @return The static spawn info or an empty optional.
      */
     public Optional<StaticSpawn> getTrackedSpawn(WorldPoint wp, int itemId, int quantity){
-        if(
-                itemId == ashesItemId // is an ashes item
-                && ashesSpawnPoints.stream().filter(sp -> sp.equals(wp)).findAny().isEmpty() // is not at an ashes spawn point
-        ){
-            return Optional.empty(); // skip ashes that are from fires burning out
-        }
+        if( isAshesNotFromSelectSpawnPoints(wp, itemId) ){ return Optional.empty(); }// skip ashes that are from fires burning out
+        // POH served food is also OWNERSHIP_NONE, so if any of those items had an item spawn, a check would be needed here to exclude the POH. But we're ok for now as none of them have any spawns so they're not in the baseRespawnTicks data.
+
         return Optional.ofNullable(mapItemIdToBaseRespawnTicks.get(itemId))
                 .map(baseRespawnTicks ->
                         new StaticSpawn(
