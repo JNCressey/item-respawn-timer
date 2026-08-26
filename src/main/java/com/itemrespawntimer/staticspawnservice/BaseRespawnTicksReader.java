@@ -10,20 +10,25 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-public class DefaultBaseRespawnTicksReader {
+public class BaseRespawnTicksReader {
 
 
-    Map<Integer,Integer> defaultBaseRespawnTicks = new HashMap<>();
+    /**
+     * The mapping itemId->baseRespawnTicks, to built by {@link #getMapItemIdToBaseRespawnTicks()}
+     * key: The item id.
+     * value: baseRespawnTicks, for this item.
+     */
+    Map<Integer,Integer> mapItemIdToBaseRespawnTicks = new HashMap<>();
 
 
     //region readResource
-    private static final String defaultResourceFilename = "DefaultBaseRespawnTicks.csv";
+    private static final String resourceFilename = "BaseRespawnTicks.csv";
 
 
     private String readResource(){
-        try (InputStream in = ItemRespawnTimerConfig.class.getClassLoader().getResourceAsStream(defaultResourceFilename)) {
+        try (InputStream in = ItemRespawnTimerConfig.class.getClassLoader().getResourceAsStream(resourceFilename)) {
             if (in == null) {
-                throw new IOException("Resource not found: " + defaultResourceFilename);
+                throw new IOException("Resource not found: " + resourceFilename);
             }
             return new String(in.readAllBytes(), StandardCharsets.UTF_8);
         } catch(IOException e){
@@ -33,30 +38,29 @@ public class DefaultBaseRespawnTicksReader {
     //endregion
 
 
-
     /**
-     * Get the parsed records, as a map itemId->baseRespawnTicks, of the default baseRespawnTicks resource file.
+     * Get the parsed records from the resource file, as a map itemId->baseRespawnTicks.
      * @return The mapping defined by the records.
      */
-    public Map<Integer,Integer> getDefaultBaseRespawnTicks(){
+    public Map<Integer,Integer> getMapItemIdToBaseRespawnTicks(){
         readResource().lines()
                 .forEach(this::parseCsvLine);
 
-        return defaultBaseRespawnTicks;
+        return mapItemIdToBaseRespawnTicks;
     }
 
 
     /**
      * Parse a line of itemId->baseRespawnTicks data,
-     *      and put the result in {@link #defaultBaseRespawnTicks}.
+     *      and put the result in {@link #mapItemIdToBaseRespawnTicks}.
      * If the line doesn't parse as itemId->baseRespawnTicks data, the line will be skipped.
      * The rest of the line after a `#` character is ignored as a comment in the data.
      *
-     * @param defaultBaseRespawnTicksCsvLine The single line of CSV data to parse.
+     * @param baseRespawnTicksCsvLine The single line of CSV data to parse.
      */
     @SuppressWarnings("UnnecessaryReturnStatement")
-    private void parseCsvLine(String defaultBaseRespawnTicksCsvLine){
-        String lineWithoutComment = defaultBaseRespawnTicksCsvLine.split("#",2)[0];
+    private void parseCsvLine(String baseRespawnTicksCsvLine){
+        String lineWithoutComment = baseRespawnTicksCsvLine.split("#",2)[0];
 
         /*
          * `lineData` is the record data:
@@ -69,7 +73,7 @@ public class DefaultBaseRespawnTicksReader {
             int itemId = Integer.parseInt(lineData.get(0));
             int baseRespawnTicks = Integer.parseInt(lineData.get(1));
 
-            defaultBaseRespawnTicks.put(itemId,baseRespawnTicks);
+            mapItemIdToBaseRespawnTicks.put(itemId,baseRespawnTicks);
 
         }
         catch (

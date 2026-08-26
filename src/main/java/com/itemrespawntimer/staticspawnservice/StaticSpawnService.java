@@ -21,7 +21,7 @@ public class StaticSpawnService
      * @return The static spawn info or an empty optional.
      */
     public Optional<StaticSpawn> getTrackedSpawn(WorldPoint wp, int itemId, int quantity){
-        return Optional.ofNullable(defaultBaseRespawnTicks.get(itemId))
+        return Optional.ofNullable(mapItemIdToBaseRespawnTicks.get(itemId))
                 .map(baseRespawnTicks ->
                             StaticSpawn.builder()
                                     .worldPoint(wp)
@@ -33,19 +33,16 @@ public class StaticSpawnService
     }
 
 
-    //region defaultBaseRespawnTicks
     /**
      * key: The item id.
-     * value: Default value for baseRespawnTicks, for this item.
+     * value: baseRespawnTicks, for this item.
      */
-    Map<Integer, Integer> defaultBaseRespawnTicks = new HashMap<>();
-
-    //endregion
+    Map<Integer, Integer> mapItemIdToBaseRespawnTicks = new HashMap<>();
 
 
     public void startUp(){
-        defaultBaseRespawnTicks = (new DefaultBaseRespawnTicksReader())
-                .getDefaultBaseRespawnTicks();
+        mapItemIdToBaseRespawnTicks = (new BaseRespawnTicksReader())
+                .getMapItemIdToBaseRespawnTicks();
     }
 
 
