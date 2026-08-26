@@ -71,6 +71,26 @@ public class StaticSpawnService
                                 : spawns.getFirst()
                 );
     }
+
+
+    /**
+     * Get a static spawn information using the baseRepsawnTicks data. or empty optional if no baseRepsawnTicks for this item id.
+     * @param wp The world point to set.
+     * @param itemId The itemId to look up and to set.
+     * @param quantity The quantity to set.
+     * @return The static spawn info or an empty optional.
+     */
+    public Optional<StaticSpawn> getTrackedSpawn(WorldPoint wp, int itemId, int quantity){
+        return Optional.ofNullable(defaultBaseRespawnTicks.get(itemId))
+                .map(baseRespawnTicks ->
+                            StaticSpawn.builder()
+                                    .worldPoint(wp)
+                                    .baseRespawnTicks(baseRespawnTicks)
+                                    .itemId(itemId)
+                                    .quantity(quantity)
+                                    .build()
+                );
+    }
     //endregion
 
 
