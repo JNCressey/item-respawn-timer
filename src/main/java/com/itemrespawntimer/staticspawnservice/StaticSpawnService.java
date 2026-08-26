@@ -13,6 +13,16 @@ import net.runelite.api.coords.WorldPoint;
 public class StaticSpawnService
 {
 
+    //region ashes spawns
+    private static final List<WorldPoint> ashesSpawnPoints = List.of(
+            new WorldPoint(1497,3173,0), // [[Bandit (Varlamore)|Bandit]]s' camp north-east of [[Ralos' Rise]]
+            new WorldPoint(3752,9780,0), // [[Sisterhood Sanctuary]]
+            new WorldPoint(1834,6187,0) // [[Realm of Memories]]
+    );
+
+    private static final int ashesItemId = 592;
+    //endregion
+
     /**
      * Get a static spawn information using the baseRespawnTicks data. or empty optional if no baseRespawnTicks for this item id.
      * @param wp The world point to set.
@@ -21,6 +31,12 @@ public class StaticSpawnService
      * @return The static spawn info or an empty optional.
      */
     public Optional<StaticSpawn> getTrackedSpawn(WorldPoint wp, int itemId, int quantity){
+        if(
+                itemId == ashesItemId // is an ashes item
+                && ashesSpawnPoints.stream().filter(sp -> sp.equals(wp)).findAny().isEmpty() // is not at an ashes spawn point
+        ){
+            return Optional.empty(); // skip ashes that are from fires burning out
+        }
         return Optional.ofNullable(mapItemIdToBaseRespawnTicks.get(itemId))
                 .map(baseRespawnTicks ->
                         new StaticSpawn(
