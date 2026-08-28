@@ -1,11 +1,352 @@
-itemId,baseRespawnTicks
-558,100
-1923,100
-1931,100
-1641,500
-2357,1500
-1939,100
-592,100
-526,100
-3109,10
-1607,1000
+itemId,baseRespawnTicks,wikiPage
+#2054,?,Wizard blizzard
+#8989,?,Brewin' guide
+#9189,?,Sapphire bolt tips
+16,100,Magic whistle
+20,100,White cog
+21,100,Black cog
+22,100,Blue cog
+23,100,Red cog
+24,100,Rat poison
+28,100,Insect repellent
+33,100,Candle#Lit
+36,100,Candle#Unlit
+39,100,Bronze arrowtips
+41,100,Steel arrowtips
+53,100,Headless arrow
+83,100,Lever (Temple of Ikov)
+84,100,Staff of Armadyl
+85,100,Shiny key
+88,100,Boots of lightness#Inventory
+90,50,Child's blanket
+125,100,Attack potion#(1)
+185,100,Superantipoison#(1)
+199,200,Grimy guam leaf
+223,100,Red spiders' eggs
+227,100,Vial of water
+229,100,Vial
+231,30,Snape grass
+233,100,Pestle and mortar
+239,10,White berries
+243,30,Blue dragon scale
+245,50,Wine of Zamorak
+247,30,Jangerberries
+272,100,Fish food
+273,100,Poison (item)
+276,100,Rubber tube
+277,100,Oil can
+278,100,Cattleprod
+301,100,Lobster pot
+303,100,Small fishing net
+305,100,Big fishing net
+307,100,Fishing rod
+309,100,Fly fishing rod
+311,100,Harpoon
+313,100,Fishing bait
+314,100,Feather
+317,100,Raw shrimps
+323,100,Burnt fish (anchovies)
+345,100,Raw herring
+347,100,Herring
+357,100,Burnt fish (herring)
+359,100,Raw tuna
+401,100,Seaweed
+403,100,Edible seaweed
+434,100,Clay
+444,500,Gold ore
+526,100,Bones
+528,100,Burnt bones
+530,50,Bat bones
+532,50,Big bones
+542,100,Monk's robe
+544,100,Monk's robe top
+554,100,Fire rune
+555,100,Water rune
+556,100,Air rune
+557,100,Earth rune
+558,100,Mind rune
+559,100,Body rune
+560,200,Death rune
+561,200,Nature rune
+562,200,Chaos rune
+564,200,Cosmic rune
+565,200,Blood rune
+581,100,Black robe
+590,100,Tinderbox
+592,100,Ashes
+596,100,Torch#Unlit
+600,100,Astronomy book
+617,100,Coins (Shilo Village)
+677,100,Panning tray#Empty
+687,100,Broken arrow
+697,100,Damaged armour
+708,100,Arcenia root
+733,100,Smashed glass
+767,100,Phoenix crossbow
+806,100,Bronze dart#Unpoisoned
+807,100,Iron dart#Unpoisoned
+837,500,Crossbow
+839,200,Longbow
+841,200,Shortbow
+843,100,Oak shortbow
+863,100,Iron knife#Unpoisoned
+865,100,Steel knife#Unpoisoned
+877,100,Bronze bolts#Unpoisoned
+882,100,Bronze arrow#Unpoisoned
+884,100,Iron arrow#Unpoisoned
+886,100,Steel arrow#Unpoisoned
+888,100,Mithril arrow#Unpoisoned
+946,100,Knife
+950,100,Silk
+952,100,Spade
+954,100,Rope
+960,100,Plank
+964,100,Skull (item)
+966,100,Tile
+970,100,Papyrus
+973,100,Charcoal
+983,100,Brass key
+995,100,Coins
+1005,100,White apron
+1009,100,Brass necklace
+1017,100,Wizard hat
+1059,100,Leather gloves
+1061,100,Leather boots
+1069,2000,Steel platelegs
+1103,700,Bronze chainbody
+1115,1500,Iron platebody
+1119,2000,Steel platebody
+1129,100,Leather body
+1137,500,Iron med helm
+1139,100,Bronze med helm
+1153,700,Iron full helm
+1171,50,Wooden shield
+1173,10,Bronze sq shield
+1191,100,Iron kiteshield
+1203,500,Iron dagger#Unpoisoned
+1205,100,Bronze dagger#Unpoisoned
+1207,1000,Steel dagger#Unpoisoned
+1217,1200,Black dagger#Unpoisoned
+1237,100,Bronze spear#Unpoisoned
+1241,100,Steel spear#Unpoisoned
+1265,100,Bronze pickaxe
+1267,100,Iron pickaxe
+1269,100,Steel pickaxe
+1277,100,Bronze sword
+1279,500,Iron sword
+1281,1000,Steel sword
+1293,1000,Iron longsword
+1295,1500,Steel longsword
+1321,100,Bronze scimitar
+1323,500,Iron scimitar
+1325,1000,Steel scimitar
+1327,1500,Black scimitar
+1335,100,Iron warhammer
+1349,500,Iron axe
+1351,100,Bronze axe
+1363,1000,Iron battleaxe
+1379,100,Staff
+1385,2000,Staff of earth
+1389,500,Magic staff
+1420,500,Iron mace
+1422,100,Bronze mace
+1467,0,Damp sticks
+1469,100,Broken glass
+1480,100,Rock (elemental)
+1493,100,Old journal
+1510,5,Picture
+1511,100,Logs
+1523,100,Lockpick
+1550,50,Garlic
+1573,100,Doogle leaves
+1590,100,Dusty key
+1592,200,Ring mould
+1595,200,Amulet mould
+1597,200,Necklace mould
+1599,200,Holy mould
+1607,1000,Sapphire
+1619,1500,Uncut ruby
+1623,500,Uncut sapphire
+1635,500,Gold ring
+1641,500,Ruby ring
+1654,500,Gold necklace
+1733,100,Needle
+1734,100,Thread
+1735,100,Shears
+1741,100,Leather
+1755,100,Chisel
+1759,100,Ball of wool
+1761,100,Soft clay
+1763,100,Red dye
+1769,100,Orange dye
+1773,100,Purple dye
+1783,100,Bucket of sand
+1785,100,Glassblowing pipe
+1812,100,Pungent pot
+1813,100,Criminal's dagger#Normal
+1823,100,Waterskin#(4)
+1831,100,Waterskin#(0)
+1856,100,Guide book
+1871,100,Chopped onion
+1887,100,Cake tin
+1895,100,Cake#Slice
+1905,100,Asgarnian ale
+1911,100,Dragon bitter
+1913,100,Dwarven stout
+1917,100,Beer
+1919,100,Beer glass
+1921,100,Bowl of water
+1923,100,Bowl
+1925,100,Bucket
+1927,100,Bucket of milk
+1929,100,Bucket of water
+1931,100,Pot
+1933,100,Pot of flour
+1935,100,Jug
+1937,100,Jug of water
+1939,100,Swamp tar
+1942,100,Potato
+1944,25,Egg
+1947,50,Grain
+1955,100,Cooking apple
+1957,100,Onion
+1963,100,Banana
+1965,100,Cabbage
+1971,100,Kebab
+1973,100,Chocolate bar
+1978,100,Cup of tea
+1980,100,Empty cup
+1982,100,Tomato
+1984,100,Rotten apple
+1985,100,Cheese
+1987,80,Grapes
+1993,100,Jug of wine
+2025,100,Cocktail shaker
+2026,100,Cocktail glass
+2028,100,Premade blurb' sp.
+2030,100,Premade choc s'dy
+2108,100,Orange
+2114,100,Pineapple
+2126,100,Dwellberries
+2128,100,Equa leaves
+2134,100,Raw rat meat
+2140,200,Cooked chicken
+2142,200,Cooked meat
+2144,200,Burnt chicken
+2146,100,Burnt meat
+2150,100,Swamp toad (item)
+2162,100,King worm
+2255,100,Toad batta
+2309,200,Bread
+2311,100,Burnt bread
+2313,100,Pie dish
+2333,100,Redberry pie#Half
+2347,100,Hammer
+2349,100,Bronze bar
+2351,500,Iron bar
+2353,1000,Steel bar
+2357,1500,Gold bar
+2384,100,Fingernails
+2397,100,Shaman robe
+2398,100,Cave nightshade
+2407,100,Ball
+2408,30,Diary (Witch's House)
+2409,95,Door key (Witch's House)
+2518,100,Rotten tomato
+2526,100,Grey toy horsey
+2859,100,Wolf bones
+2957,100,Druid pouch#Empty
+2964,3,Washing bowl
+3109,10,Stone ball#Red
+3110,10,Stone ball#Blue
+3111,10,Stone ball#Yellow
+3112,10,Stone ball#Purple
+3113,10,Stone ball#Green
+3138,100,Potato cactus
+3187,100,Bones (Ape Atoll)
+3216,30,Barrel
+3803,100,Beer tankard
+3805,100,Tankard
+4034,100,Monkey skull
+4084,30,Sled#Waxed
+4164,100,Facemask
+4199,100,Pickled brain
+4492,10,Muddy rock
+4494,10,Pole
+4496,30,Broken pole
+4529,100,Candle lantern#Unlit_(white_candle)
+4548,100,Bullseye lantern#Unlit
+4615,10,Letter (The Golem)
+4619,10,Strange implement
+4686,10,Embalming manual
+4707,100,Crumbling tome
+4819,100,Bronze nails
+4820,100,Iron nails
+5062,10,Left boot
+5063,10,Right boot
+5341,100,Rake
+5418,100,Empty sack
+5462,100,Cabbages#2
+5504,100,Strawberry
+5523,100,Tiara mould
+5559,10,Flash powder
+5568,10,Tiles (Rogues' Den)#Correct
+5569,10,Tiles (Rogues' Den)#Flipped Vertically
+5570,10,Tiles (Rogues' Den)#Rotated
+5571,10,Tiles (Rogues' Den)#Flipped Horizontally
+5586,10,Metal spade#Spade
+5610,100,Hourglass (Recruitment Drive)
+5763,100,Cider
+5986,100,Sweetcorn
+5988,100,Cooked sweetcorn
+6332,100,Mahogany logs
+6662,100,Broken fishing rod
+6663,100,Forlorn boot
+6697,100,Pat of butter
+6790,1,Shoes
+6792,5,Ancestral key
+6903,800,Dragonstone (Mage Training Arena)
+6962,100,Triangle sandwich
+7051,100,Bug lantern#Unlit
+7074,100,Chopped garlic
+7080,100,Sliced mushrooms
+7088,100,Sweetcorn (bowl)
+7225,100,Iron spit
+7954,100,Burnt shrimp
+7967,0,Engine
+7972,0,Lift manual
+8780,100,Teak plank
+8794,100,Saw
+9652,10,Haemalchemy volume 1
+10006,100,Bird snare
+10008,100,Box trap
+10029,500,Teasing stick
+10150,100,Noose wand
+10179,100,Feathered journal
+10562,10,Queen help book
+10810,100,Arctic pine logs
+10885,20,Keg (dummy item)
+11065,200,Bracelet mould
+11656,100,Glassblowing book
+11680,0,Address form
+11940,100,Dark fishing bait
+20798,100,Smelly journal
+22251,100,Oak shield
+22416,100,The turncloak
+22418,100,Explosive discovery
+22420,100,Bloody grimoire
+22426,100,Deed
+22428,100,Old key
+22430,100,Bloody bracer
+24774,100,Blood pint
+24788,100,Pat of not garlic butter
+25829,100,Old note (Secluded Chapel)
+26963,100,Odd spectacles
+26965,100,Bottle of 'tonic'
+29277,100,Trapper's tipple
+29409,100,Sunbeam ale
+29412,100,Steamforge brew
+29415,75,Eclipse red
+29963,100,Chichilihui rosé
+31393,50,Tortugan scute
+31395,50,Sea shell
