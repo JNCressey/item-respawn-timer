@@ -147,24 +147,15 @@ public class ItemRespawnTimerPlugin extends Plugin
 		activeTimers.onItemDespawned(event);
 	}
 
-	//region gameTick
-	/**
-	 * the timestamp for the current tick in milliseconds
-	 */
-	@Getter
-	private long tickTimeMillis;
-
 
 	@SuppressWarnings("unused")
     @Subscribe
 	public void onGameTick(GameTick event) {
-		tickTimeMillis = Instant.now().toEpochMilli();
 		despawnEventVerificationService.onGameTick();
 		activeTimers.onGameTick();
 		panel.setCurrentWorldId(client.getWorld());//todo move to the onGameStateChanged event
 		panel.updateSidePanel();
 	}
-	//endregion
 
 
 	@Inject

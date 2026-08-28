@@ -185,7 +185,7 @@ public class ActiveTimers {
                     int worldId = client.getWorld();
                     int worldPopulation = plugin.getCurrentWorldPopulation();
 
-                    RespawnTimer timer = new RespawnTimer(spawn,worldId,worldPopulation,plugin.getTickTimeMillis());
+                    RespawnTimer timer = new RespawnTimer(spawn,worldId,worldPopulation);
                     add(timer);
                 });
     }

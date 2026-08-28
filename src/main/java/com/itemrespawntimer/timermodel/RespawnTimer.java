@@ -94,13 +94,12 @@ public class RespawnTimer
     public RespawnTimer(
             StaticSpawn spawn,
             int worldId,
-            int worldPopulation,
-            long startMillis
+            int worldPopulation
     )
     {
         this.spawn = spawn;
         this.worldId = worldId;
-        this.start = startMillis;
+        this.start = Instant.now().toEpochMilli();
 
         int respawnDelayTicks = (int)Math.floor(this.spawn.getBaseRespawnTicks() * ((4000D-worldPopulation)/4000));
         this.respawnAt =        startMillis + (    respawnDelayTicks * 600L); //todo: figure out why red stone ball appears to always spawn 1 tick later than this prediction in both populated and sparse worlds, pot and bowl appear 2 ticks late on populated world but spot on on sparse worlds. sapphire on populated world seemed 1 tick early
