@@ -25,6 +25,8 @@ Hotkeys for manually removing timers:
 
 
 ## dev to-dos
+- wilderness wine of zamorak seems to be shorter than baseRespawnTicks 10. find out what it is
+- respawn delay predicion seems to be 1 longer than measured time for despawnEvent->spawnEvent
 - add config option for the number on the dial to be ticks or seconds
 - get rid of the customisable clearing.
   - clear at 2T (the side panel will show progress bar fill up twice, first time green filling over gray, second time red filling over green)
