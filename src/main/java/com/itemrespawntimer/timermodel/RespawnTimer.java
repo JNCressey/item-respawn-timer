@@ -2,12 +2,14 @@ package com.itemrespawntimer.timermodel;
 
 import com.itemrespawntimer.staticspawnservice.StaticSpawn;
 import lombok.Getter;
+import lombok.extern.slf4j.Slf4j;
 import net.runelite.api.coords.WorldPoint;
 
 import java.beans.PropertyChangeListener;
 import java.beans.PropertyChangeSupport;
 import java.time.Instant;
 
+@Slf4j
 public class RespawnTimer
 {
 
@@ -102,8 +104,8 @@ public class RespawnTimer
         this.start = Instant.now().toEpochMilli();
 
         int respawnDelayTicks = (int)Math.floor(this.spawn.getBaseRespawnTicks() * ((4000D-worldPopulation)/4000));
-        this.respawnAt =        startMillis + (    respawnDelayTicks * 600L); //todo: figure out why red stone ball appears to always spawn 1 tick later than this prediction in both populated and sparse worlds, pot and bowl appear 2 ticks late on populated world but spot on on sparse worlds. sapphire on populated world seemed 1 tick early
-        this.twiceRespawnTime = startMillis + (2 * respawnDelayTicks * 600L);
+        this.respawnAt =        start + (    respawnDelayTicks * 600L);
+        this.twiceRespawnTime = start + (2 * respawnDelayTicks * 600L);
 
         int respawnDelaySeconds = (int)(respawnDelayTicks*0.6);
         this.totalSeconds = Math.max(respawnDelaySeconds, 1); // fallback if somehow respawnDelaySeconds is 0, to avoid any divide by zeros
