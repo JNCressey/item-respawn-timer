@@ -8,7 +8,6 @@ import com.itemrespawntimer.panel.ItemRespawnTimerPanel;
 import com.itemrespawntimer.staticspawnservice.StaticSpawnService;
 import com.itemrespawntimer.timermodel.ActiveTimers;
 import com.itemrespawntimer.timermodel.DespawnEventVerificationService;
-import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 import net.runelite.api.*;
 import net.runelite.api.events.GameTick;
@@ -20,7 +19,6 @@ import net.runelite.client.plugins.Plugin;
 import net.runelite.client.plugins.PluginDescriptor;
 
 import java.awt.image.BufferedImage;
-import java.time.Instant;
 
 import net.runelite.client.ui.ClientToolbar;
 import net.runelite.client.ui.NavigationButton;
