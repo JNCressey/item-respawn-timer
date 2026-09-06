@@ -6,15 +6,25 @@ import java.awt.*;
 import java.time.Instant;
 import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 import com.itemrespawntimer.timermodel.ActiveTimers;
 import com.itemrespawntimer.timermodel.RespawnTimer;
 import lombok.Setter;
 import net.runelite.client.game.ItemManager;
+import net.runelite.client.ui.DynamicGridLayout;
 import net.runelite.client.ui.PluginPanel;
 
+import net.runelite.client.plugins.timetracking.TimeablePanel;
+
 public class ItemRespawnTimerPanel extends PluginPanel {
+
+    private final java.util.List<TimeablePanel<RespawnTimer>> spawnPanels;
+
+    private final Set<RespawnTimer> shownTimers;
 
     //protected JLabel label;
     protected JTextArea textArea;
@@ -25,9 +35,13 @@ public class ItemRespawnTimerPanel extends PluginPanel {
         /*
         todo: make tiles with buttons for each timer
          */
-        setLayout(new BorderLayout());
+        //setLayout(new BorderLayout());
         textArea = new JTextArea("Hello RuneLite!");
-        add(textArea, BorderLayout.NORTH);
+        //add(textArea, BorderLayout.NORTH);// todo remove text mode
+
+        setLayout(new DynamicGridLayout(0, 1, 0, 0));
+        spawnPanels = new ArrayList<>();
+        shownTimers = new HashSet<>();
 
     }
 
@@ -82,6 +96,60 @@ public class ItemRespawnTimerPanel extends PluginPanel {
                 })
                 .collect(Collectors.joining("\n"));
 
-        textArea.setText(txt);
+        //textArea.setText(txt); //todo remove text mode
+
+        //add timer panels
+        for (RespawnTimer t : activeTimers.getActiveTimers()){
+            if (shownTimers.contains(t)){ continue; }
+
+            String itemName = getItemName(t);
+            TimeablePanel<RespawnTimer> panel = new TimeablePanel<>(t,itemName,(int) (t.getRespawnAt()-t.getStart()));
+
+            add(panel);
+            spawnPanels.add(panel);
+            shownTimers.add(t);
+            //todo add in sorted position
+
+
+            itemManager.getImage(t.getSpawn().getItemId()).addTo(panel.getIcon());
+            panel.getIcon().setToolTipText(itemName);
+            panel.getProgress().setVisible(true);
+            panel.getNotifyButton().setSelected(false); //todo implement notifier
+            panel.getProgress().setForeground(Color.GREEN);
+            panel.getProgress().setBackground(Color.DARK_GRAY);
+
+        }
+
+        //update progress
+        for (TimeablePanel<RespawnTimer> panel : spawnPanels){
+            RespawnTimer timer = panel.getTimeable();
+
+            int worldId = timer.getWorldId();
+            String estimateWorldPart = (worldId == currentWorldId)
+                    ? ""
+                    : String.format(" | in W%s",worldId);
+
+            if (timer.isExpired()){
+                panel.getEstimate().setText(String.format("Done%s", estimateWorldPart));
+                panel.getProgress().setForeground(Color.DARK_GRAY);
+                panel.getProgress().setBackground(Color.GREEN);
+
+                panel.getProgress().setValue((int) (nowMillis - timer.getRespawnAt()));
+            } else {
+
+                String doneAtMinutesAndSeconds = Instant.ofEpochMilli(timer.getRespawnAt()).atZone(ZoneId.of("UTC")).format(formatterMinutesAndSeconds);
+                panel.getEstimate().setText(String.format("Done at %s%s", doneAtMinutesAndSeconds, estimateWorldPart));
+                panel.getProgress().setValue((int) (nowMillis - timer.getStart()));
+            }
+
+            if (timer.isDeleted()){
+                spawnPanels.remove(panel);
+                shownTimers.remove(timer);
+                remove(panel);
+                revalidate();
+            }
+        }
+
+
     }
 }
