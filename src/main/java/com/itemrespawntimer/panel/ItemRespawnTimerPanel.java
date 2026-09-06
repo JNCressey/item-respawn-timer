@@ -127,7 +127,7 @@ public class ItemRespawnTimerPanel extends PluginPanel {
             int worldId = timer.getWorldId();
             String estimateWorldPart = (worldId == currentWorldId)
                     ? ""
-                    : String.format(" | in W%s",worldId);
+                    : String.format(" in W%s",worldId);
 
             if (timer.isExpired()){
                 panel.getEstimate().setText(String.format("Done%s", estimateWorldPart));
