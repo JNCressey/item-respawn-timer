@@ -1,15 +1,21 @@
+import net.runelite.client.plugins.timetracking.TimeablePanel;
+
 class RespawnTimablePanel
 extends TimablePanel<RespawnTimer>
 {
+
+  @Inject
+  private ItemManager itemManager;
+
   RespawnTimablePanel(RespawnTimer timer)
   {
     int itemId = timer.getSpawn().getItemId();
-    String itemName = itemManager ... getName(itemId);
+    String itemName = itemManager.getItemComposition(timer.getSpawn().getItemId()).getName();
     // timer.getTotalMillis() = timer.getRespawnAt()-timer.getStart()
     super(timer, itemName, timer.getTotalMillis()):
 
-    image.setImage(itemManager ... getIcon(itemId));
-
+    itemManager.getImage(t.getSpawn().getItemId()).addTo(panel.getIcon());
+    
     progressBar set colors green foreground dark grey background
 
     updateEstimateMessage():
