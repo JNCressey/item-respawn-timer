@@ -1,0 +1,31 @@
+class RespawnTimablePanel
+extends TimablePanel<RespawnTimer>
+{
+  RespawnTimablePanel(RespawnTimer timer)
+  {
+    int itemId = timer.getSpawn().getItemId();
+    String itemName = itemManager ... getName(itemId);
+    // timer.getTotalMillis() = timer.getRespawnAt()-timer.getStart()
+    super(timer, itemName, timer.getTotalMillis()):
+
+    image.setImage(itemManager ... getIcon(itemId));
+
+    progressBar set colors green foreground dark grey background
+
+    updateEstimateMessage():
+    
+  }
+
+  public updateEstimateMessage()
+  {
+    //todo
+  }
+
+  public updateProgress()
+  {
+    if (timer.isExpired){
+      profeessbar set colors green background dark grey foreground
+    } 
+    //todo
+  }
+}
