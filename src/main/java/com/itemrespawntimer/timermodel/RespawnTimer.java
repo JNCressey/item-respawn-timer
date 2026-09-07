@@ -54,6 +54,13 @@ public class RespawnTimer
      */
     @Getter
     private final int totalSeconds;
+
+
+    /**
+     * the total time that the timer is counting out of
+     */
+    @Getter
+    private final int totalMillis;
     //endregion
 
 
@@ -109,6 +116,12 @@ public class RespawnTimer
 
         int respawnDelaySeconds = (int)(respawnDelayTicks*0.6);
         this.totalSeconds = Math.max(respawnDelaySeconds, 1); // fallback if somehow respawnDelaySeconds is 0, to avoid any divide by zeros
+
+
+        int respawnDelayMillis = (int)(respawnDelayTicks*600);
+        this.totalMillis = Math.max(respawnDelayMillis, 1); // fallback if somehow respawnDelayMillis is 0, to avoid any divide by zeros
+
+
     }
 
 
