@@ -6,7 +6,9 @@ extends TimablePanel<RespawnTimer>
 
   @Inject
   private ItemManager itemManager;
-
+ 
+  String estimateAtTimePart;
+  String estimateWorldPart;
   bool isStaleColorsSet = false;
 
   RespawnTimablePanel(RespawnTimer timer)
@@ -25,7 +27,8 @@ extends TimablePanel<RespawnTimer>
     getProgress().setForeground(Color.GREEN);
     getProgress().setBackground(Color.DARK_GRAY);
 
-    update(worldId,nowMillis);
+    prepareEstimateParts();
+    update(timer.getWorldId(),timer.getStart());
     
   }
 
@@ -35,13 +38,28 @@ extends TimablePanel<RespawnTimer>
     updateProgress(nowMillis);
   }
 
-  public void updateEstimateMessage(int worldId)
+  public void updateEstimateMessage(int currentWorldId)
   {
-    String atTimePart =
-    String worldPart =
-    //todo
+    RespawnTimer timer = getTimable();
+    String atTimePart = (timer.isExpired()) : "" ? estimateAtTimePart;
+    String worldPart = (timer.getWorldId() == currentWorldId) : "" ? estimateWorldPart;
+    
     String.format("Done%s%s", atTimePart, worldPart)
   }
+
+
+  private static final DateTimeFormatter formatterMinutesAndSeconds = DateTimeFormatter.ofPattern("mm:ss");
+
+  private prepareEstimateParts()
+  {
+    RespawnTimer timer = getTimable();
+
+    estimateWorldPart = String.format(" in W%s", timer.getWorldId());
+   
+    String doneAtMinutesAndSeconds = Instant.ofEpochMilli(timer.getRespawnAt()).atZone(ZoneId.of("UTC")).format(formatterMinutesAndSeconds);
+    estimateAtTimePart = String.format(" at %s", doneAtMinutesAndSeconds);
+  }
+
 
   public void updateProgress(long nowMillis)
   {
@@ -64,6 +82,5 @@ extends TimablePanel<RespawnTimer>
     isStaleColorsSet = true;
     getProgress().setForeground(Color.DARK_GRAY);
     getProgress().setBackground(Color.GREEN);
-
   }
 }
