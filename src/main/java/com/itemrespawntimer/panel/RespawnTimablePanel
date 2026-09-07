@@ -30,7 +30,7 @@ extends TimablePanel<RespawnTimer>
   
     getIcon().setToolTipText(itemName);
     getProgress().setVisible(true);
-    getNotifyButton().setSelected(false); //todo implement notifier
+    remove(getNotifyButton());
     getProgress().setForeground(Color.GREEN);
     getProgress().setBackground(Color.DARK_GRAY);
 
