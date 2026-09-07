@@ -23,16 +23,25 @@ extends TimablePanel<RespawnTimer>
     getProgress().setForeground(Color.GREEN);
     getProgress().setBackground(Color.DARK_GRAY);
 
-    updateEstimateMessage():
+    update(worldId,nowMillis);
     
   }
 
-  public updateEstimateMessage()
+  public void update(int worldId, long nowMillis)
   {
-    //todo
+    updateEstimateMessage(worldId);
+    updateProgress(nowMillis);
   }
 
-  public updateProgress()
+  public void updateEstimateMessage(int worldId)
+  {
+    String atTimePart =
+    String worldPart =
+    //todo
+    String.format("Done%s%s", atTimePart, worldPart)
+  }
+
+  public void updateProgress(long nowMillis)
   {
     if (timer.isExpired){
       profeessbar set colors green background dark grey foreground
