@@ -7,6 +7,8 @@ extends TimablePanel<RespawnTimer>
   @Inject
   private ItemManager itemManager;
 
+  bool isStaleColorsSet = false;
+
   RespawnTimablePanel(RespawnTimer timer)
   {
     int itemId = timer.getSpawn().getItemId();
@@ -43,9 +45,25 @@ extends TimablePanel<RespawnTimer>
 
   public void updateProgress(long nowMillis)
   {
+    RepawnTimer timer = getTimable();
+    int progress;
     if (timer.isExpired){
-      profeessbar set colors green background dark grey foreground
+      if (!isStaleColorsSet) { setStaleColors; }
+      progress = nowMillis - timer.getRespawnAt();
     } 
-    //todo
+    else
+    {
+      progress = nowMillis - timer.getStart();
+    }
+    
+    setProgress(progress);
+  }
+
+  private void setStaleColors()
+  {
+    isStaleColorsSet = true;
+    getProgress().setForeground(Color.DARK_GRAY);
+    getProgress().setBackground(Color.GREEN);
+
   }
 }
