@@ -80,8 +80,8 @@ extends TimablePanel<RespawnTimer>
     {
       progress = nowMillis - timer.getStart();
     }
-    
-    setProgress(progress);
+
+    getProgress().setValue(progress);
   }
 
   private void setStaleColors()
