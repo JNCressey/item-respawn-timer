@@ -14,9 +14,14 @@ extends TimablePanel<RespawnTimer>
     // timer.getTotalMillis() = timer.getRespawnAt()-timer.getStart()
     super(timer, itemName, timer.getTotalMillis()):
 
-    itemManager.getImage(t.getSpawn().getItemId()).addTo(panel.getIcon());
+    itemManager.getImage(t.getSpawn().getItemId()).addTo(getIcon());
     
-    progressBar set colors green foreground dark grey background
+  
+    getIcon().setToolTipText(itemName);
+    getProgress().setVisible(true);
+    getNotifyButton().setSelected(false); //todo implement notifier
+    getProgress().setForeground(Color.GREEN);
+    getProgress().setBackground(Color.DARK_GRAY);
 
     updateEstimateMessage():
     
