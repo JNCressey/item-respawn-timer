@@ -98,31 +98,32 @@ public class ItemRespawnTimerPanel extends PluginPanel {
 
         //textArea.setText(txt); //todo remove text mode
 
-        //add new timer panels
-        for (RespawnTimer t : activeTimers.getActiveTimers()){
-            if (shownTimers.contains(t)){ continue; }
-
-            RespawnTimeablePanel panel = new RespawnTimeablePanel(t, itemManager);
-
-            add(panel);
-            spawnPanels.add(panel);
-            shownTimers.add(t);
-            //todo add in sorted position
-
-        }
-
-        //update progress
-        for (RespawnTimeablePanel panel : spawnPanels){
+        //remove deleted timers
+        for  (RespawnTimeablePanel panel : spawnPanels) {
             RespawnTimer timer = panel.getTimeable();
-
-            if (timer.isDeleted()){ //remove timer panel
+            if (timer.isDeleted()){
                 spawnPanels.remove(panel);
                 shownTimers.remove(timer);
                 remove(panel);
                 revalidate();
-                continue;
             }
+        }
 
+        //add new timer panels
+        for(int i=0; i<activeTimers.getActiveTimers().size(); ++i){
+            RespawnTimer t = activeTimers.getActiveTimers().get(i);
+
+            if (shownTimers.contains(t)){ continue; }
+
+            RespawnTimeablePanel panel = new RespawnTimeablePanel(t, itemManager);
+
+            add(panel,i);
+            spawnPanels.add(panel);
+            shownTimers.add(t);
+        }
+
+        //update progress
+        for (RespawnTimeablePanel panel : spawnPanels){
             panel.update(currentWorldId, nowMillis);
 
         }
