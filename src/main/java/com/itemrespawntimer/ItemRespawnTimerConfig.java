@@ -16,9 +16,4 @@ public interface ItemRespawnTimerConfig extends Config
 		return true;
 	}
 
-
-	//todo section for hiding timers from side panel
-	// minimum value
-	// list of items to hide
-
 }
