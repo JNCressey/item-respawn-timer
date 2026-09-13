@@ -227,27 +227,4 @@ public class ActiveTimers {
     }
     //endregion
 
-
-    /**
-     * Sets the deleted state for a single expired timer.
-     * @see RespawnTimer#delete
-     */
-    public void deleteExpiredSingle(){
-        activeTimers.stream()
-                .findFirst()
-                .filter(RespawnTimer::isExpired)
-                .ifPresent(RespawnTimer::delete);
-    }
-
-
-    /**
-     * Sets the deleted state for all expired timers.
-     * @see RespawnTimer#delete
-     */
-    public void deleteExpiredAll(){
-        activeTimers.stream()
-                .filter(RespawnTimer::isExpired)
-                .forEach(RespawnTimer::delete);
-    }
-
 }
