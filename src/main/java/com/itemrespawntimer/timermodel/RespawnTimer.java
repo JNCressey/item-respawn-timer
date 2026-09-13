@@ -118,7 +118,7 @@ public class RespawnTimer
         this.totalSeconds = Math.max(respawnDelaySeconds, 1); // fallback if somehow respawnDelaySeconds is 0, to avoid any divide by zeros
 
 
-        int respawnDelayMillis = (int)(respawnDelayTicks*600);
+        int respawnDelayMillis = (respawnDelayTicks*600);
         this.totalMillis = Math.max(respawnDelayMillis, 1); // fallback if somehow respawnDelayMillis is 0, to avoid any divide by zeros
 
 
@@ -172,29 +172,6 @@ public class RespawnTimer
             return 0;
         }
         return (int) Math.ceil(diff / 1000.0);
-    }
-
-
-    /**
-     * Get the countdown to the respawn time, formatted as a T-minus type countdown.
-     * Negative for before respawn time, positive for after respawn time.
-     * Either T-# for a number of seconds, or like T-#:## if minutes are needed.
-     * @return the countdown
-    */
-    public String getTMinusCountdown(long nowMillis)
-    {
-        //todo: long nowMillis = Instant.now().toEpochMilli();
-        long countdownSeconds = (nowMillis/1000) - (respawnAt/1000);
-
-        char sign = (countdownSeconds <= 0)? '-' : '+';
-        long minutesPart = Math.abs(countdownSeconds) / 60;
-        long secondsPart = Math.abs(countdownSeconds) % 60;
-
-        if (totalSeconds>=60 || minutesPart!=0){ // with a minute part
-            return String.format("T%c%d:%02d", sign, minutesPart, secondsPart);
-        } else { // without a minute part
-            return String.format("T%c%d", sign, secondsPart);
-        }
     }
     //endregion
 
