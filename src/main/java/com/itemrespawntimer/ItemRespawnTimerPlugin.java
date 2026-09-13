@@ -19,7 +19,9 @@ import net.runelite.client.plugins.Plugin;
 import net.runelite.client.plugins.PluginDescriptor;
 
 import java.awt.image.BufferedImage;
+import java.time.temporal.ChronoUnit;
 
+import net.runelite.client.task.Schedule;
 import net.runelite.client.ui.ClientToolbar;
 import net.runelite.client.ui.NavigationButton;
 import net.runelite.client.ui.overlay.OverlayManager;
@@ -152,6 +154,16 @@ public class ItemRespawnTimerPlugin extends Plugin
 		despawnEventVerificationService.onGameTick();
 		activeTimers.onGameTick();
 		panel.setCurrentWorldId(client.getWorld());//todo move to the onGameStateChanged event
+	}
+
+
+	@SuppressWarnings("unused")
+    @Schedule(
+			period = 1,
+			unit = ChronoUnit.SECONDS
+	)
+	public void updateSidePanel()
+	{
 		panel.updateSidePanel();
 	}
 
