@@ -1,6 +1,5 @@
 package com.itemrespawntimer.timermodel;
 
-import com.itemrespawntimer.ItemRespawnTimerConfig;
 import com.itemrespawntimer.ItemRespawnTimerPlugin;
 import com.itemrespawntimer.staticspawnservice.StaticSpawnService;
 import lombok.Getter;
@@ -23,10 +22,6 @@ public class ActiveTimers {
     //region head
     @Inject
     private Client client;
-
-
-    @Inject
-    private ItemRespawnTimerConfig config;
 
 
     @Inject

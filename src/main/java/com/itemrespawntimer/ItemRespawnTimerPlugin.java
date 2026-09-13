@@ -41,7 +41,8 @@ public class ItemRespawnTimerPlugin extends Plugin
 	private Client client;
 
 
-	@Inject
+	@SuppressWarnings("unused")
+    @Inject
 	private ItemRespawnTimerConfig config;
 
 
