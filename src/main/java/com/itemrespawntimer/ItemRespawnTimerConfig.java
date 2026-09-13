@@ -1,12 +1,9 @@
 package com.itemrespawntimer;
 
-import com.itemrespawntimer.timermodel.RemoveExpiredTimerEvent;
 import net.runelite.client.config.*;
 
 import java.awt.event.InputEvent;
 import java.awt.event.KeyEvent;
-import java.util.EnumSet;
-import java.util.Set;
 
 @ConfigGroup("itemrespawntimer")
 public interface ItemRespawnTimerConfig extends Config
@@ -72,63 +69,6 @@ public interface ItemRespawnTimerConfig extends Config
 	}
 	//endregion hotkeysSection
 
-
-	//region removeTimersSection
-	@ConfigSection(
-			name = "Automatically Remove Timers",
-			description = "Automatically remove the expired timers",
-			position = 2,
-			closedByDefault = true
-	)
-	String removeTimersSection = "removeTimersSection";
-
-	@ConfigItem(
-			keyName = "removeTimersEvents",
-			name = "when",
-			section = removeTimersSection,
-			description = "Automatically remove timers when any of the selected conditions are met.",
-			position = 0
-	)
-	default Set<RemoveExpiredTimerEvent> removeTimersEvents()
-	{
-		return EnumSet.of(
-				RemoveExpiredTimerEvent.CAN_SEE_LOCATION,
-				RemoveExpiredTimerEvent.TWICE_RESPAWN_TIME
-		);
-	}
-
-	@Range(
-			min=-999,
-			max=999
-	)
-	@ConfigItem(
-			keyName = "removeTimersCustom1",
-			name = "Custom Offset 1 (s)",
-			section = removeTimersSection,
-			description = "The custom offset in seconds for the above 'remove when at T + custom offset 1' option. Use negative for before T or positive for after T.",
-			position = 1
-	)
-	default int removeTimersCustom1()
-	{
-		return 10;
-	}
-
-	@Range(
-			min=-999,
-			max=999
-	)
-	@ConfigItem(
-			keyName = "removeTimersCustom2",
-			name = "Custom Offset 2 (s)",
-			section = removeTimersSection,
-			description = "The custom offset in seconds for the above 'remove when at 2T + custom offset 2' option. (Where 2T is after twice the respawn time). Use negative for before 2T or positive for after 2T.",
-			position = 2
-	)
-	default int removeTimersCustom2()
-	{
-		return -10;
-	}
-	//endregion removeTimersSection
 
 	//todo section for hiding timers from side panel
 	// minimum value

@@ -200,9 +200,6 @@ public class ActiveTimers {
         activeTimers.stream()
                 .filter(timer -> toAutomaticallyDelete(
                         timer,
-                        config.removeTimersEvents(),
-                        config.removeTimersCustom1()*1000L,
-                        config.removeTimersCustom2()*1000L,
                         Instant.now().toEpochMilli(),
                         client.getWorld(),
                         client.getLocalPlayer().getWorldLocation()
@@ -214,44 +211,19 @@ public class ActiveTimers {
 
     private boolean toAutomaticallyDelete(
             RespawnTimer timer,
-            Set<RemoveExpiredTimerEvent> selectedRemoveTimerEvents,
-            long custom1Millis,
-            long custom2Millis,
             long nowMillis,
             int currentWorldId,
             WorldPoint playerPoint
     ){
-        return selectedRemoveTimerEvents.stream()
-                .anyMatch(selectedRemoveTimerEvent -> {
-                    switch(selectedRemoveTimerEvent){
-                        case CAN_SEE_LOCATION:
-                            return timer.isExpired()
-                                    && (timer.getWorldId()==currentWorldId)
-                                    && StaticSpawnService.isSpawnLocationWithinViewDistance(timer,playerPoint);
+        boolean expiredAndCanSeeLocation = (
+                timer.isExpired()
+                && (timer.getWorldId()==currentWorldId)
+                && StaticSpawnService.isSpawnLocationWithinViewDistance(timer,playerPoint)
+        );
 
-                        case  SAME_WORLD:
-                            return timer.isExpired()
-                                    && (timer.getWorldId()==currentWorldId);
+        boolean twiceExpiredTime = (nowMillis >= timer.getTwiceRespawnTime());
 
-                        case T_MINUS_ZERO:
-                            return timer.isExpired();
-
-                        case T_PLUS_60_SECONDS:
-                            return nowMillis >= (timer.getRespawnAt()        + 60_000L      );
-
-                        case T_PLUS_CUSTOM:
-                            return nowMillis >= (timer.getRespawnAt()        + custom1Millis);
-
-                        case TWICE_RESPAWN_TIME:
-                            return nowMillis >= (timer.getTwiceRespawnTime()                );
-
-                        case TWO_T_PLUS_CUSTOM:
-                            return nowMillis >= (timer.getTwiceRespawnTime() + custom2Millis);
-
-                        default:
-                            return false;
-                    }
-                });
+        return expiredAndCanSeeLocation || twiceExpiredTime;
     }
     //endregion
 
