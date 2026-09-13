@@ -26,9 +26,6 @@ import net.runelite.client.ui.ClientToolbar;
 import net.runelite.client.ui.NavigationButton;
 import net.runelite.client.ui.overlay.OverlayManager;
 import net.runelite.api.events.ItemDespawned;
-import net.runelite.client.util.HotkeyListener;
-import net.runelite.client.callback.ClientThread;
-import net.runelite.client.input.KeyManager;
 import net.runelite.client.util.ImageUtil;
 import net.runelite.http.api.worlds.WorldResult;
 
@@ -92,10 +89,6 @@ public class ItemRespawnTimerPlugin extends Plugin
 		staticSpawnService.startUp();
 
 		startupSidePanel();
-
-		keyManager.registerKeyListener(removeExpiredSingleListener);
-		keyManager.registerKeyListener(removeExpiredAllListener);
-		keyManager.registerKeyListener(clearTimersListener);
 	}
 
 	private void startupSidePanel(){
@@ -166,39 +159,6 @@ public class ItemRespawnTimerPlugin extends Plugin
 	{
 		panel.updateSidePanel();
 	}
-
-
-	@Inject
-	private KeyManager keyManager;
-	@Inject
-	private ClientThread clientThread;
-
-	private final HotkeyListener removeExpiredSingleListener = new HotkeyListener(() -> config.hotkeyRemoveExpiredSingle())
-	{
-		@Override
-		public void hotkeyPressed()
-		{
-			clientThread.invoke(() -> activeTimers.deleteExpiredSingle());
-		}
-	};
-
-	private final HotkeyListener removeExpiredAllListener = new HotkeyListener(() -> config.hotkeyRemoveExpiredAll())
-	{
-		@Override
-		public void hotkeyPressed()
-		{
-			clientThread.invoke(() -> activeTimers.deleteExpiredAll());
-		}
-	};
-
-	private final HotkeyListener clearTimersListener = new HotkeyListener(() -> config.hotkeyClearTimers())
-	{
-		@Override
-		public void hotkeyPressed()
-		{
-			clientThread.invoke(() -> activeTimers.clear());
-		}
-	};
 
 
 	public int getCurrentWorldPopulation(){
