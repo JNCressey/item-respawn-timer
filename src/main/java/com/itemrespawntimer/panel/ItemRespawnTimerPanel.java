@@ -2,7 +2,6 @@ package com.itemrespawntimer.panel;
 
 import javax.swing.*;
 import javax.inject.Inject;
-import java.awt.*;
 import java.time.Instant;
 import java.util.ArrayList;
 import java.util.HashSet;
@@ -17,7 +16,7 @@ import net.runelite.client.ui.PluginPanel;
 
 public class ItemRespawnTimerPanel extends PluginPanel {
 
-    private final java.util.List<RespawnTimeablePanel> spawnPanels;
+    private final java.util.List<ItemRespawnTimeablePanel> spawnPanels;
 
     private final Set<RespawnTimer> shownTimers;
 
@@ -56,7 +55,7 @@ public class ItemRespawnTimerPanel extends PluginPanel {
         long nowMillis = Instant.now().toEpochMilli();
 
         //remove deleted timers
-        for  (RespawnTimeablePanel panel : spawnPanels) {
+        for  (ItemRespawnTimeablePanel panel : spawnPanels) {
             RespawnTimer timer = panel.getTimeable();
             if (timer.isDeleted()){
                 spawnPanels.remove(panel);
@@ -72,7 +71,7 @@ public class ItemRespawnTimerPanel extends PluginPanel {
 
             if (shownTimers.contains(t)){ continue; }
 
-            RespawnTimeablePanel panel = new RespawnTimeablePanel(t, itemManager);
+            ItemRespawnTimeablePanel panel = new ItemRespawnTimeablePanel(t, itemManager);
 
             add(panel,i);
             spawnPanels.add(panel);
@@ -80,7 +79,7 @@ public class ItemRespawnTimerPanel extends PluginPanel {
         }
 
         //update progress
-        for (RespawnTimeablePanel panel : spawnPanels){
+        for (ItemRespawnTimeablePanel panel : spawnPanels){
             panel.update(currentWorldId, nowMillis);
 
         }

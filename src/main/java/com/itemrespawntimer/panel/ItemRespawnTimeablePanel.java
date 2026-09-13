@@ -11,7 +11,7 @@ import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
 
 
-class RespawnTimeablePanel
+class ItemRespawnTimeablePanel
 extends TimeablePanel<RespawnTimer>
 {
  
@@ -19,7 +19,7 @@ extends TimeablePanel<RespawnTimer>
   String estimateWorldPart;
   boolean isStaleColorsSet = false;
 
-  RespawnTimeablePanel(RespawnTimer timer, ItemManager itemManager)
+  ItemRespawnTimeablePanel(RespawnTimer timer, ItemManager itemManager)
   {
     super(
             timer,
