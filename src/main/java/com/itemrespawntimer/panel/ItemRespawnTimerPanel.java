@@ -15,7 +15,6 @@ import com.itemrespawntimer.timermodel.ActiveTimers;
 import com.itemrespawntimer.timermodel.RespawnTimer;
 import lombok.Setter;
 import net.runelite.client.game.ItemManager;
-import net.runelite.client.ui.DynamicGridLayout;
 import net.runelite.client.ui.PluginPanel;
 
 
@@ -38,8 +37,6 @@ public class ItemRespawnTimerPanel extends PluginPanel {
         textArea = new JTextArea("Hello RuneLite!");
         //add(textArea, BorderLayout.NORTH);// todo remove text mode
 
-        //todo prevent it crashing when the full height has been added, maybe needs to have a scrollable layout
-        setLayout(new DynamicGridLayout(0, 1, 0, 0));
         spawnPanels = new ArrayList<>();
         shownTimers = new HashSet<>();
 
