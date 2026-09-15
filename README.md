@@ -6,14 +6,14 @@ Predictions can be slightly off. Because the respawn time depends on how many pl
 ## Overlay
 ![example of the countdown dial](example-overlay.png)
 
-An overlay shows countdown dials like there is for mining and woodcutting plugins.
+An overlay shows count-down dials (like there are for the mining and woodcutting plugins).
 
 You can turn off the overlay with the plugin's config setting.
 
 ## Panel
 ![example of the side panel](example-panel.png)
 
-A side panel shows a list of timers like the time tracking plugin. From the sidebar, select the panel with the name "Item Respawns" and the icon: <img src="icon.png" alt="icon" width="20" height="20">
+A side-panel shows a list of timers (like the time-tracking plugin). From the sidebar, select the panel with the name "Item Respawns" and the icon: <img src="icon.png" alt="icon" width="20" height="20">
 
 Each timer in the list shows the following information:
 - The item icon and name.
