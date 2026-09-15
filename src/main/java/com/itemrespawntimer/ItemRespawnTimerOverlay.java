@@ -19,6 +19,7 @@ import net.runelite.client.ui.overlay.components.ProgressPieComponent;
 public class ItemRespawnTimerOverlay extends Overlay
 {
     private final Client client;
+    @SuppressWarnings({"FieldCanBeLocal", "unused"})
     private final ItemRespawnTimerPlugin plugin;
     private final ItemRespawnTimerConfig config;
 
@@ -59,9 +60,10 @@ public class ItemRespawnTimerOverlay extends Overlay
 
                     double percent = timer.getProgress(); // 0.0 -> 1.0
 
+                    int plane = client.getTopLevelWorldView().getPlane();
                     int heightOffset = itemHeightOffset.getOrDefault(timer.getWorldPoint(), 0);
 
-                    Point point = Perspective.localToCanvas(client, loc, client.getPlane(), heightOffset);
+                    Point point = Perspective.localToCanvas(client, loc, plane, heightOffset);
                     if (point == null)
                     {
                         return;
