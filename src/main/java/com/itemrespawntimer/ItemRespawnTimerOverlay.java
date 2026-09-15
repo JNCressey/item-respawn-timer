@@ -1,13 +1,16 @@
 package com.itemrespawntimer;
 
 import java.awt.*;
+import java.util.HashMap;
+import java.util.Map;
 import javax.inject.Inject;
 
 import com.itemrespawntimer.timermodel.ActiveTimers;
-import net.runelite.api.Client;
-import net.runelite.api.coords.LocalPoint;
-import net.runelite.api.Perspective;
+import net.runelite.api.*;
 import net.runelite.api.Point;
+import net.runelite.api.coords.LocalPoint;
+import net.runelite.api.coords.WorldPoint;
+import net.runelite.api.events.ItemSpawned;
 import net.runelite.client.ui.overlay.Overlay;
 import net.runelite.client.ui.overlay.OverlayLayer;
 import net.runelite.client.ui.overlay.OverlayPosition;
@@ -56,10 +59,9 @@ public class ItemRespawnTimerOverlay extends Overlay
 
                     double percent = timer.getProgress(); // 0.0 -> 1.0
 
-                    //int tileHeight = Perspective.getTileHeight(client, loc, client.getPlane());
-                    //Point point = Perspective.localToCanvas(client, loc, client.getPlane(), tileHeight);
-                    Point point = Perspective.localToCanvas(client, loc, client.getPlane(),80); //todo: height offset should be 0 for on the floor and something (>80?) for on table
+                    int heightOffset = itemHeightOffset.getOrDefault(timer.getWorldPoint(), 0);
 
+                    Point point = Perspective.localToCanvas(client, loc, client.getPlane(), heightOffset);
                     if (point == null)
                     {
                         return;
@@ -77,5 +79,43 @@ public class ItemRespawnTimerOverlay extends Overlay
                 });
 
         return null;
+    }
+
+    /**
+     * The height offset for the item layer at a given location, for the timer to be displayed on top of tables.
+     */
+    private final Map<WorldPoint, Integer> itemHeightOffset = new HashMap<>();
+
+    /**
+     * Add the height data, to ensure {@link #itemHeightOffset} has the height data for any item spawn seen.
+     * @param event the item spawned
+     */
+    public void onItemSpawned(ItemSpawned event){
+        Tile tile = event.getTile();
+        TileItem item = event.getItem();
+        if (tile == null || item == null)
+        {
+            return;
+        }
+
+        if (item.getOwnership() != TileItem.OWNERSHIP_NONE){
+            return; // only react to items that were naturally spawned
+        }
+
+        WorldPoint wp = tile.getWorldLocation();
+
+        if (itemHeightOffset.containsKey(wp)){
+            return; // only add if new information
+        }
+
+        ItemLayer itemLayer = tile.getItemLayer();
+        if (itemLayer == null)
+        {
+            return;
+        }
+
+        int heightOffset = itemLayer.getHeight();
+
+        itemHeightOffset.put(wp, heightOffset);
     }
 }

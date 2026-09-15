@@ -134,6 +134,7 @@ public class ItemRespawnTimerPlugin extends Plugin
 	public void onItemSpawned(ItemSpawned event)
 	{
 		activeTimers.onItemSpawned(event);
+		overlay.onItemSpawned(event);
 	}
 
 	@SuppressWarnings("unused")
