@@ -20,6 +20,6 @@ Each timer in the list shows the following information:
 - The timestamp of when the item will respawn is shown as minutes and seconds.
 - The progress bar fills with green until the respawn time.
 - After you see the item, the timer is deleted from the panel.
-  - If you don't return to the spawn, the progress bar will fill a second time with grey as an indicator of how stale the information is.
+  - If you don't return to the spawn location, the progress bar will fill a second time with grey as an indicator of how stale the information is.
   - After the stale bar fills the timer is deleted.
 - If you're in a different world to the spawn, the world number will be shown on the timer.
