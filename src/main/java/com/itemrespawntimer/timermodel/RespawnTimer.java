@@ -5,8 +5,6 @@ import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 import net.runelite.api.coords.WorldPoint;
 
-import java.beans.PropertyChangeListener;
-import java.beans.PropertyChangeSupport;
 import java.time.Instant;
 
 @Slf4j
@@ -77,25 +75,6 @@ public class RespawnTimer
      */
     public void delete(){
         deleted = true;
-        pcs.firePropertyChange("deleted",false,true);
-    }
-
-    //endregion
-
-
-    //region property change listener support
-    private final PropertyChangeSupport pcs = new PropertyChangeSupport(this);
-
-
-    // Add a listener
-    public void addPropertyChangeListener(PropertyChangeListener listener) {
-        pcs.addPropertyChangeListener(listener);
-    }
-
-
-    // Remove a listener
-    public void removePropertyChangeListener(PropertyChangeListener listener) {
-        pcs.removePropertyChangeListener(listener);
     }
     //endregion
 
@@ -156,22 +135,6 @@ public class RespawnTimer
         return Math.min(Math.max( // clamped progress between 0.0 and 1.0. Math.clamp is not available for java 11
                 progress,
                 0.0), 1.0);
-    }
-
-
-    /**
-     *
-     * @return The time remaining in seconds.
-     */
-    public int getSecondsRemaining()
-    {
-        long nowMillis = Instant.now().toEpochMilli();
-        long diff = respawnAt - nowMillis;
-        if (diff <= 0)
-        {
-            return 0;
-        }
-        return (int) Math.ceil(diff / 1000.0);
     }
     //endregion
 
