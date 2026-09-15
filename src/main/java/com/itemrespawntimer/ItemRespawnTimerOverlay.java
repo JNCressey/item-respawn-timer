@@ -83,6 +83,7 @@ public class ItemRespawnTimerOverlay extends Overlay
 
     /**
      * The height offset for the item layer at a given location, for the timer to be displayed on top of tables.
+     * Left unset for 0s, use getOrDefault(wp, 0).
      */
     private final Map<WorldPoint, Integer> itemHeightOffset = new HashMap<>();
 
@@ -102,12 +103,6 @@ public class ItemRespawnTimerOverlay extends Overlay
             return; // only react to items that were naturally spawned
         }
 
-        WorldPoint wp = tile.getWorldLocation();
-
-        if (itemHeightOffset.containsKey(wp)){
-            return; // only add if new information
-        }
-
         ItemLayer itemLayer = tile.getItemLayer();
         if (itemLayer == null)
         {
@@ -115,7 +110,13 @@ public class ItemRespawnTimerOverlay extends Overlay
         }
 
         int heightOffset = itemLayer.getHeight();
+        if (heightOffset == 0)
+        {
+            return; // don't record 0s. Can assume 0 from absent. And to prevent ashes from burned out fires bloating the size of the map.
+        }
 
-        itemHeightOffset.put(wp, heightOffset);
+        WorldPoint wp = tile.getWorldLocation();
+
+        itemHeightOffset.putIfAbsent(wp, heightOffset);
     }
 }
