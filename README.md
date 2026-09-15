@@ -6,7 +6,7 @@ Show overlay countdown dials like there is for mining and woodcutting plugins.
 ![example of the countdown dial](example-overlay.png)
 
 Show a side panel of timers like the time tracking plugin.
-- The 
+- The timestamp of when the item will respawn is shown as minutes and seconds.
 - The progress bar fills with green until the respawn time.
 - After you see the item, the timer is deleted from the panel.
   - If you don't return to the spawn, the progress bar will fill a second time with grey as an indicator of how stale the information is.
