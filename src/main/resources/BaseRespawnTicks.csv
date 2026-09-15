@@ -1,5 +1,4 @@
 itemId,baseRespawnTicks,wikiPage
-#8989,?,Brewin' guide
 #9189,?,Sapphire bolt tips
 16,100,Magic whistle
 20,100,White cog
@@ -316,6 +315,8 @@ itemId,baseRespawnTicks,wikiPage
 7972,0,Lift manual
 8780,100,Teak plank
 8794,100,Saw
+8989,0,Brewin' guide
+8990,0,Brewin' guide (unobtainable item)
 9652,10,Haemalchemy volume 1
 10006,100,Bird snare
 10008,100,Box trap
