@@ -96,17 +96,6 @@ public class StaticSpawnService
     public static boolean isSpawnLocationWithinViewDistance(RespawnTimer timer, WorldPoint playerPoint){
         return isSpawnLocationWithinViewDistance(timer.getWorldPoint(), playerPoint);
     }
-
-
-    /**
-     * Check if the spawn location is within the range that the player can see if the item respawns.
-     * @param spawn The static spawn data to check the spawn location of.
-     * @param playerPoint The current player position.
-     * @return The result of the check
-     */
-    public static boolean isSpawnLocationWithinViewDistance(StaticSpawn spawn, WorldPoint playerPoint){
-        return isSpawnLocationWithinViewDistance(spawn.getWorldPoint(), playerPoint);
-    }
     //endregion
 
 }
