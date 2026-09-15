@@ -32,7 +32,9 @@ import net.runelite.http.api.worlds.WorldResult;
 
 @Slf4j
 @PluginDescriptor(
-	name = "Item Respawn Timer"
+	name = "Item Respawn Timer",
+	description = "Show respawn timers for items",
+	tags = {"overlay", "collection", "items", "timers"}
 )
 public class ItemRespawnTimerPlugin extends Plugin
 {

@@ -7,9 +7,11 @@ import com.itemrespawntimer.timermodel.ActiveTimers;
 import net.runelite.api.Client;
 import net.runelite.api.coords.LocalPoint;
 import net.runelite.api.Perspective;
+import net.runelite.api.Point;
 import net.runelite.client.ui.overlay.Overlay;
 import net.runelite.client.ui.overlay.OverlayLayer;
 import net.runelite.client.ui.overlay.OverlayPosition;
+import net.runelite.client.ui.overlay.components.ProgressPieComponent;
 
 public class ItemRespawnTimerOverlay extends Overlay
 {
@@ -34,7 +36,7 @@ public class ItemRespawnTimerOverlay extends Overlay
 
 
     @Override
-    public Dimension render(Graphics2D g)
+    public Dimension render(Graphics2D graphics)
     {
         int currentWorldId = client.getWorld();
         if (!config.overlayEnabled())
@@ -46,53 +48,34 @@ public class ItemRespawnTimerOverlay extends Overlay
                 .filter(timer -> timer.getWorldId() == currentWorldId)
                 .filter(timer -> !timer.isExpired())
                 .forEach(timer -> {
-                    LocalPoint lp = LocalPoint.fromWorld(client, timer.getWorldPoint());
-                    if (lp == null)
+                    LocalPoint loc = LocalPoint.fromWorld(client, timer.getWorldPoint());
+                    if (loc == null)
                     {
                         return;
                     }
 
-                    Polygon poly = Perspective.getCanvasTileAreaPoly(client, lp, 1);
-                    if (poly == null)
+                    double percent = timer.getProgress(); // 0.0 -> 1.0
+
+                    //int tileHeight = Perspective.getTileHeight(client, loc, client.getPlane());
+                    //Point point = Perspective.localToCanvas(client, loc, client.getPlane(), tileHeight);
+                    Point point = Perspective.localToCanvas(client, loc, client.getPlane(),80); //todo: height offset should be 0 for on the floor and something (>80?) for on table
+
+                    if (point == null)
                     {
                         return;
                     }
 
-                    double progress = timer.getProgress(); // 0.0 -> 1.0
-                    drawCircularTimer(g, poly, progress, timer.getSecondsRemaining());
+                    Color pieFillColor = Color.YELLOW;
+                    Color pieBorderColor = Color.ORANGE;
+
+                    ProgressPieComponent ppc = new ProgressPieComponent();
+                    ppc.setBorderColor(pieBorderColor);
+                    ppc.setFill(pieFillColor);
+                    ppc.setPosition(point);
+                    ppc.setProgress(percent);
+                    ppc.render(graphics);
                 });
 
         return null;
-    }
-
-
-    private void drawCircularTimer(Graphics2D g, Polygon poly, double progress, int secondsRemaining)
-    {
-        Rectangle bounds = poly.getBounds();
-        int size = Math.min(bounds.width, bounds.height);
-
-        int x = bounds.x;
-        int y = bounds.y;
-
-        // Background circle
-        g.setColor(new Color(0, 0, 0, 120));
-        g.fillOval(x, y, size, size);
-
-        // Progress arc (yellow)
-        g.setColor(new Color(255, 255, 0, 180));
-        g.fillArc(x, y, size, size, 90, (int) -(360 * progress));
-
-        // Border
-        g.setColor(Color.BLACK);
-        g.drawOval(x, y, size, size);
-
-        // Text (seconds)
-        String text = String.valueOf(secondsRemaining);
-        FontMetrics fm = g.getFontMetrics();
-        int tx = x + (size - fm.stringWidth(text)) / 2;
-        int ty = y + (size + fm.getAscent()) / 2 - 2;
-
-        g.setColor(Color.WHITE);
-        g.drawString(text, tx, ty);
     }
 }

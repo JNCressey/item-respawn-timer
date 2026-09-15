@@ -17,7 +17,6 @@ Predictions can be slightly off. Because the respawn time depends on how many pl
 ## dev to-dos
 - wilderness wine of zamorak seems to be shorter than baseRespawnTicks 10. find out what it is
 - respawn delay predicion seems to be 1 longer than measured time for despawnEvent->spawnEvent
-- add config option for the number on the dial to be ticks or seconds
 - should startup code in injected classes be put into injected constructor like the config has?
 - add config for filtering what items show in the panel
   - minimum value
