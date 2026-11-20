@@ -83,7 +83,7 @@ public class ItemRespawnTimerPlugin extends Plugin
 
 
 	//region set up
-    @SuppressWarnings("RedundantThrows")
+	@SuppressWarnings({"unused", "RedundantThrows"})
     @Override
 	protected void startUp() throws Exception
 	{
@@ -111,7 +111,7 @@ public class ItemRespawnTimerPlugin extends Plugin
 	}
 
 
-	@SuppressWarnings("RedundantThrows")
+	@SuppressWarnings({"unused", "RedundantThrows"})
     @Override
 	protected void shutDown() throws Exception
 	{
