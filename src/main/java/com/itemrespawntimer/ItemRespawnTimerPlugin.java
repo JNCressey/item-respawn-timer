@@ -103,6 +103,7 @@ public class ItemRespawnTimerPlugin extends Plugin
 			.tooltip("Item Respawns")
 			.panel(panel)
 			.icon(icon)
+			.priority(4)
 			.build();
 
 		if (config.panelEnabled()) {
