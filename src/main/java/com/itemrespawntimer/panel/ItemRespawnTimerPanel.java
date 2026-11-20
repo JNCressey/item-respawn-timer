@@ -20,24 +20,12 @@ public class ItemRespawnTimerPanel extends PluginPanel {
 
     private final Set<RespawnTimer> shownTimers;
 
-    //protected JLabel label;
-    protected JTextArea textArea;
-
     @Inject
     public ItemRespawnTimerPanel()
     {
-        /*
-        todo: make tiles with buttons for each timer
-         */
-        //setLayout(new BorderLayout());
-        textArea = new JTextArea("Hello RuneLite!");
-        //add(textArea, BorderLayout.NORTH);// todo remove text mode
-
         spawnPanels = new ArrayList<>();
         shownTimers = new HashSet<>();
-
     }
-
 
 
     @Inject

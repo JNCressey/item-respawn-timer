@@ -18,7 +18,7 @@ public class BaseRespawnTicksReader {
      * key: The item id.
      * value: baseRespawnTicks, for this item.
      */
-    Map<Integer,Integer> mapItemIdToBaseRespawnTicks = new HashMap<>();
+    final Map<Integer,Integer> mapItemIdToBaseRespawnTicks = new HashMap<>();
 
 
     //region readResource
