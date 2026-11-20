@@ -43,7 +43,7 @@ public class ItemRespawnTimerOverlay extends Overlay
     public Dimension render(Graphics2D graphics)
     {
         int currentWorldId = client.getWorld();
-        if (!config.overlayEnabled())
+        if (!config.overlayPieEnabled())
         {
             return null;
         }
