@@ -15,6 +15,8 @@ You can turn off the overlay with the plugin's config setting.
 
 A side-panel shows a list of timers (like the time-tracking plugin). From the sidebar, select the panel with the name "Item Respawns" and the icon: <img src="icon.png" alt="icon" width="20" height="20">
 
+You can turn off the panel with the plugin's config setting.
+
 Each timer in the list shows the following information:
 - The item icon and name.
 - The timestamp of when the item will respawn is shown as minutes and seconds.

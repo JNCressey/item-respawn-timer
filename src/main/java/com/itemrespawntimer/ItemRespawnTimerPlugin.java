@@ -14,6 +14,7 @@ import net.runelite.api.events.GameTick;
 import net.runelite.api.events.ItemSpawned;
 import net.runelite.client.config.ConfigManager;
 import net.runelite.client.eventbus.Subscribe;
+import net.runelite.client.events.ConfigChanged;
 import net.runelite.client.game.WorldService;
 import net.runelite.client.plugins.Plugin;
 import net.runelite.client.plugins.PluginDescriptor;
@@ -104,7 +105,9 @@ public class ItemRespawnTimerPlugin extends Plugin
 			.icon(icon)
 			.build();
 
-		clientToolbar.addNavigation(navButton);
+		if (config.panelEnabled()) {
+			clientToolbar.addNavigation(navButton);
+		}
 	}
 
 
@@ -125,6 +128,19 @@ public class ItemRespawnTimerPlugin extends Plugin
 	ItemRespawnTimerConfig provideConfig(ConfigManager configManager)
 	{
 		return configManager.getConfig(ItemRespawnTimerConfig.class);
+	}
+
+	/**
+	 * Show or hide navButton for side-panel according to configuration
+	 */
+	@SuppressWarnings("unused")
+	@Subscribe
+	public void onConfigChanged(ConfigChanged event) {
+		if (config.panelEnabled()) {
+			clientToolbar.addNavigation(navButton);
+		} else {
+			clientToolbar.removeNavigation(navButton);
+		}
 	}
 	//endregion
 

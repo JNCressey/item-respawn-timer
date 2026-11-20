@@ -16,4 +16,15 @@ public interface ItemRespawnTimerConfig extends Config
 		return true;
 	}
 
+	@ConfigItem(
+			keyName = "panelEnabled",
+			name = "Enable Side-panel",
+			description = "A side panel with a list of active timers.",
+			position = 0
+	)
+	default boolean panelEnabled()
+	{
+		return true;
+	}
+
 }
