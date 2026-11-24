@@ -7,6 +7,7 @@ import javax.inject.Inject;
 
 import com.itemrespawntimer.timermodel.ActiveTimers;
 import com.itemrespawntimer.timermodel.RespawnTimer;
+import lombok.Setter;
 import net.runelite.api.*;
 import net.runelite.api.Point;
 import net.runelite.api.coords.LocalPoint;
@@ -33,6 +34,12 @@ public class ItemRespawnTimerOverlay extends Overlay
 
     @Inject
     private ActiveTimers activeTimers;
+
+    /**
+     * The time to base tick time rounding on.
+     */
+    @Setter
+    private long tickBaseMillis;
 
 
     @Inject
@@ -117,10 +124,20 @@ public class ItemRespawnTimerOverlay extends Overlay
      */
     private void renderNumberTimer(Graphics2D graphics, Point point, RespawnTimer timer){
 
-        // Text (seconds)
-        String text = String.valueOf(timer.getSecondsRemaining()); //todo config to choose to use getTicksRemaining
+        // Text of time remaining
+        String text;// = String.valueOf(timer.getSecondsRemaining()); //todo config to choose to use getTicksRemaining
+        switch(config.overlayNumberMode()){
+            case SECONDS:
+                text = String.valueOf(timer.getSecondsRemaining());
+                break;
+            case TICKS:
+            default:
+                text = String.valueOf(timer.getTicksRemaining(tickBaseMillis));
+                break;
+        }
 
-        // point has the centre where the timer is. offset by half the text size, to get the origin to draw the text
+
+        // point has the center where the timer is. offset by half the text size, to get the origin to draw the text
         FontMetrics fm = graphics.getFontMetrics();
         int tx = point.getX() - (fm.stringWidth(text) / 2);
         int ty = point.getY() + (fm.getAscent() / 2);

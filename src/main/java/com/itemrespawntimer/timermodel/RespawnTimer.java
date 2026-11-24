@@ -156,22 +156,24 @@ public class RespawnTimer
         {
             return 0;
         }
-        return (int) Math.ceil(diff / 1000.0);
+        return (int) Math.round(diff / 1000.0);
     }
 
     /**
      *
+     * @param tickBaseMillis The time to base tick time rounding on
      * @return The time remaining in seconds.
      */
-    public int getTicksRemaining() //todo check if i need to do any rounding to make timers change synchronised
+    public int getTicksRemaining(long tickBaseMillis)
     {
         long nowMillis = Instant.now().toEpochMilli();
-        long diff = respawnAt - nowMillis;
+        long currentTickMillis = nowMillis - ((nowMillis-tickBaseMillis)%600);
+        long diff = respawnAt - currentTickMillis;
         if (diff <= 0)
         {
             return 0;
         }
-        return (int) Math.ceil(diff / 600.0);
+        return (int) Math.round(diff / 600.0);
     }
     //endregion
 

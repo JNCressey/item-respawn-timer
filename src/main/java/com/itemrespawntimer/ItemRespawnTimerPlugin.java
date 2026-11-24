@@ -20,6 +20,7 @@ import net.runelite.client.plugins.Plugin;
 import net.runelite.client.plugins.PluginDescriptor;
 
 import java.awt.image.BufferedImage;
+import java.time.Instant;
 import java.time.temporal.ChronoUnit;
 
 import net.runelite.client.task.Schedule;
@@ -168,6 +169,9 @@ public class ItemRespawnTimerPlugin extends Plugin
 		despawnEventVerificationService.onGameTick();
 		activeTimers.onGameTick();
 		panel.setCurrentWorldId(client.getWorld());//todo move to the onGameStateChanged event
+
+		long nowMillis = Instant.now().toEpochMilli();
+		overlay.setTickBaseMillis(nowMillis);
 	}
 
 
