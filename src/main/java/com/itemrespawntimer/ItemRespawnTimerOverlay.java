@@ -25,12 +25,7 @@ public class ItemRespawnTimerOverlay extends Overlay
     private final ItemRespawnTimerPlugin plugin;
     private final ItemRespawnTimerConfig config;
 
-
-    //todo make colors configurable
     private Color pieFillColor;
-    private final Color pieFillColorWithoutNumber = Color.YELLOW;
-    private final Color pieFillColorWithNumber = new Color(120, 120, 0);
-    private final Color pieBorderColor = Color.ORANGE;
 
     @Inject
     private ActiveTimers activeTimers;
@@ -66,7 +61,7 @@ public class ItemRespawnTimerOverlay extends Overlay
             return null;
         }
 
-        pieFillColor = overlayNumberEnabled ? pieFillColorWithNumber : pieFillColorWithoutNumber;
+        pieFillColor = overlayNumberEnabled ? config.pieFillColorWithNumber() : config.pieFillColorWithoutNumber();
 
         activeTimers.getActiveTimers().stream()
                 .filter(timer -> timer.getWorldId() == currentWorldId)
@@ -109,7 +104,7 @@ public class ItemRespawnTimerOverlay extends Overlay
         double percent = timer.getProgress(); // 0.0 -> 1.0
 
         ProgressPieComponent ppc = new ProgressPieComponent();
-        ppc.setBorderColor(pieBorderColor);
+        ppc.setBorderColor(config.pieBorderColor());
         ppc.setFill(pieFillColor);
         ppc.setPosition(point);
         ppc.setProgress(percent);
@@ -125,7 +120,7 @@ public class ItemRespawnTimerOverlay extends Overlay
     private void renderNumberTimer(Graphics2D graphics, Point point, RespawnTimer timer){
 
         // Text of time remaining
-        String text;// = String.valueOf(timer.getSecondsRemaining()); //todo config to choose to use getTicksRemaining
+        String text;
         switch(config.overlayNumberMode()){
             case SECONDS:
                 text = String.valueOf(timer.getSecondsRemaining());
@@ -142,7 +137,7 @@ public class ItemRespawnTimerOverlay extends Overlay
         int tx = point.getX() - (fm.stringWidth(text) / 2);
         int ty = point.getY() + (fm.getAscent() / 2);
 
-        graphics.setColor(Color.WHITE);
+        graphics.setColor(config.overlayNumberColor());
         graphics.drawString(text, tx, ty);
     }
 
