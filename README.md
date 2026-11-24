@@ -6,9 +6,14 @@ Predictions can be slightly off. Because the respawn time depends on how many pl
 ## Overlay
 ![example of the countdown dial](example-overlay.png)
 
-An overlay shows count-down dials (like there are for the mining and woodcutting plugins).
+An overlay shows pie-style count-down dials (like there are for the mining and woodcutting plugins).
 
-You can turn off the overlay with the plugin's config setting.
+Optionally, the overlay can show the seconds or ticks remaining as a number, and you can turn off the pie-style timers.
+
+![example of the overlay with both pie and number enabled](example-overlay-number.png)
+
+You can configure the colors of these, for example, when you want to make the pie contrast more to a specific environment or to the number.
+
 
 ## Panel
 ![example of the side panel](example-panel.png)
