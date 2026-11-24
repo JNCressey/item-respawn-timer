@@ -6,6 +6,7 @@ import java.util.Map;
 import javax.inject.Inject;
 
 import com.itemrespawntimer.timermodel.ActiveTimers;
+import com.itemrespawntimer.timermodel.RespawnTimer;
 import net.runelite.api.*;
 import net.runelite.api.Point;
 import net.runelite.api.coords.LocalPoint;
@@ -22,6 +23,13 @@ public class ItemRespawnTimerOverlay extends Overlay
     @SuppressWarnings({"FieldCanBeLocal", "unused"})
     private final ItemRespawnTimerPlugin plugin;
     private final ItemRespawnTimerConfig config;
+
+
+    //todo make colors configurable
+    private Color pieFillColor;
+    private final Color pieFillColorWithoutNumber = Color.YELLOW;
+    private final Color pieFillColorWithNumber = new Color(120, 120, 0);
+    private final Color pieBorderColor = Color.ORANGE;
 
     @Inject
     private ActiveTimers activeTimers;
@@ -43,10 +51,15 @@ public class ItemRespawnTimerOverlay extends Overlay
     public Dimension render(Graphics2D graphics)
     {
         int currentWorldId = client.getWorld();
-        if (!config.overlayPieEnabled())
+        boolean overlayPieEnabled = config.overlayPieEnabled();
+        boolean overlayNumberEnabled = config.overlayNumberEnabled();
+
+        if (!overlayPieEnabled && !overlayNumberEnabled)
         {
             return null;
         }
+
+        pieFillColor = overlayNumberEnabled ? pieFillColorWithNumber : pieFillColorWithoutNumber;
 
         activeTimers.getActiveTimers().stream()
                 .filter(timer -> timer.getWorldId() == currentWorldId)
@@ -58,8 +71,6 @@ public class ItemRespawnTimerOverlay extends Overlay
                         return;
                     }
 
-                    double percent = timer.getProgress(); // 0.0 -> 1.0
-
                     int plane = client.getTopLevelWorldView().getPlane();
                     int heightOffset = itemHeightOffset.getOrDefault(timer.getWorldPoint(), 0);
 
@@ -69,18 +80,53 @@ public class ItemRespawnTimerOverlay extends Overlay
                         return;
                     }
 
-                    Color pieFillColor = Color.YELLOW;
-                    Color pieBorderColor = Color.ORANGE;
+                    if (overlayPieEnabled) {
+                        renderPieTimer(graphics,point,timer);
+                    }
 
-                    ProgressPieComponent ppc = new ProgressPieComponent();
-                    ppc.setBorderColor(pieBorderColor);
-                    ppc.setFill(pieFillColor);
-                    ppc.setPosition(point);
-                    ppc.setProgress(percent);
-                    ppc.render(graphics);
+                    if (overlayNumberEnabled) {
+                        renderNumberTimer(graphics,point,timer);
+                    }
                 });
 
         return null;
+    }
+
+    /**
+     * Add a single pie timer to the graphics.
+     * @param graphics The graphics to add the timer to.
+     * @param point The local canvas point to draw at.
+     * @param timer The timer state.
+     */
+    private void renderPieTimer(Graphics2D graphics, Point point, RespawnTimer timer){
+        double percent = timer.getProgress(); // 0.0 -> 1.0
+
+        ProgressPieComponent ppc = new ProgressPieComponent();
+        ppc.setBorderColor(pieBorderColor);
+        ppc.setFill(pieFillColor);
+        ppc.setPosition(point);
+        ppc.setProgress(percent);
+        ppc.render(graphics);
+    }
+
+    /**
+     * Add a single number timer to the graphics.
+     * @param graphics The graphics to add the timer to.
+     * @param point The local canvas point to draw at.
+     * @param timer The timer state.
+     */
+    private void renderNumberTimer(Graphics2D graphics, Point point, RespawnTimer timer){
+
+        // Text (seconds)
+        String text = String.valueOf(timer.getSecondsRemaining()); //todo config to choose to use getTicksRemaining
+
+        // point has the centre where the timer is. offset by half the text size, to get the origin to draw the text
+        FontMetrics fm = graphics.getFontMetrics();
+        int tx = point.getX() - (fm.stringWidth(text) / 2);
+        int ty = point.getY() + (fm.getAscent() / 2);
+
+        graphics.setColor(Color.WHITE);
+        graphics.drawString(text, tx, ty);
     }
 
     /**

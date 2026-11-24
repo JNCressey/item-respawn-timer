@@ -39,6 +39,12 @@ public class RespawnTimer
     @Getter
     private final long respawnAt;
 
+    /**
+     * when the item will respawn, rounded down to the second, as a millisecond timestamp
+     */
+    @Getter
+    private final long respawnAtSecond;
+
 
     /**
      * the time after twice the respawn delay, as a millisecond timestamp
@@ -91,6 +97,7 @@ public class RespawnTimer
 
         int respawnDelayTicks = (int)Math.floor(this.spawn.getBaseRespawnTicks() * ((4000D-worldPopulation)/4000));
         this.respawnAt =        start + (    respawnDelayTicks * 600L);
+        this.respawnAtSecond = this.respawnAt - (this.respawnAt % 1000);
         this.twiceRespawnTime = start + (2 * respawnDelayTicks * 600L);
 
         int respawnDelaySeconds = (int)(respawnDelayTicks*0.6);
@@ -135,6 +142,36 @@ public class RespawnTimer
         return Math.min(Math.max( // clamped progress between 0.0 and 1.0. Math.clamp is not available for java 11
                 progress,
                 0.0), 1.0);
+    }
+
+    /**
+     *
+     * @return The time remaining in seconds.
+     */
+    public int getSecondsRemaining()
+    {
+        long nowMillis = Instant.now().toEpochMilli();
+        long diff = respawnAtSecond - nowMillis;
+        if (diff <= 0)
+        {
+            return 0;
+        }
+        return (int) Math.ceil(diff / 1000.0);
+    }
+
+    /**
+     *
+     * @return The time remaining in seconds.
+     */
+    public int getTicksRemaining() //todo check if i need to do any rounding to make timers change synchronised
+    {
+        long nowMillis = Instant.now().toEpochMilli();
+        long diff = respawnAt - nowMillis;
+        if (diff <= 0)
+        {
+            return 0;
+        }
+        return (int) Math.ceil(diff / 600.0);
     }
     //endregion
 
